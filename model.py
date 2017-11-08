@@ -7,7 +7,7 @@ db = SQLAlchemy()
 
 
 #########
-#  ORM  #
+# ORM Models
 #########
 
 class Country(db.Model):
@@ -150,3 +150,26 @@ class Datum(db.Model):
         return ('\n<Datum id={} val={} country="{}" indic="{}" year={} >'
                 .format(self.datum_id, self.value, self.country.name,
                         self.indicator.title, self.year))
+
+
+#########
+# Helper functions
+#########
+
+def connect_to_db(app):
+    """ Connect the database to the Flask app. """
+
+    # Configure to use our PostgreSQL database
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///sdgdash'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.app = app
+    db.init_app(app)
+
+
+if __name__ == "__main__":
+    # As a convenience, if we run this module interactively, it will leave
+    # you in a state of being able to work with the database directly.
+
+    from server import app
+    connect_to_db(app)
+    print "Connected to DB."
