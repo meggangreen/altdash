@@ -1,0 +1,152 @@
+""" Models and db functions for SDG db. """
+
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+
+
+#########
+#  ORM  #
+#########
+
+class Country(db.Model):
+    """ Country model. """
+
+    __tablename__ = 'countries'
+
+    country_id = db.Column(db.String(3), primary_key=True)
+    name = db.Column(db.Text, unique=True, nullable=False)
+    capital = db.Column(db.Text, nullable=True)
+    lat = db.Column(db.Float, nullable=True) # country or capital?
+    lng = db.Column(db.Float, nullable=True)
+    region = db.Column(db.Text, nullable=False)
+    income = db.Column(db.Text, nullable=False)
+    wikiurl = db.Column(db.Text, unique=True, nullable=True)
+
+    def __repr__(self):
+        return ('\n<Country "{}" id={} region="{}" income="{}" >'
+                .format(self.name, self.country_id, self.region, self.income))
+
+
+class Color(db.Model):
+    """ Color model.
+
+        Most importantly, this table holds the goal prefix ('goal_pre' 2-char
+        value from 01 to 17) used by the 'goal' table.
+
+        Also, each goal has a color and icon associated with it on the World
+        Bank site; this front end 'might' replicate those and therefore stores
+        them very simply as a goal number-hex value pair. The 'hexval' includes
+        the '#'.
+
+    """
+
+    __tablename__ = 'colors'
+
+    goal_pre = db.Column(db.String(2), primary_key=True)
+    hexval = db.Column(db.String(7), unique=True, nullable=False)
+
+    def __repr__(self):
+        return ('\n<Color goal_pre={} hex="{}" >'
+                .format(self.goal_pre, self.hexval))
+
+
+class Goal(db.Model):
+    """ Goal model.
+
+        Each goal has sub-goals. Main goals are 'EE00' where 'EE' is the 'goal_pre',
+        (01 to 17). Sub-goals are 'EEZZ' where 'EE' is the 'goal_pre' and 'ZZ'
+        is the 'goal_suf' -- 2-char code either a number ('03', '11') or a letter
+        and single 0 ('a0'). Not every goal/sub-goal detailed by the World Bank
+        is accounted for here.
+
+    """
+
+    __tablename__ = 'goals'
+
+    goal_id = db.Column(db.String(4), primary_key=True)
+    goal_pre = db.Column(db.String(2),
+                         db.ForeignKey('colors.goal_pre'),
+                         nullable=False)
+    goal_suf = db.Column(db.String(2), nullable=False)
+    description = db.Column(db.Text, unique=True, nullable=False)
+    wburl = db.Column(db.Text, unique=True, nullable=True)
+
+    indicators = db.relationship('Indicator', secondary='goals_indicators',
+                                 backref=db.backref('goals', order_by='goal_id'))
+    color = db.relationship('Color')
+
+    def __repr__(self):
+        return ('\n<Goal id={} descr="{}" indicators="{}" >'
+                .format(self.goal_id, self.description, self.indicators))
+
+
+class Indicator(db.Model):
+    """ Indicator model. An indicator is a World Bank metric.
+
+        World Bank has assigned each metric a code which serves as the
+        'indicator_id'. Not every metric detailed by the World Bank is accounted
+        for here.
+
+    """
+
+    __tablename__ = 'indicators'
+
+    indicator_id = db.Column(db.String(4), primary_key=True)
+    title = db.Column(db.Text, unique=True, nullable=False)
+    method = db.Column(db.Text, unique=False, nullable=True)
+    wburl = db.Column(db.Text, unique=True, nullable=True)
+
+    def __repr__(self):
+        return ('\n<Indicator id={} title="{}" >'
+                .format(self.indicator_id, self.title))
+
+
+class GoalIndic(db.Model):
+    """ Association table for goal-indicator pairs. """
+
+    __tablename__ = 'goals_indicators'
+
+    gi_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    goal_id = db.Column(db.String(4),
+                        db.ForeignKey('goals.goal_id'),
+                        nullable=False)
+    indicator_id = db.Column(db.String(4),
+                             db.ForeignKey('indicators.indicator_id'),
+                             nullable=False)
+
+
+class Datum(db.Model):
+    """ Data point model.
+
+        Data points for each country-indicator-year combination.
+
+    """
+
+    __tablename__ = 'data_points'
+
+    datum_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    country_id = db.Column(db.String(3),
+                           db.ForeignKey('countries.country_id'),
+                           nullable=False)
+    indicator_id = db.Column(db.String(4),
+                             db.ForeignKey('indicators.indicator_id'),
+                             nullable=False)
+    year = db.Column(db.Integer, nullable=False)
+    value = db.Column(db.Float, nullable=False)
+
+    country = db.relationship('Country',
+                              backref=db.backref('data_points',
+                                                 order_by='indicator_id'))
+    indicator = db.relationship('Indicator',
+                                backref=db.backref('data_points',
+                                                   order_by='country_id'))
+    # goals = db.relationship('Goal',
+    #                         backref=db.backref('data_points',
+    #                                            order_by='country_id'))
+
+    def __repr__(self):
+        return ('\n<Datum id={} val={} country="{}" indic="{}" year={} >'
+                .format(self.datum_id, self.value, self.country.name,
+                        self.indicator.title, self.year))
