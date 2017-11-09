@@ -9,7 +9,13 @@ db = SQLAlchemy()
 #########
 
 class Country(db.Model):
-    """ Country model. """
+    """ Country model.
+
+        World Bank doesn't calculate world, region, or income numbers on the
+        fly; they are their own values. Weighted? Who knows. But I'm sticking
+        with their methods, albeit with a reduced number of groupings.
+
+    """
 
     __tablename__ = 'countries'
 
@@ -91,14 +97,14 @@ class Indicator(db.Model):
 
     __tablename__ = 'indicators'
 
-    indicator_id = db.Column(db.String(4), primary_key=True)
+    indicator_id = db.Column(db.Text, primary_key=True)
     title = db.Column(db.Text, unique=True, nullable=False)
     method = db.Column(db.Text, unique=False, nullable=True)
     wburl = db.Column(db.Text, unique=True, nullable=True)
 
     def __repr__(self):
-        return ('\n<Indicator id={} title="{}" >'
-                .format(self.indicator_id, self.title))
+        return ('\n<Indicator title="{}" id={} >'
+                .format(self.title, self.indicator_id))
 
 
 class GoalIndic(db.Model):
@@ -110,7 +116,7 @@ class GoalIndic(db.Model):
     goal_id = db.Column(db.String(4),
                         db.ForeignKey('goals.goal_id'),
                         nullable=False)
-    indicator_id = db.Column(db.String(4),
+    indicator_id = db.Column(db.Text,
                              db.ForeignKey('indicators.indicator_id'),
                              nullable=False)
 
@@ -128,7 +134,7 @@ class Datum(db.Model):
     country_id = db.Column(db.String(3),
                            db.ForeignKey('countries.country_id'),
                            nullable=False)
-    indicator_id = db.Column(db.String(4),
+    indicator_id = db.Column(db.Text,
                              db.ForeignKey('indicators.indicator_id'),
                              nullable=False)
     year = db.Column(db.Integer, nullable=False)
@@ -157,7 +163,7 @@ class Datum(db.Model):
 def connect_to_db(app):
     """ Connect the database to the Flask app. """
 
-    # Configure to use our PostgreSQL database
+    # Configure to use PostgreSQL production database
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///sdgdash'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
