@@ -31,8 +31,9 @@ class Country(db.Model):
     wikiurl = db.Column(db.Text, unique=True, nullable=True)
 
     def __repr__(self):
-        return ('\n<Country "{}" id={} region="{}" income="{}" >'
-                .format(self.name, self.country_id, self.region, self.income))
+        return ('\n<Country "{}" id={} region="{}" income="{}" groups="{}" >'
+                .format(self.name, self.country_id,
+                        self.region, self.income, self.groups))
 
 
 class Group(db.Model):
@@ -49,11 +50,15 @@ class Group(db.Model):
     group_id = db.Column(db.String(3), primary_key=True)
     name = db.Column(db.Text, unique=True, nullable=False)
 
-    countries = db.relationship('Country', 
+    countries = db.relationship('Country',
                                 secondary='groups_countries',
-                                order_by='country_id',
+                                order_by='Country.country_id',
                                 backref=db.backref('groups',
-                                                   order_by='group_id'))
+                                                   order_by=group_id))
+
+    def __repr__(self):
+        return ('\n<Group "{}" id={} countries="{}" >'
+                .format(self.name, self.country_id, self.countries))
 
 
 class GroupCountry(db.Model):
@@ -117,14 +122,14 @@ class Goal(db.Model):
     wburl = db.Column(db.Text, unique=True, nullable=True)
 
     indicators = db.relationship('Indicator',
-                                 order_by='indicator_id',
+                                 order_by='Indicator.indicator_id',
                                  secondary='goals_indicators',
-                                 backref=db.backref('goals', order_by='goal_id'))
+                                 backref=db.backref('goals', order_by=goal_id))
     color = db.relationship('Color')
 
     def __repr__(self):
         return ('\n<Goal id={} descr="{}" indicators="{}" >'
-                .format(self.goal_id, self.description, self.indicators))
+                .format(self.goal_id, self.description[:50], self.indicators))
 
 
 class Indicator(db.Model):
@@ -145,7 +150,7 @@ class Indicator(db.Model):
 
     def __repr__(self):
         return ('\n<Indicator title="{}" id={} >'
-                .format(self.title, self.indicator_id))
+                .format(self.title[:50], self.indicator_id))
 
 
 class GoalIndic(db.Model):
@@ -185,10 +190,10 @@ class Datum(db.Model):
 
     country = db.relationship('Country',
                               backref=db.backref('data_points',
-                                                 order_by='indicator_id'))
+                                                 order_by=indicator_id))
     indicator = db.relationship('Indicator',
                                 backref=db.backref('data_points',
-                                                   order_by='country_id'))
+                                                   order_by=country_id))
     # goals = db.relationship('Goal',
     #                         backref=db.backref('data_points',
     #                                            order_by='country_id'))
