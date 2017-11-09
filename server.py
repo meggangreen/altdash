@@ -7,16 +7,15 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 from sqlalchemy.sql import func
 
-from model import connect_to_db, db, User, Rating, Movie
-
+from model import *
 
 
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
-app.secret_key = "WBSDG"
+app.secret_key = "WBSDG-Dashboards"
 
-# Normally, if you use an undefined variable in Jinja2, it fails silently. 
+# Normally, if you use an undefined variable in Jinja2, it fails silently.
 # This is horrible. Make it raise an error instead.
 app.jinja_env.undefined = StrictUndefined
 
@@ -32,13 +31,19 @@ def index():
 #########
 
 if __name__ == "__main__":
-    # We have to set debug=True here; it has to be True at the point we invoke 
-    # the DebugToolbarExtension
+    import sys
+
+    # app.debug has to be True at the point we invoke the DebugToolbarExtension
     app.debug = True
+
     # Ensure templates, etc. are not cached in debug mode
     app.jinja_env.auto_reload = app.debug
 
-    connect_to_db(app)
+    # connect to test db if testing
+    if 'test' in sys.argv[-1]:
+        connect_to_db(app, 'postgres:///sdgTEST')
+    else:
+        connect_to_db(app)
 
     # Use the DebugToolbar
     DebugToolbarExtension(app)
