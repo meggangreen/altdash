@@ -4,9 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-#########
+###########################
 # ORM Models
-#########
+###########################
+
+### Countries ###
 
 class Country(db.Model):
     """ Country model.
@@ -32,6 +34,41 @@ class Country(db.Model):
         return ('\n<Country "{}" id={} region="{}" income="{}" >'
                 .format(self.name, self.country_id, self.region, self.income))
 
+
+class Group(db.Model):
+    """ Group model.
+
+        Region, income, and other classifications based on economic, geographic,
+        and cultural characteristics. Eg: Arab World, Small States, Pacific
+        Island Small States.
+
+    """
+
+    __tablename__ = 'groups'
+
+    group_id = db.Column(db.String(3), primary_key=True)
+    name = db.Column(db.Text, unique=True, nullable=False)
+
+    countries = db.relationship('Country', secondary='groups_countries',
+                                backref=db.backref('groups',
+                                                   order_by='group_id'))
+
+
+class GroupCountry(db.Model):
+    """ Association table for group-country pairs. """
+
+    __tablename__ = 'groups_countries'
+
+    gc_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    group_id = db.Column(db.String(3),
+                         db.ForeignKey('groups.group_id'),
+                         nullable=False)
+    country_id = db.Column(db.Text,
+                           db.ForeignKey('countries.country_id'),
+                           nullable=False)
+
+
+### Goals and Indicators ###
 
 class Color(db.Model):
     """ Color model.
@@ -121,6 +158,8 @@ class GoalIndic(db.Model):
                              nullable=False)
 
 
+### Data ###
+
 class Datum(db.Model):
     """ Data point model.
 
@@ -156,9 +195,9 @@ class Datum(db.Model):
                         self.indicator.title, self.year))
 
 
-#########
+###########################
 # Helper functions
-#########
+###########################
 
 def connect_to_db(app):
     """ Connect the database to the Flask app. """
