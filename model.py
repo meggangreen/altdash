@@ -49,7 +49,9 @@ class Group(db.Model):
     group_id = db.Column(db.String(3), primary_key=True)
     name = db.Column(db.Text, unique=True, nullable=False)
 
-    countries = db.relationship('Country', secondary='groups_countries',
+    countries = db.relationship('Country', 
+                                secondary='groups_countries',
+                                order_by='country_id',
                                 backref=db.backref('groups',
                                                    order_by='group_id'))
 
@@ -114,7 +116,9 @@ class Goal(db.Model):
     description = db.Column(db.Text, unique=True, nullable=False)
     wburl = db.Column(db.Text, unique=True, nullable=True)
 
-    indicators = db.relationship('Indicator', secondary='goals_indicators',
+    indicators = db.relationship('Indicator',
+                                 order_by='indicator_id',
+                                 secondary='goals_indicators',
                                  backref=db.backref('goals', order_by='goal_id'))
     color = db.relationship('Color')
 
