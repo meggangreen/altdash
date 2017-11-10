@@ -23,11 +23,8 @@ class Country(db.Model):
 
     country_id = db.Column(db.String(3), primary_key=True)
     name = db.Column(db.Text, unique=True, nullable=False)
-    # capital = db.Column(db.Text, nullable=True)
-    # lat = db.Column(db.Float, nullable=True)  # country or capital?
-    # lng = db.Column(db.Float, nullable=True)
-    region = db.Column(db.Text, nullable=False)
-    income = db.Column(db.Text, nullable=False)
+    region = db.Column(db.Text, nullable=True)
+    income = db.Column(db.Text, nullable=True)
     wikiurl = db.Column(db.Text, unique=False, nullable=True)
 
     def __repr__(self):
@@ -70,7 +67,7 @@ class GroupCountry(db.Model):
     group_id = db.Column(db.String(3),
                          db.ForeignKey('groups.group_id'),
                          nullable=False)
-    country_id = db.Column(db.Text,
+    country_id = db.Column(db.String(3),
                            db.ForeignKey('countries.country_id'),
                            nullable=False)
 

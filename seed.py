@@ -8,32 +8,6 @@ from model import Group, Country, GroupCountry, Datum
 from model import Color, Goal, Indicator, GoalIndic
 
 
-def load_countries():
-    """ Load countries records from csv file. """
-
-    # Delete all rows to start fresh
-    Country.query.delete()
-
-    # Read csv file and insert data
-    countries_csv = open('rawdata/countries.csv').readlines()
-    for row in countries_csv:
-        row = row.rstrip()
-
-        country_id, name, region, income, wikiurl = row.split(",")
-
-        # Instantiate 'Country' object and supply attributes
-        country = Country(country_id=country_id,
-                          name=name,
-                          region=region,
-                          income=income,
-                          wikiurl=wikiurl)
-
-        db.session.add(country)  # stage for insertion
-
-    # Commit all countries to 'countries'
-    db.session.commit()
-
-
 def load_groups_and_countries():
     """ Load groups_countries records from csv file. Creates records in groups
         AND countries AND groups_countries.
@@ -45,11 +19,13 @@ def load_groups_and_countries():
     Country.query.delete()
     GroupCountry.query.delete()
 
-    # Empty dictionary that will populate the countries' attributes
+    # Empty dictionaries that will populate the countries and groups
     countries = {}
-    wikiurl = "https://en.wikipedia.org/wiki/"
+    groups = {}
+    groups_countries = {}
+    WIKIURL = "https://en.wikipedia.org/wiki/"
 
-    # Read csv file and insert data
+    # Read csv file and parse data
     gc_csv = open('rawdata/groups_countries.csv').readlines()
     for row in gc_csv:
         row = row.rstrip()
@@ -57,25 +33,24 @@ def load_groups_and_countries():
         # Unpack row
         g_id, g_name, c_id, c_name = row.split(",")
 
-        # Instantiate 'GroupCountry' object and supply attributes
-        group_country = GroupCountry(group_id=g_id, country_id=c_id)
-        db.session.add(group_country)  # stage for insertion
+        # Add group-country pair to 'groups_countries'
+        groups_countries[g_id] = groups_countries.get(g_id, [])
+        groups_countries[g_id].append(c_id)
 
-        # Create and stage for insertion each new group
-        if not Group.query.filter(Group.group_id == g_id).first():
-            group = Group(group_id=g_id, name=g_name)
-            db.session.add(group)  # stage for insertion
+        # Add group to 'groups'
+        if not groups.get(g_id):
+            groups[g_id] = groups.get(g_id, g_name)
 
-        # Start country object if new
+        # Add country to 'countries' if new
         if not countries.get(c_id):
-            countries[c_id] = countries.get(c_id, {'name': c_name})
+            countries[c_id] = {'name': c_name, 'income': None, 'region': None}
 
-        # IFF group is also an income or a region, create or update country
+        # IFF group is also an income or a region, update country
         if g_name in ['High income',
                       'Upper middle income',
                       'Lower middle income',
                       'Low income']:
-            countries[c_id]['income'] = countries[c_id].get('income', g_name)
+            countries[c_id]['income'] = g_name
         if g_name in ['East Asia & Pacific',
                       'Europe & Central Asia',
                       'Latin America & Caribbean',
@@ -83,19 +58,35 @@ def load_groups_and_countries():
                       'North America',
                       'South Asia',
                       'Sub-Saharan Africa']:
-            countries[c_id]['region'] = countries[c_id].get('region', g_name)
+            countries[c_id]['region'] = g_name
 
-        # Create and stage for insertion each new country
-        for c_id in countries:
-            country = Country(country_id=c_id,
-                              name=c_id['name'],
-                              region=c_id['region'],
-                              income=c_id['income'],
-                              wikiurl=wikiurl + c_id['name'])
-            db.session.add(country)
+    # Create and insert each new Country
+    for c_id in countries:
+        name = countries[c_id]['name']
+        region = countries[c_id]['region']
+        income = countries[c_id]['income']
+        country = Country(country_id=c_id,
+                          name=name,
+                          region=region,
+                          income=income,
+                          wikiurl=WIKIURL + name)
+        db.session.add(country)
+    db.session.commit()  # Commit new country records
 
-    # Commit all new records
-    db.session.commit()
+    # Each group has its own data,
+    # so each needs to be a country (with no groups)
+    for g_id, g_name in groups.items():
+        group = Group(group_id=g_id, name=g_name)
+        country = Country(country_id=g_id, name=g_name)
+        db.session.add(group, country)
+    db.session.commit()  # Commit new country and group records
+
+    # Lastly, create and insert each group-country pair
+    for g_id in groups_countries:
+        for c_id in groups_countries[g_id]:
+            gc = GroupCountry(group_id=g_id, country_id=c_id)
+            db.session.add(gc)
+    db.session.commit()  # Must commit 'gc' AFTER countries and groups
 
 ###########################
 # Helper Functions
@@ -108,4 +99,4 @@ if __name__ == "__main__":
     db.create_all()
 
     # Import different types of data
-    load_countries()
+    load_groups_and_countries()
