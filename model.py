@@ -23,12 +23,12 @@ class Country(db.Model):
 
     country_id = db.Column(db.String(3), primary_key=True)
     name = db.Column(db.Text, unique=True, nullable=False)
-    capital = db.Column(db.Text, nullable=True)
-    lat = db.Column(db.Float, nullable=True) # country or capital?
-    lng = db.Column(db.Float, nullable=True)
+    # capital = db.Column(db.Text, nullable=True)
+    # lat = db.Column(db.Float, nullable=True)  # country or capital?
+    # lng = db.Column(db.Float, nullable=True)
     region = db.Column(db.Text, nullable=False)
     income = db.Column(db.Text, nullable=False)
-    wikiurl = db.Column(db.Text, unique=True, nullable=True)
+    wikiurl = db.Column(db.Text, unique=False, nullable=True)
 
     def __repr__(self):
         return ('\n<Country "{}" id={} region="{}" income="{}" groups="{}" >'
