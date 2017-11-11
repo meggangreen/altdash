@@ -1,0 +1,12 @@
+p {
+    margin: 0;
+}
+
+#nav-container {
+    max-width: 1400px;
+}
+
+#body-container {
+    padding-top: 60px;
+    max-width: 1400px;
+}

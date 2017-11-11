@@ -1,13 +1,16 @@
 """ World Bank Sustainable Development Goals Dashboard """
 
+from model import connect_to_db, db
+from model import Country, Group, GroupCountry, Datum
+from model import Color, Goal, Indicator, GoalIndic
+from functions import *
+
 from jinja2 import StrictUndefined
 
-from flask import Flask, jsonify, render_template, redirect, request, flash, session
+from flask import Flask, render_template, redirect, request
+from flask import jsonify, flash, session
+# from flask_sqlalchemy import SQLAlchemy
 from flask_debugtoolbar import DebugToolbarExtension
-
-from sqlalchemy.sql import func
-
-from model import *
 
 
 app = Flask(__name__)
@@ -24,7 +27,13 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """ Index """
 
-    return render_template("index.html")
+    countries = (Country.query
+                        .filter(Country.region != null)
+                        .order_by(Country.region)
+                        .order_by(Country.name)
+                        .all())
+
+    return render_template("index.html", countries=countries)
 
 #########
 # Helper Functions
