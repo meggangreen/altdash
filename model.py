@@ -55,7 +55,7 @@ class Group(db.Model):
 
     def __repr__(self):
         return ('\n<Group "{}" id={} countries="{}" >'
-                .format(self.name, self.country_id, self.countries))
+                .format(self.name, self.group_id, self.countries))
 
 
 class GroupCountry(db.Model):

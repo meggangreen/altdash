@@ -28,7 +28,7 @@ def index():
     """ Index """
 
     countries = (Country.query
-                        .filter(Country.region != null)
+                        .filter(Country.region == "North America")
                         .order_by(Country.region)
                         .order_by(Country.name)
                         .all())
