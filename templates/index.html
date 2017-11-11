@@ -1,2 +1,24 @@
 {% extends 'base.html' %}
 {% block headtitle %}World Bank Data Alternative Dashboard{% endblock %}
+
+{% block bodycontent %}
+
+  <div id="body-container" class="container-fluid">
+    <div class="row">
+      <div id="scatter-chart" class="col-xs-12">
+        <form id="country-selector">
+          <select name="country">
+            {% for country in countries %}
+              <option value="{{ country.country_id }}">{{ country.name }}</option>
+            {% endfor %}
+          </select>
+        </form>
+        <p>This is above my canvas.</p>
+        <canvas id="chart-canvas">
+          
+        </canvas>
+      </div>
+    </div>
+  </div><!-- /#body-container -->
+
+{% endblock %}

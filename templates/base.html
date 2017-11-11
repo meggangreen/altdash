@@ -36,24 +36,6 @@
     </div><!-- /#nav-container -->
   </nav>
 
-  <div id="body-container" class="container-fluid">
-    <div class="row">
-      <div id="scatter-chart" class="col-xs-12">
-        <form id="country-selector">
-          <select name="country">
-            {% for country in countries %}
-              <option value="{{ country }}">{{ country }}</option>
-            {% endfor %}
-          </select>
-        </form>
-        <br />
-        <canvas id="chart-canvas">
-          <p>This is my canvas.</p>
-        </canvas>
-      </div>
-    </div>
-  </div><!-- /#body-container -->
-
   {% block bodycontent %}{% endblock %}
 </body>
 </html>

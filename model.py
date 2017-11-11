@@ -28,9 +28,9 @@ class Country(db.Model):
     wikiurl = db.Column(db.Text, unique=False, nullable=True)
 
     def __repr__(self):
-        return ('\n<Country "{}" id={} region="{}" income="{}" groups="{}" >'
+        return ('\n<Country "{}" id={} region="{}" income="{}" groups="n" >'
                 .format(self.name, self.country_id,
-                        self.region, self.income, self.groups))
+                        self.region, self.income))
 
 
 class Group(db.Model):

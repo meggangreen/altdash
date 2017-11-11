@@ -22,6 +22,8 @@ def load_groups_and_countries():
     countries = {}
     groups = {}
     groups_countries = {}
+
+    # WikiURL constant
     WIKIURL = "https://en.wikipedia.org/wiki/"
 
     # Read csv file and parse data
@@ -40,9 +42,15 @@ def load_groups_and_countries():
         if not groups.get(g_id):
             groups[g_id] = groups.get(g_id, g_name)
 
+        # Add group to 'countries'
+        if not countries.get(g_id):
+            countries[g_id] = {'name': g_name, 'income': None,
+                               'region': None, 'wikiurl': None}
+
         # Add country to 'countries' if new
         if not countries.get(c_id):
-            countries[c_id] = {'name': c_name, 'income': None, 'region': None}
+            countries[c_id] = {'name': c_name, 'income': None,
+                               'region': None, 'wikiurl': WIKIURL + c_name}
 
         # IFF group is also an income or a region, update country
         if g_name in ['High income',
@@ -59,16 +67,17 @@ def load_groups_and_countries():
                       'Sub-Saharan Africa']:
             countries[c_id]['region'] = g_name
 
-    # Create and insert each new Country
+    # Create and insert each new item in 'countries'
     for c_id in countries:
         name = countries[c_id]['name']
         region = countries[c_id]['region']
         income = countries[c_id]['income']
+        wikiurl = countries[c_id]['wikiurl']
         country = Country(country_id=c_id,
                           name=name,
                           region=region,
                           income=income,
-                          wikiurl=WIKIURL + name)
+                          wikiurl=wikiurl)
         db.session.add(country)
     db.session.commit()  # Commit new country records
 
@@ -76,8 +85,7 @@ def load_groups_and_countries():
     # so each needs to be a country (with no groups)
     for g_id, g_name in groups.items():
         group = Group(group_id=g_id, name=g_name)
-        country = Country(country_id=g_id, name=g_name)
-        db.session.add(group, country)
+        db.session.add(group)
     db.session.commit()  # Commit new country and group records
 
     # Lastly, create and insert each group-country pair

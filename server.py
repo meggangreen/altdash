@@ -1,9 +1,10 @@
 """ World Bank Sustainable Development Goals Dashboard """
 
 from model import connect_to_db, db
-from model import Country, Group, GroupCountry, Datum
-from model import Color, Goal, Indicator, GoalIndic
+# from model import Country, Group, GroupCountry, Datum
+# from model import Color, Goal, Indicator, GoalIndic
 from functions import *
+import pdb
 
 from jinja2 import StrictUndefined
 
@@ -24,15 +25,20 @@ app.jinja_env.undefined = StrictUndefined
 
 
 @app.route('/')
+def knowngood():
+    """ When ish goes wrong, this is right. """
+
+    return render_template("knowngood.html")
+
+
+@app.route('/index')
 def index():
     """ Index """
 
-    countries = (Country.query
-                        .filter(Country.region == "North America")
-                        .order_by(Country.region)
-                        .all())
+    countries = get_country_list()
+    regions = get_region_list()
 
-    return render_template("index.html", countries=countries)
+    return render_template("index.html", countries=countries, regions=regions)
 
 #########
 # Helper Functions
