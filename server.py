@@ -30,7 +30,6 @@ def index():
     countries = (Country.query
                         .filter(Country.region == "North America")
                         .order_by(Country.region)
-                        .order_by(Country.name)
                         .all())
 
     return render_template("index.html", countries=countries)
