@@ -9,7 +9,15 @@
         <form id="country-selector">
           <select name="country">
             {% for country in countries %}
-              <option value="{{ country.country_id }}">{{ country.name }}</option>
+              {% if country.name == selected %}
+                <option value="{{ country.country_id }}" selected>
+                  {{ country.name }}
+                </option>
+              {% else %}
+                <option value="{{ country.country_id }}">
+                  {{ country.name }}
+                </option>
+              {% endif %}
             {% endfor %}
           </select>
         </form>

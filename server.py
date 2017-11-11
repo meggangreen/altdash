@@ -36,9 +36,9 @@ def index():
     """ Index """
 
     countries = get_country_list()
-    regions = get_region_list()
+    selected = 'Cuba'
 
-    return render_template("index.html", countries=countries, regions=regions)
+    return render_template("index.html", countries=countries, selected=selected)
 
 #########
 # Helper Functions
