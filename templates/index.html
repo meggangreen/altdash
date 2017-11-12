@@ -3,23 +3,19 @@
 
 {% block bodycontent %}
 
-  <div id="body-container" class="container-fluid">
+  <div class="body-0">
+    <!-- show scatter chart and goal-score tiles -->
+    {% include 'charttiles.html' %}
+  </div><!-- /.body-0 -->
 
-    <div id="row-body1" class="row body-row">
-      <!-- show scatter chart and goal-score tiles -->
-      {% include 'charttiles.html' %}
-    </div><!-- /#row-body1 -->
+  <div class="body-1">
+    <!-- show information about the world bank -->
+    {% include 'worldbank.html' ignore missing %}
+  </div><!-- /.body-1 -->
 
-    <div id="row-body2" class="row body-row">
-      <!-- show information about the world bank -->
-      {% include 'worldbank.html' ignore missing %}
-    </div><!-- /#row-body2 -->
-
-    <div id="row-body3" class="row body-row">
-      <!-- show information about the world bank -->
-      {% include 'aboutme.html' ignore missing %}
-    </div><!-- /#row-body3 -->
-
-  </div><!-- /#body-container -->
+  <div class="body-0">
+    <!-- show information about the world bank -->
+    {% include 'aboutme.html' ignore missing %}
+  </div><!-- /.body-0 -->
 
 {% endblock %}

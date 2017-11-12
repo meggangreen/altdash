@@ -15,15 +15,15 @@
 
 <body>
 
-  <div id="body-header">
+  <div id="body-header" class="plain">
     {% include 'bodyheader.html' %}
   </div><!-- /#body-header -->
 
-  <div id="body-content">
-    {% block bodycontent %}{% endblock %}
+  <div id="body-content" class="plain">
+      {% block bodycontent %}{% endblock %}
   </div><!-- /#body-content -->
 
-  <div id="body-footer">
+  <div id="body-footer" class="plain">
     {% include 'bodyfooter.html' %}
   </div><!-- /#body-footer -->
 
