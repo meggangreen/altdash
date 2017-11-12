@@ -4,29 +4,49 @@
 {% block bodycontent %}
 
   <div id="body-container" class="container-fluid">
-    <div class="row">
-      <div id="scatter-chart" class="col-xs-12">
-        <form id="country-selector">
-          <select name="country">
-            {% for country in countries %}
-              {% if country.name == selected %}
-                <option value="{{ country.country_id }}" selected>
-                  {{ country.name }}
-                </option>
-              {% else %}
-                <option value="{{ country.country_id }}">
-                  {{ country.name }}
-                </option>
-              {% endif %}
-            {% endfor %}
-          </select>
-        </form>
-        <p>This is above my canvas.</p>
-        <canvas id="chart-canvas">
-          
-        </canvas>
-      </div>
-    </div>
+
+    <div id="row-1" class="row">
+
+      <div id="col-scatterchart" class="col-xs-12">
+        <div id="row-btnselect" class="row">
+          <div id="col-mapbtn" class="col-xs-3">
+            <button id="btn-map" class="btn btn-default" type="button">
+              World Map
+            </button>
+          </div><!-- /#col-mapbtn -->
+          <div id="col-chartselect" class="col-xs-6">
+            <form id="country-selector"> 
+              <select id="select-country" name="country">
+                {% for country in countries %}
+                  {% if country.name == selected %}
+                    <option value="{{ country.country_id }}" selected>
+                      {{ country.name }}
+                    </option>
+                  {% else %}
+                    <option value="{{ country.country_id }}">
+                      {{ country.name }}
+                    </option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </form>
+          </div><!-- /#col-chartselect -->
+          <div id="col-randombtn" class="col-xs-3">
+            <button id="btn-random" class="btn btn-default" type="button">
+              New Random
+            </button>
+          </div><!-- /#col-randombtn -->
+        </div><!-- /#row-btnselect -->
+        <div id="row-chartdisp" class="row">
+          <div id="col-chartdisp" class="col-xs-12">
+            <canvas id="scatter-chart"></canvas>
+            <script>scatterchart();</script>
+          </div><!-- /#col-chartdisp -->
+        </div><!-- /#row-chartdisp -->
+      </div><!-- /#col-scatterchart -->
+
+    </div><!-- /#row-1 -->
+    
   </div><!-- /#body-container -->
 
 {% endblock %}

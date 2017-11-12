@@ -36,7 +36,7 @@ def index():
     """ Index """
 
     countries = get_country_list()
-    selected = 'Cuba'
+    selected = 'Cuba'  # need to make this randomly selected
 
     return render_template("index.html", countries=countries, selected=selected)
 
