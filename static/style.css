@@ -4,6 +4,7 @@
 
 p {
     margin: 0;
+    font-size: 12px;
 }
 
 .body-row {
@@ -132,7 +133,7 @@ button.g06 {
 /* World Bank Section */
 /***************************/
 #col-worldbank p {
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.2;
     margin-top: 10px;
 }
