@@ -1,0 +1,70 @@
+<!-- needs to go in a row which is in a container or other column -->
+
+<div id="col-scatterchart" class="col-xs-12">
+  <div id="row-btnselect" class="row">
+    <div id="col-mapbtn" class="col-xs-3">
+      <button id="btn-map" class="btn btn-default btn-btnselect" type="button">
+        World Map
+      </button>
+    </div><!-- /#col-mapbtn -->
+    <div id="col-chartselect" class="col-xs-6">
+      <form id="country-selector"> 
+        <select id="select-country" name="country">
+          {% for country in countries %}
+            {% if country.name == selected %}
+              <option value="{{ country.country_id }}" selected>
+                {{ country.name }}
+              </option>
+            {% else %}
+              <option value="{{ country.country_id }}">
+                {{ country.name }}
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </form>
+    </div><!-- /#col-chartselect -->
+    <div id="col-randombtn" class="col-xs-3">
+      <button id="btn-random" class="btn btn-default btn-btnselect" type="button">
+        New Random
+      </button>
+    </div><!-- /#col-randombtn -->
+  </div><!-- /#row-btnselect -->
+  <div id="row-chartdisp" class="row">
+    <div id="col-chartdisp" class="col-xs-12">
+      <canvas id="scatter-chart"></canvas>
+      <script>scatterchart();</script>
+    </div><!-- /#col-chartdisp -->
+  </div><!-- /#row-chartdisp -->
+  <div id="row-slider" class="row">
+    <div id="col-slider" class="col-xs-12">
+      <input id="slider" class="slider" type="range" min="1990" max="2016" value="2016"/>
+    </div><!-- /#col-slider -->
+  </div><!-- /#row-slider -->
+</div><!-- /#col-scatterchart -->
+<div id="col-tiles" class="col-xs-12">
+  <button id="g01" type="button" class="btn btn-default btn-g-tiles g01">
+    <p class="btn-g-score">8</p>
+    <p class="btn-g-title">Poverty</p>
+  </button>
+  <button id="g02" type="button" class="btn btn-default btn-g-tiles g02">
+    <p class="btn-g-score">9</p>
+    <p class="btn-g-title">Hunger</p>
+  </button>
+  <button id="g03" type="button" class="btn btn-default btn-g-tiles g03">
+    <p class="btn-g-score">5</p>
+    <p class="btn-g-title">Health</p>
+  </button>
+  <button id="g04" type="button" class="btn btn-default btn-g-tiles g04">
+    <p class="btn-g-score">7</p>
+    <p class="btn-g-title">Education</p>
+  </button>
+  <button id="g05" type="button" class="btn btn-default btn-g-tiles g05">
+    <p class="btn-g-score">7</p>
+    <p class="btn-g-title">Gender Equality</p>
+  </button>
+  <button id="g06" type="button" class="btn btn-default btn-g-tiles g06">
+    <p class="btn-g-score">10</p>
+    <p class="btn-g-title">Water &amp; Sanitation</p>
+  </button>
+</div><!-- /#col-tiles -->
