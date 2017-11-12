@@ -21,22 +21,28 @@ canvas {
 .btn-g-tiles {
     padding: 3px;
     margin: 3px;
-    line-height: 1;
     border-radius: 6px;
     white-space: normal;
     width: 65px;
     height: 65px;
+    color:  #fff;
+    border-width: 0;
+
 }
 
 .btn-g-score {
-    font-size: 18px;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.3;
 }
 
 .btn-g-title {
     font-size: 10px;
     font-weight: 700;
+    line-height: 1;
 }
 
+/* populate colors with jQuery ? */
 button.g01 {
     background-color: #eb1c2d;
 }
@@ -75,6 +81,9 @@ button.g06 {
 }
 
 /* Chart Slider */
+#col-slider {
+    margin: 10px 0px 10px;
+}
 .slider {
     -webkit-appearance: none;  /* Override default CSS styles */
     appearance: none;
