@@ -10,7 +10,7 @@
       <div id="col-scatterchart" class="col-xs-12">
         <div id="row-btnselect" class="row">
           <div id="col-mapbtn" class="col-xs-3">
-            <button id="btn-map" class="btn btn-default" type="button">
+            <button id="btn-map" class="btn btn-default btn-btnselect" type="button">
               World Map
             </button>
           </div><!-- /#col-mapbtn -->
@@ -32,7 +32,7 @@
             </form>
           </div><!-- /#col-chartselect -->
           <div id="col-randombtn" class="col-xs-3">
-            <button id="btn-random" class="btn btn-default" type="button">
+            <button id="btn-random" class="btn btn-default btn-btnselect" type="button">
               New Random
             </button>
           </div><!-- /#col-randombtn -->
@@ -42,13 +42,44 @@
             <canvas id="scatter-chart"></canvas>
             <script>scatterchart();</script>
           </div><!-- /#col-chartdisp -->
-          <div id="col-chartslide" class="col-xs-12">
-            <input id="chart-slider" class="slider" type="range" min="1990" max="2016" value="2016"/>
-          </div><!-- /#col-chartslide -->
         </div><!-- /#row-chartdisp -->
+        <div id="row-slider">
+          <div id="col-slider" class="col-xs-12">
+            <input id="slider" class="slider" type="range" min="1990" max="2016" value="2016"/>
+          </div><!-- /#col-slider -->
+        </div><!-- /#row-slider -->
+        <div id="row-tiles" class="row">
+          <div id="col-tiles" class="col-xs-12">
+            <button id="g01" type="button" class="btn btn-default btn-g-tiles g01">
+              <p class="btn-g-score">S</p>
+              <p class="btn-g-title">Poverty</p>
+            </button>
+            <button id="g02" type="button" class="btn btn-default btn-g-tiles g02">
+              <p class="btn-g-score">S</p>
+              <p class="btn-g-title">Hunger</p>
+            </button>
+            <button id="g03" type="button" class="btn btn-default btn-g-tiles g03">
+              <p class="btn-g-score">S</p>
+              <p class="btn-g-title">Health</p>
+            </button>
+            <button id="g04" type="button" class="btn btn-default btn-g-tiles g04">
+              <p class="btn-g-score">S</p>
+              <p class="btn-g-title">Education</p>
+            </button>
+            <button id="g05" type="button" class="btn btn-default btn-g-tiles g05">
+              <p class="btn-g-score">S</p>
+              <p class="btn-g-title">Gender Equality</p>
+            </button>
+            <button id="g06" type="button" class="btn btn-default btn-g-tiles g06">
+              <p class="btn-g-score">S</p>
+              <p class="btn-g-title">Water &amp; Sanitation</p>
+            </button>
+          </div><!-- /#col-tiles -->
+        </div><!-- /#row-tiles -->
       </div><!-- /#col-scatterchart -->
 
     </div><!-- /#row-1 -->
+
     
   </div><!-- /#body-container -->
 
