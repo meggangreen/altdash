@@ -129,6 +129,15 @@ button.g06 {
 }
 
 /***************************/
+/* World Bank Section */
+/***************************/
+#col-worldbank p {
+    font-size: 12px;
+    line-height: 1.2;
+    margin-top: 10px;
+}
+
+/***************************/
 /* Footer */
 /***************************/
 #footer-container {
