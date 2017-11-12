@@ -25,13 +25,6 @@ app.jinja_env.undefined = StrictUndefined
 
 
 @app.route('/')
-def knowngood():
-    """ When ish goes wrong, this is right. """
-
-    return render_template("knowngood.html")
-
-
-@app.route('/index')
 def index():
     """ Index """
 

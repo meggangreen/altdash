@@ -77,7 +77,8 @@ button.g06 {
 }
 
 #select-country {
-    width: 150px;
+    max-width: 100%;
+    min-width: 50%;
 }
 
 /* Chart Slider */
