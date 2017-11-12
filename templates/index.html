@@ -5,12 +5,21 @@
 
   <div id="body-container" class="container-fluid">
 
-    <div id="row-1" class="row">
+    <div id="row-body1" class="row body-row">
       <!-- show scatter chart and goal-score tiles -->
       {% include 'charttiles.html' %}
-    </div><!-- /#row-1 -->
+    </div><!-- /#row-body1 -->
 
-    
+    <div id="row-body2" class="row body-row">
+      <!-- show information about the world bank -->
+      {% include 'worldbank.html' ignore missing %}
+    </div><!-- /#row-body2 -->
+
+    <div id="row-body3" class="row body-row">
+      <!-- show information about the world bank -->
+      {% include 'aboutme.html' ignore missing %}
+    </div><!-- /#row-body3 -->
+
   </div><!-- /#body-container -->
 
 {% endblock %}
