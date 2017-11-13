@@ -5,7 +5,7 @@ from server import app
 
 
 def load_groups_and_countries():
-    """ Load groups_countries records from csv file. Creates records in groups
+    """ Seed groups_countries records from csv file. Creates records in groups
         AND countries AND groups_countries.
 
     """
@@ -92,6 +92,61 @@ def load_groups_and_countries():
             db.session.add(gc)
     db.session.commit()  # Must commit 'gc' AFTER countries and groups
 
+
+def load_goals_and_targets():
+    """ Seed goal_design and goals records from csv file. Must run before
+        creating goals_indicators records. * csv delimited by '|'.
+
+    """
+
+    # Delete all rows to start fresh
+    Goal.query.delete()
+    GoalDesign.query.delete()
+
+    # Empty dictionaries that will populate the countries and groups
+    g_designs = {}
+    goals = {}
+
+    # Read csv file and parse data
+    goal_csv = open('rawdata/goals.csv').readlines()
+    for row in goal_csv:
+        row = row.rstrip()
+
+        # Unpack row
+        pre, suf, descr, hexval, iurlb, iurlf, unurl = row.split("|")
+        g_id = pre + suf
+
+        # Add goal to goal_design; goals depends on goal_design
+        if suf == '00':  # Only the main goal
+            g_designs[pre] = {'hexval': hexval, 'iurlb': iurlb,
+                              'iurlf': iurlf, 'unurl': unurl}
+
+        # Add goal/target to goals
+        goals[g_id] = {'pre': pre, 'suf': suf, 'descr': descr}
+
+    # Create and insert each new item in 'goal_design'
+    for pre in g_designs:
+        hexval = g_designs[pre]['hexval']
+        iurlb = g_designs[pre]['iurlb']
+        iurlf = g_designs[pre]['iurlf']
+        unurl = g_designs[pre]['unurl']
+        g_design = GoalDesign(goal_pre=pre,
+                              hexval=hexval,
+                              iurl_blank=iurlb,
+                              iurl_full=iurlf,
+                              unurl=unurl)
+        db.session.add(g_design)
+    db.session.commit()  # Commit goal_designs
+
+    # Create and insert each new item in 'goals'
+    for g_id in goals:
+        pre = goals[g_id]['pre']
+        suf = goals[g_id]['suf']
+        descr = goals[g_id]['descr']
+        goal = Goal(goal_id=g_id, goal_pre=pre, goal_suf=suf, description=descr)
+        db.session.add(goal)
+    db.session.commit()  # Must commit goals AFTER goal_designs
+
 ###########################
 # Helper Functions
 ###########################
@@ -103,4 +158,5 @@ if __name__ == "__main__":
     db.create_all()
 
     # Import different types of data
-    load_groups_and_countries()
+    # load_groups_and_countries()
+    load_goals_and_targets()
