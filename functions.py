@@ -1,8 +1,6 @@
 """ Helper functions for display. """
 
-from model import connect_to_db, db
-from model import Country, Group, GroupCountry, Datum
-from model import Color, Goal, Indicator, GoalIndic
+from model import *
 
 ###########################
 # Main Scatter Chart

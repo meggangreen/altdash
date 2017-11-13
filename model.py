@@ -28,9 +28,8 @@ class Country(db.Model):
     wikiurl = db.Column(db.Text, unique=False, nullable=True)
 
     def __repr__(self):
-        return ('\n<Country "{}" id={} region="{}" income="{}" groups="n" >'
-                .format(self.name, self.country_id,
-                        self.region, self.income))
+        return ('<Country "{}" id={} region="{}" income="{}" (c.groups) >\n'
+                .format(self.name, self.country_id, self.region, self.income))
 
 
 class Group(db.Model):
@@ -54,8 +53,8 @@ class Group(db.Model):
                                                    order_by=group_id))
 
     def __repr__(self):
-        return ('\n<Group "{}" id={} countries="{}" >'
-                .format(self.name, self.group_id, self.countries))
+        return ('<Group "{}" id={} (g.countries) >\n'
+                .format(self.name, self.group_id))
 
 
 class GroupCountry(db.Model):
@@ -74,37 +73,40 @@ class GroupCountry(db.Model):
 
 ### Goals and Indicators ###
 
-class Color(db.Model):
-    """ Color model.
+class GoalDesign(db.Model):
+    """ GoalDesign model.
 
         Most importantly, this table holds the goal prefix ('goal_pre' 2-char
         value from 01 to 17) used by the 'goal' table.
 
-        Also, each goal has a color and icon associated with it on the World
-        Bank site; this front end 'might' replicate those and therefore stores
-        them very simply as a goal number-hex value pair. The 'hexval' includes
-        the '#'.
+        Also, each goal has a color and icon associated with it on the UN site;
+        this front end 'might' replicate those and therefore stores them very
+        simply as the goal number, hex value, and icon urls. The field 'hexval'
+        includes the leading '#'.
 
     """
 
-    __tablename__ = 'colors'
+    __tablename__ = 'goal_design'
 
     goal_pre = db.Column(db.String(2), primary_key=True)
     hexval = db.Column(db.String(7), unique=True, nullable=False)
+    iurl_blank = db.Column(db.Text, unique=True, nullable=False)
+    iurl_full = db.Column(db.Text, unique=True, nullable=False)
+    unurl = db.Column(db.Text, unique=True, nullable=False)
 
     def __repr__(self):
-        return ('\n<Color goal_pre={} hex="{}" >'
+        return ('<GoalDesign goal_pre={} hex="{}" >\n'
                 .format(self.goal_pre, self.hexval))
 
 
 class Goal(db.Model):
     """ Goal model.
 
-        Each goal has sub-goals. Main goals are 'EE00' where 'EE' is the 'goal_pre',
-        (01 to 17). Sub-goals are 'EEZZ' where 'EE' is the 'goal_pre' and 'ZZ'
-        is the 'goal_suf' -- 2-char code either a number ('03', '11') or a letter
-        and single 0 ('a0'). Not every goal/sub-goal detailed by the World Bank
-        is accounted for here.
+        Each goal has targets. Main goals are 'EE00' where 'EE' is the
+        'goal_pre' (01 to 17). Targets are 'EEZZ' where 'EE' is the 'goal_pre'
+        and 'ZZ' is the 'goal_suf' -- 2-char code either a number ('03', '11')
+        or a single 0 and the letter ('0a'). Not every goal/target detailed
+        by the SDG accord is accounted for here.
 
     """
 
@@ -112,21 +114,21 @@ class Goal(db.Model):
 
     goal_id = db.Column(db.String(4), primary_key=True)
     goal_pre = db.Column(db.String(2),
-                         db.ForeignKey('colors.goal_pre'),
+                         db.ForeignKey('goal_design.goal_pre'),
                          nullable=False)
     goal_suf = db.Column(db.String(2), nullable=False)
     description = db.Column(db.Text, unique=True, nullable=False)
-    wburl = db.Column(db.Text, unique=True, nullable=True)
 
     indicators = db.relationship('Indicator',
                                  order_by='Indicator.indicator_id',
                                  secondary='goals_indicators',
                                  backref=db.backref('goals', order_by=goal_id))
-    color = db.relationship('Color')
+
+    design = db.relationship('GoalDesign')
 
     def __repr__(self):
-        return ('\n<Goal id={} descr="{}" indicators="{}" >'
-                .format(self.goal_id, self.description[:50], self.indicators))
+        return ('<Goal id={} descr="{}" (g.indicators) (g.design) >\n'
+                .format(self.goal_id, self.description[:50]))
 
 
 class Indicator(db.Model):
@@ -146,8 +148,8 @@ class Indicator(db.Model):
     wburl = db.Column(db.Text, unique=True, nullable=True)
 
     def __repr__(self):
-        return ('\n<Indicator title="{}" id={} >'
-                .format(self.title[:50], self.indicator_id))
+        return ('<Indicator id={} title="{}" (i.goals) >\n'
+                .format(self.indicator_id, self.title[:50]))
 
 
 class GoalIndic(db.Model):
@@ -196,7 +198,7 @@ class Datum(db.Model):
     #                                            order_by='country_id'))
 
     def __repr__(self):
-        return ('\n<Datum id={} val={} country="{}" indic="{}" year={} >'
+        return ('<Datum id={} val={} country="{}" indic="{}" year={} >\n'
                 .format(self.datum_id, self.value, self.country.name,
                         self.indicator.title, self.year))
 

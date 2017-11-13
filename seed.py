@@ -1,10 +1,7 @@
 """ Utility file to seed data into production and test databases. """
 
-from model import connect_to_db, db
+from model import *
 from server import app
-
-from model import Group, Country, GroupCountry, Datum
-from model import Color, Goal, Indicator, GoalIndic
 
 
 def load_groups_and_countries():
@@ -53,10 +50,10 @@ def load_groups_and_countries():
                                'region': None, 'wikiurl': WIKIURL + c_name}
 
         # IFF group is also an income or a region, update country
-        if g_name in ['High income',
-                      'Upper middle income',
-                      'Lower middle income',
-                      'Low income']:
+        if g_name in ['High Income',
+                      'Upper-Middle Income',
+                      'Lower-Middle Income',
+                      'Low Income']:
             countries[c_id]['income'] = g_name
         if g_name in ['East Asia & Pacific',
                       'Europe & Central Asia',

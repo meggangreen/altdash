@@ -1,15 +1,33 @@
 p {
-    margin: 0;
+    margin: 0 0 10px;
     font-size: 12px;
+    line-height: 1.2
 }
 
 .plain {
-    margin-top: -10px;
     padding: 0;
+}
+
+.navbar-default {
+    background-color: #ccc;
+    border-color: #444;
+    border-width: 0 0 2px;
+}
+
+.navbar-default .navbar-brand {
+    color: #222;
 }
 
 #nav-container {
     max-width: 1400px;
+}
+
+.navbar-default .navbar-toggle {
+    border-color: #444;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #222;
 }
 
 .body-row {
@@ -18,19 +36,27 @@ p {
 }
 
 #body-content {
-    padding-top: 60px;
+    padding-top: 50px;
+}
+
+.body-0, .body-1, .body-2 {
+    width: 100%;
+    padding: 0 0 15px;
 }
 
 .body-0 {
-    width: 100%;
     background-color: #fff;
+    border-top: 10px solid #27bfe6;
 }
 
 .body-1 {
-    width: 100%;
-    border-top: 3px solid #222;
-    border-bottom: 3px solid #222;
     background-color: #ccc;
+    border-top: 8px solid #e5233d;
+}
+
+.body-2 {
+    background-color: #eee;
+    border-top: 8px solid #4ca146;
 }
 
 .container-body {
@@ -62,7 +88,7 @@ canvas {
 
 /* Chart Slider */
 #col-slider {
-    margin: 10px 0px;
+    margin: 10px 0;
 }
 .slider {
     -webkit-appearance: none;  /* Override default CSS styles */
@@ -107,69 +133,72 @@ canvas {
     white-space: normal;
     width: 65px;
     height: 65px;
-    color:  #fff;
     border-width: 0;
-
+    background-size: 120%;
+    background-position: 40% 10%;
 }
 
 .btn-g-score {
-    font-size: 24px;
-    font-weight: 700;
-    line-height: 1.3;
-}
-
-.btn-g-title {
-    font-size: 10px;
+    font-size: 35px;
     font-weight: 700;
     line-height: 1;
+    margin-top: 22px;
+    color:  #fff;
 }
 
-/* populate colors with jQuery ? */
+/* populate colors/imgs with jQuery */
+/*https://stackoverflow.com/questions/1341358/set-size-on-background-image-with-css*/
+
 button.g01 {
-    background-color: #eb1c2d;
+    background-image: url("img/icon_01_blank.png");
+    background-color: #e5233d;
 }
 
 button.g02 {
-    background-color: #d3a029;
+    background-color: #dda73a;
+    background-image: url("img/icon_02_blank.png");
 }
 
 button.g03 {
-    background-color: #27ab48;
+    background-color: #4ca146;
+    background-image: url("img/icon_03_blank.png");
 }
 
 button.g04 {
-    background-color: #c31f33;
+    background-color: #c7212f;
+    background-image: url("img/icon_12_blank.png");
 }
 
 button.g05 {
-    background-color: #ef402b;
+    background-color: #ef402d;
+    background-image: url("img/icon_15_blank.png");
 }
 
 button.g06 {
-    background-color: #00aed9;
+    background-color: #27bfe6;
+    background-image: url("img/icon_16_blank.png");
 }
 
 /***************************/
 /* World Bank Section */
 /***************************/
-#col-worldbank {
-    margin-top: 10px;
-    padding: 15px;
+#col-wb, #col-un, #col-sdg {
+    /*margin-top: 10px;
+    padding: 15px;*/
 }
 
-#col-worldbank p {
+#col-wb p, #col-un p, #col-sdg p {
     font-size: 13px;
-    line-height: 1.2;
-    margin-top: 10px;
 }
 
 /***************************/
 /* Footer */
 /***************************/
 #body-footer {
-    background-color: #222;
+    background-color: #444;
     width: 100%;
     min-height: 60px;
+    border-top: 8px solid #f89d2a;
 }
 
 #footer-container {
