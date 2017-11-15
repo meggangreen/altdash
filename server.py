@@ -1,17 +1,15 @@
 """ World Bank Sustainable Development Goals Dashboard """
 
-from model import connect_to_db, db
-# from model import Country, Group, GroupCountry, Datum
-# from model import Color, Goal, Indicator, GoalIndic
+from model import *
 from functions import *
-import pdb
 
-from jinja2 import StrictUndefined
+import requests
+import json
 
 from flask import Flask, render_template, redirect, request
 from flask import jsonify, flash, session
-# from flask_sqlalchemy import SQLAlchemy
 from flask_debugtoolbar import DebugToolbarExtension
+from jinja2 import StrictUndefined
 
 
 app = Flask(__name__)

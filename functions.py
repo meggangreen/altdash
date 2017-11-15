@@ -2,6 +2,9 @@
 
 from model import *
 
+import requests
+import json
+
 ###########################
 # Main Scatter Chart
 ###########################
@@ -22,12 +25,71 @@ def get_country_list(order_field=0):
     return countries
 
 
-def get_region_list():
-    """ Get list of regions in alphabetical order. """
+def get_wbmeta_by_indicator(indicators):
+    """ Given a list of indicators, returns a dictionary of JSON data with all
+        meta information needed in 'indicators' table. Follows same format as
+        'get_wbdata_by_indicator(indicators)'.
 
-    regions = (db.session.query(Country.region)
-                         .filter(Country.region is not None)
-                         .order_by(Country.region)
-                         .distinct())
+    """
 
-    return regions
+    WBAPI = 'http://api.worldbank.org/indicators/'
+    FORMAT = '?format=json&per_page='
+    meta_tables = {}
+    bad_indic = "The following indicator codes are not working:"
+
+    for indic in indicators:
+        qty = "1"
+        url = WBAPI + indic + FORMAT + qty
+        response = requests.get(url)
+        data = response.json()
+        qty = str(data[0].get('total', 0))
+        if qty == '0':  # no results for this indicator
+            bad_indic = "{}\n    {}".format(bad_indic, indic)
+            data = None
+        else:
+            meta_tables[indic] = data
+
+    print bad_indic
+    return meta_tables
+
+
+def get_wbdata_by_indicator(indicators):
+    """ Given a list of indicators, returns a dictionary of JSON data for all
+        countries and all years using the World Bank API.
+
+        The function first requests only the first result to get the 'total'
+        quantity of values. It then re-requests the data with the total quantity
+        on one page. In addition to returning data, returns the code for any
+        indicator that doesn't have data in order to be removed from indicator
+        list. The indicator should be removed manually by a person, because they
+        all have been tested and used to work.
+
+        >>>indicators = ['SP.DYN.CONM.ZS', 'ER.H20.FWAG.ZS', 'SP.ADO.TFRT']
+        >>>test_dict = get_wbdata_by_indicator(indicators)
+        The following indicator codes are not working:
+            ER.H20.FWAG.ZS
+        >>> test_dict.keys()
+        ['SP.ADO.TFRT', 'SP.DYN.CONM.ZS']
+
+    """
+
+    WBAPI = 'http://api.worldbank.org/countries/all/indicators/'
+    FORMAT = '?format=json&per_page='
+    data_tables = {}
+    bad_indic = "The following indicator codes are not working:"
+
+    for indic in indicators:
+        qty = "1"
+        for i in range(0, 2):
+            url = WBAPI + indic + FORMAT + qty
+            response = requests.get(url)
+            data = response.json()
+            qty = str(data[0].get('total', 0))
+            if qty == '0':  # no results for this indicator
+                bad_indic = "{}\n    {}".format(bad_indic, indic)
+                data = None
+                break
+            data_tables[indic] = data
+
+    print bad_indic
+    return data_tables

@@ -1,6 +1,7 @@
 """ Utility file to seed data into production and test databases. """
 
 from model import *
+from functions import *
 from server import app
 
 
@@ -9,6 +10,9 @@ def load_groups_and_countries():
         AND countries AND groups_countries.
 
     """
+
+    # WikiURL constant
+    WIKIURL = "https://en.wikipedia.org/wiki/"
 
     # Delete all rows to start fresh
     Group.query.delete()
@@ -19,9 +23,6 @@ def load_groups_and_countries():
     countries = {}
     groups = {}
     groups_countries = {}
-
-    # WikiURL constant
-    WIKIURL = "https://en.wikipedia.org/wiki/"
 
     # Read csv file and parse data
     gc_csv = open('rawdata/groups_countries.csv').readlines()
@@ -147,6 +148,49 @@ def load_goals_and_targets():
         db.session.add(goal)
     db.session.commit()  # Must commit goals AFTER goal_designs
 
+
+def load_indicators():
+    """ Seed indicator meta data via World Bank API from supplied list of
+        indicator IDs. Seed goals_indicators table.
+
+    """
+
+    # WB URL constant
+    URL = "https://data.worldbank.org/indicator/"
+
+    # Delete all rows to start fresh
+    GoalIndic.query.delete
+    Indicator.query.delete
+
+    # Read csv file and parse data
+    indic_csv = open('rawdata/indicators.csv').readlines()
+    for row in indic_csv:
+        row = row.rstrip()
+
+        # Goal pre is always 1st value, but nothing else is guaranteed
+        cells = row.split(',')
+        goal_id = cells[0] + "00"
+        goal_indic = []
+        indicators = cells[1:]
+
+        # Retrieve and parse meta data
+        meta = get_wbmeta_by_indicator(indicators)
+        for m in meta.itervalues():
+            indic = Indicator(indicator_id=m[1][0]['id'],
+                              title=m[1][0]['name'],
+                              method=m[1][0]['sourceNote'],
+                              wburl=URL + m[1][0]['id'])
+            db.session.add(indic)
+            goal_indic.append(GoalIndic(indicator_id=m[1][0]['id'],
+                                        goal_id=goal_id))
+        db.session.commit()
+        print goal_indic
+        print '\n\n'
+        import pdb; pdb.set_trace()
+        db.session.add(goal_indic)
+        db.session.commit()
+
+
 ###########################
 # Helper Functions
 ###########################
@@ -160,3 +204,4 @@ if __name__ == "__main__":
     # Import different types of data
     # load_groups_and_countries()
     load_goals_and_targets()
+    load_indicators()

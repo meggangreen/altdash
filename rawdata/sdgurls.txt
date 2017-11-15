@@ -1,12 +1,13 @@
 World Bank list of economies June 2017
 https://blogs.worldbank.org/opendata/new-country-classifications-income-level-2017-2018
-https://databank.worldbank.org/data/download/site-content/CLASS.xls
+http://databank.worldbank.org/data/download/site-content/CLASS.xls
 
 Sustainable Development Goals and Targets
 http://datatopics.worldbank.org/sdgs/sdg-goals-targets.html
 http://www.un.org/sustainabledevelopment/sustainable-development-goals/
 
 http://datatopics.worldbank.org/sdgs
+http://datatopics.worldbank.org/sdgatlas/
 http://www.un.org/sustainabledevelopment/
 http://www.un.org/sustainabledevelopment/takeaction/
 http://worldslargestlesson.globalgoals.org/
