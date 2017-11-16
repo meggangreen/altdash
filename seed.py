@@ -4,6 +4,8 @@ from model import *
 from functions import *
 from server import app
 
+import pdb
+
 
 def load_groups_and_countries():
     """ Seed groups_countries records from csv file. Creates records in groups
@@ -101,8 +103,8 @@ def load_goals_and_targets():
     """
 
     # Delete all rows to start fresh
-    Goal.query.delete()
     GoalDesign.query.delete()
+    Goal.query.delete()
 
     # Empty dictionaries that will populate the countries and groups
     g_designs = {}
@@ -174,21 +176,42 @@ def load_indicators():
         indicators = cells[1:]
 
         # Retrieve and parse meta data
+        # pdb.set_trace()
         meta = get_wbmeta_by_indicator(indicators)
-        for m in meta.itervalues():
-            indic = Indicator(indicator_id=m[1][0]['id'],
-                              title=m[1][0]['name'],
-                              method=m[1][0]['sourceNote'],
-                              wburl=URL + m[1][0]['id'])
-            db.session.add(indic)
-            goal_indic.append(GoalIndic(indicator_id=m[1][0]['id'],
-                                        goal_id=goal_id))
-        db.session.commit()
-        print goal_indic
-        print '\n\n'
+
         import pdb; pdb.set_trace()
-        db.session.add(goal_indic)
+
+        for m in meta.itervalues():
+            indic_id = m['id']
+            if not (Indicator.query
+                             .filter(Indicator.indicator_id == indic_id)
+                             .first()):
+                indic = Indicator(indicator_id=indic_id,
+                                  title=m['name'],
+                                  method=m['sourceNote'],
+                                  wburl=URL + indic_id)
+                db.session.add(indic)
+            if not (GoalIndic.query
+                             .filter(GoalIndic.indicator_id == indic_id,
+                                     GoalIndic.goal_id == goal_id)
+                             .first()):
+                goal_indic.append(GoalIndic(indicator_id=indic_id,
+                                            goal_id=goal_id))
+        # pdb.set_trace()
         db.session.commit()
+        db.session.add_all(goal_indic)
+        db.session.commit()
+
+
+def load_data():
+    """ Seed indicator data via World Bank API from IDs in 'indicators' table.
+
+    """
+
+    # Delete all rows to start fresh
+    Datum.query.delete
+
+    
 
 
 ###########################
@@ -202,6 +225,12 @@ if __name__ == "__main__":
     db.create_all()
 
     # Import different types of data
-    # load_groups_and_countries()
+    print '\n\nLoading Groups and Countries now ...'
+    load_groups_and_countries()
+    print '\nGroups and Countries loaded.'
+    print '\n\nLoading Goals and Targets now ...'
     load_goals_and_targets()
+    print '\nGoals and Targets loaded.'
+    print '\n\nLoading Indicators now ...'
     load_indicators()
+    print '\nIndicators loaded.'
