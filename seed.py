@@ -67,10 +67,21 @@ def load_groups_and_countries():
                       'Sub-Saharan Africa']:
             countries[c_id]['region'] = g_name
 
+    # Get dict of 3- and 2-char country codes
+    c_dict = {}
+    f = open('rawdata/countryconverter.txt', 'r')
+    for row in f:
+        row.rstrip()
+        c3, c2 = row.split("|")
+        c_dict[c3] = c2[:2]
+    f.close()
+
     # Create and insert each new item in 'countries'
     for c_id in countries.itervalues():
+        c_c2 = c_dict[c_id['id']]
         country = Country(country_id=c_id['id'],
                           name=c_id['name'],
+                          char2=c_c2,
                           region=c_id['region'],
                           income=c_id['income'],
                           wikiurl=c_id['wikiurl'])
@@ -79,7 +90,8 @@ def load_groups_and_countries():
 
     # Create and insert each new item in 'groups'
     for g_id, g_name in groups.items():
-        group = Group(group_id=g_id, name=g_name)
+        g_c2 = c_dict[g_id]
+        group = Group(group_id=g_id, name=g_name, char2=g_c2)
         db.session.add(group)
     db.session.commit()  # Commit new group records
 
@@ -174,8 +186,6 @@ def load_indicators():
         # pdb.set_trace()
         meta = get_wbmeta_by_indicator(indicators)
 
-        import pdb; pdb.set_trace()
-
         for m in meta.itervalues():
             indic_id = m['id']
             if not (Indicator.query
@@ -202,9 +212,46 @@ def load_data():
     """ Seed indicator data via World Bank API from IDs in 'indicators' table.
 
     """
-
+    
     # Delete all rows to start fresh
-    Datum.query.delete
+    # Datum.query.delete
+
+    # Get dict of 3- and 2-char country codes
+    c_dict = {}
+    f = open('rawdata/countryconverter.txt', 'r')
+    for row in f:
+        row.rstrip()
+        c3, c2 = row.split("|")
+        c_dict[c2[:2]] = c3
+    f.close()
+
+    # Get list of indicator codes from db
+    indicators = [i.indicator_id for i in Indicator.query.all()]
+
+    # Get data dictionary for all indicators
+    data = get_wbdata_by_indicator(indicators)
+
+    print "\n    Let's parse some data!"
+
+    # Parse datum in data
+    for indicator in data:  # indicator code
+        for d_pt in data[indicator]:  # 'd_pt' is a dict about one data point
+            if ((d_pt['value'] is None) or
+                (c_dict.get(d_pt['country']['id']) is None)):
+                continue
+            country = c_dict[d_pt['country']['id']]
+            datum = Datum(indicator_id=indicator,
+                          country_id=country,
+                          year=int(d_pt['date']),
+                          value=float(d_pt['value']))
+            db.session.add(datum)
+            db.session.commit()
+        
+        # Invert scale -- put on indicator
+
+
+
+
 
 
 ###########################
@@ -227,3 +274,6 @@ if __name__ == "__main__":
     print '\n\nLoading Indicators now ...'
     load_indicators()
     print '\nIndicators loaded.'
+    print '\n\nLoading Data now ...'
+    load_data()
+    print '\nData loaded.'

@@ -5,6 +5,8 @@ from model import *
 import requests
 import json
 
+import pdb
+
 ###########################
 # Main Scatter Chart
 ###########################
@@ -24,6 +26,10 @@ def get_country_list(order_field=0):
 
     return countries
 
+
+###########################
+# SEEDING DATABASE
+###########################
 
 def get_wbdata_by_indicator(indicators):
     """ Given a list of indicators, returns a dictionary of JSON data for all
@@ -49,11 +55,11 @@ def get_wbdata_by_indicator(indicators):
     WBAPI = 'http://api.worldbank.org/countries/all/indicators/'
     FORMAT = '?format=json&per_page='
     data_tables = {}
-    bad_indic = "The following indicator codes are not working:"
+    bad_indic = ""
 
-    import pdb; pdb.set_trace()
+    print "\n    I'm about to make the queries. Go get a coffee.\n"
 
-    for indic in indicators:
+    for indic in indicators[0:10]:
         if indic == '':
             continue
         qty = "1"
@@ -63,12 +69,15 @@ def get_wbdata_by_indicator(indicators):
             data = response.json()
             qty = str(data[0].get('total', 0))
             if qty == '0':  # no results for this indicator
+                if bad_indic == "":
+                    bad_indic = "The following indicator codes are not working:"
                 bad_indic = "{}\n    {}".format(bad_indic, indic)
                 data = None
                 break
             data_tables[indic] = data[1]
 
-    print bad_indic
+    if bad_indic != "":
+        print "\n", bad_indic
     return data_tables
 
 
@@ -82,7 +91,7 @@ def get_wbmeta_by_indicator(indicators):
     WBAPI = 'http://api.worldbank.org/indicators/'
     FORMAT = '?format=json&per_page='
     meta_tables = {}
-    bad_indic = "The following indicator codes are not working:"
+    bad_indic = ""
 
     for indic in indicators:
         if indic == '':
@@ -93,10 +102,59 @@ def get_wbmeta_by_indicator(indicators):
         data = response.json()
         qty = str(data[0].get('total', 0))
         if qty == '0':  # no results for this indicator
+            if bad_indic == "":
+                bad_indic = "The following indicator codes are not working:"
             bad_indic = "{}\n    {}".format(bad_indic, indic)
             data = None
         else:
             meta_tables[indic] = data[1][0]  # partiular bit that contains meta
 
-    print bad_indic
+    if bad_indic != "":
+        print "\n", bad_indic
     return meta_tables
+
+
+def get_wbtwo_for_countries():
+    """ Addends 3-char and 2-char codes from WB database to file. """
+
+    # Empty dictionaries that will populate the countries and groups
+    countries = {}
+
+    # Read csv file and parse data
+    gc_csv = open('rawdata/groups_countries.csv').readlines()
+    for row in gc_csv:
+        row = row.rstrip()
+
+        # Unpack row
+        g_id, _, c_id, _ = row.split(",")
+        if not countries.get(g_id):
+            countries[g_id] = get_wbmeta_by_country(g_id)['iso2Code']
+        if not countries.get(c_id):
+            countries[c_id] = get_wbmeta_by_country(c_id)['iso2Code']
+
+    f = open('rawdata/countryconverter.txt', 'a')
+    for c3, c2 in countries.iteritems():
+        f.write("\n{}|{}".format(c3, c2))
+    f.close()
+
+
+def get_wbmeta_by_country(c_id):
+
+    WBAPI = 'http://api.worldbank.org/countries/'
+    FORMAT = '?format=json&per_page='
+    bad_indic = "The following country codes are not working:"
+
+    if c_id == '':
+        return None
+    qty = "1"
+    url = WBAPI + c_id + FORMAT + qty
+    response = requests.get(url)
+    data = response.json()
+    qty = str(data[0].get('total', 0))
+    if qty == '0':  # no results for this country
+        bad_indic = "{}\n    {}".format(bad_indic, c_id)
+        data = None
+    else:
+        return data[1][0]
+
+

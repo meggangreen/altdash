@@ -22,6 +22,7 @@ class Country(db.Model):
     __tablename__ = 'countries'
 
     country_id = db.Column(db.String(3), primary_key=True)
+    char2 = db.Column(db.String(2), unique=True, nullable=False)
     name = db.Column(db.Text, unique=True, nullable=False)
     region = db.Column(db.Text, nullable=True)
     income = db.Column(db.Text, nullable=True)
@@ -44,6 +45,7 @@ class Group(db.Model):
     __tablename__ = 'groups'
 
     group_id = db.Column(db.String(3), primary_key=True)
+    char2 = db.Column(db.String(2), unique=True, nullable=False)
     name = db.Column(db.Text, unique=True, nullable=False)
 
     countries = db.relationship('Country',
