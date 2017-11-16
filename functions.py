@@ -51,6 +51,8 @@ def get_wbdata_by_indicator(indicators):
     data_tables = {}
     bad_indic = "The following indicator codes are not working:"
 
+    import pdb; pdb.set_trace()
+
     for indic in indicators:
         if indic == '':
             continue
@@ -64,7 +66,7 @@ def get_wbdata_by_indicator(indicators):
                 bad_indic = "{}\n    {}".format(bad_indic, indic)
                 data = None
                 break
-            data_tables[indic] = data
+            data_tables[indic] = data[1]
 
     print bad_indic
     return data_tables

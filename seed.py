@@ -17,9 +17,9 @@ def load_groups_and_countries():
     WIKIURL = "https://en.wikipedia.org/wiki/"
 
     # Delete all rows to start fresh
-    Group.query.delete()
-    Country.query.delete()
-    GroupCountry.query.delete()
+    # Group.query.delete()
+    # Country.query.delete()
+    # GroupCountry.query.delete()
 
     # Empty dictionaries that will populate the countries and groups
     countries = {}
@@ -38,18 +38,18 @@ def load_groups_and_countries():
         groups_countries[g_id] = groups_countries.get(g_id, [])
         groups_countries[g_id].append(c_id)
 
-        # Add group to 'groups'
+        # Add group to 'groups' if new
         if not groups.get(g_id):
-            groups[g_id] = groups.get(g_id, g_name)
+            groups[g_id] = g_name
 
         # Add group to 'countries'
         if not countries.get(g_id):
-            countries[g_id] = {'name': g_name, 'income': None,
+            countries[g_id] = {'id': g_id, 'name': g_name, 'income': None,
                                'region': None, 'wikiurl': None}
 
         # Add country to 'countries' if new
         if not countries.get(c_id):
-            countries[c_id] = {'name': c_name, 'income': None,
+            countries[c_id] = {'id': c_id, 'name': c_name, 'income': None,
                                'region': None, 'wikiurl': WIKIURL + c_name}
 
         # IFF group is also an income or a region, update country
@@ -68,25 +68,20 @@ def load_groups_and_countries():
             countries[c_id]['region'] = g_name
 
     # Create and insert each new item in 'countries'
-    for c_id in countries:
-        name = countries[c_id]['name']
-        region = countries[c_id]['region']
-        income = countries[c_id]['income']
-        wikiurl = countries[c_id]['wikiurl']
-        country = Country(country_id=c_id,
-                          name=name,
-                          region=region,
-                          income=income,
-                          wikiurl=wikiurl)
+    for c_id in countries.itervalues():
+        country = Country(country_id=c_id['id'],
+                          name=c_id['name'],
+                          region=c_id['region'],
+                          income=c_id['income'],
+                          wikiurl=c_id['wikiurl'])
         db.session.add(country)
     db.session.commit()  # Commit new country records
 
-    # Each group has its own data,
-    # so each needs to be a country (with no groups)
+    # Create and insert each new item in 'groups'
     for g_id, g_name in groups.items():
         group = Group(group_id=g_id, name=g_name)
         db.session.add(group)
-    db.session.commit()  # Commit new country and group records
+    db.session.commit()  # Commit new group records
 
     # Lastly, create and insert each group-country pair
     for g_id in groups_countries:
@@ -103,8 +98,8 @@ def load_goals_and_targets():
     """
 
     # Delete all rows to start fresh
-    GoalDesign.query.delete()
-    Goal.query.delete()
+    # GoalDesign.query.delete()
+    # Goal.query.delete()
 
     # Empty dictionaries that will populate the countries and groups
     g_designs = {}
@@ -161,8 +156,8 @@ def load_indicators():
     URL = "https://data.worldbank.org/indicator/"
 
     # Delete all rows to start fresh
-    GoalIndic.query.delete
-    Indicator.query.delete
+    # GoalIndic.query.delete
+    # Indicator.query.delete
 
     # Read csv file and parse data
     indic_csv = open('rawdata/indicators.csv').readlines()
@@ -210,8 +205,6 @@ def load_data():
 
     # Delete all rows to start fresh
     Datum.query.delete
-
-    
 
 
 ###########################
