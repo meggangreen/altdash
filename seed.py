@@ -246,7 +246,7 @@ def load_data():
                           value=float(d_pt['value']))
             db.session.add(datum)
             db.session.commit()
-        
+
         # Invert scale -- put on indicator
 
 

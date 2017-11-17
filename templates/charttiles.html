@@ -35,12 +35,11 @@
       <div id="row-chartdisp" class="row">
         <div id="col-chartdisp" class="col-xs-12">
           <canvas id="scatter-chart"></canvas>
-          <script>scatterchart();</script>
         </div><!-- /#col-chartdisp -->
       </div><!-- /#row-chartdisp -->
       <div id="row-slider" class="row">
         <div id="col-slider" class="col-xs-12">
-          <input id="slider" class="slider" type="range" min="1990" max="2016" value="2016"/>
+          <input id="slider" class="slider" type="range" min="1990" max="2016" value="2016" />
         </div><!-- /#col-slider -->
       </div><!-- /#row-slider -->
     </div><!-- /#col-scatterchart -->
@@ -66,3 +65,18 @@
     </div><!-- /#col-tiles -->
   </div><!-- /#row-body-charts -->
 </div><!-- /#cont-body-charts -->
+
+<script>
+  // event listener for slider
+  // checks displayed year and slider year
+  // retrieves data for slider year --
+  //    from db |OR| from client-side stored data ?
+  // calls makeChartScatter, and updateButtons
+
+  let cDatasets = {
+                   '2010': ['2010', {x: 2, y: 3}, {x: 2, y: 7}], 
+                   '2011': ['2011', {x: 3, y: 2}, {x: 3, y: 5}],
+                   };
+  let cYear = "2010";
+  makeChartScatter(cDatasets, cYear);
+</script>

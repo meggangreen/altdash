@@ -156,5 +156,3 @@ def get_wbmeta_by_country(c_id):
         data = None
     else:
         return data[1][0]
-
-
