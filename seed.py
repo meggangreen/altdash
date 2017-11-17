@@ -183,7 +183,6 @@ def load_indicators():
         indicators = cells[1:]
 
         # Retrieve and parse meta data
-        # pdb.set_trace()
         meta = get_wbmeta_by_indicator(indicators)
 
         for m in meta.itervalues():
@@ -193,7 +192,7 @@ def load_indicators():
                              .first()):
                 indic = Indicator(indicator_id=indic_id,
                                   title=m['name'],
-                                  method=m['sourceNote'],
+                                  description=m['sourceNote'],
                                   wburl=URL + indic_id)
                 db.session.add(indic)
             if not (GoalIndic.query
@@ -229,29 +228,32 @@ def load_data():
     indicators = [i.indicator_id for i in Indicator.query.all()]
 
     # Get data dictionary for all indicators
-    data = get_wbdata_by_indicator(indicators)
+    i = 0
+    for j in range(len(indicators)):
+        if i > len(indicators):
+            break
+        indic = indicators[i:i+15]  # trying to do just 15 at a time
+        data = get_wbdata_by_indicator(indic)
 
-    print "\n    Let's parse some data!"
+        print "\n    Let's parse some data!", i, i + 15
 
-    # Parse datum in data
-    for indicator in data:  # indicator code
-        for d_pt in data[indicator]:  # 'd_pt' is a dict about one data point
-            if ((d_pt['value'] is None) or
-                (c_dict.get(d_pt['country']['id']) is None)):
-                continue
-            country = c_dict[d_pt['country']['id']]
-            datum = Datum(indicator_id=indicator,
-                          country_id=country,
-                          year=int(d_pt['date']),
-                          value=float(d_pt['value']))
-            db.session.add(datum)
-            db.session.commit()
+        # Parse datum in data
+        for indicator in data:  # indicator code
+            for d_pt in data[indicator]:  # 'd_pt' is a dict about one data point
+                if ((d_pt['value'] is None) or
+                    (c_dict.get(d_pt['country']['id']) is None)):
+                    continue
+                country = c_dict[d_pt['country']['id']]
+                datum = Datum(indicator_id=indicator,
+                              country_id=country,
+                              year=int(d_pt['date']),
+                              value=float(d_pt['value']))
+                db.session.add(datum)
+                db.session.commit()  # Is there a limit to the amt of obj to commit?
+
+        i = i + 15
 
         # Invert scale -- put on indicator
-
-
-
-
 
 
 ###########################
@@ -271,7 +273,7 @@ if __name__ == "__main__":
     print '\n\nLoading Goals and Targets now ...'
     load_goals_and_targets()
     print '\nGoals and Targets loaded.'
-    print '\n\nLoading Indicators now ...'
+    print '\n\nLoading Indicators (meta) now ...'
     load_indicators()
     print '\nIndicators loaded.'
     print '\n\nLoading Data now ...'

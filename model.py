@@ -26,7 +26,7 @@ class Country(db.Model):
     name = db.Column(db.Text, unique=True, nullable=False)
     region = db.Column(db.Text, nullable=True)
     income = db.Column(db.Text, nullable=True)
-    wikiurl = db.Column(db.Text, unique=False, nullable=True)
+    wikiurl = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
         return ('<Country "{}" id={} region="{}" income="{}" (c.groups) >\n'
@@ -146,7 +146,9 @@ class Indicator(db.Model):
 
     indicator_id = db.Column(db.Text, primary_key=True)
     title = db.Column(db.Text, unique=True, nullable=False)
-    method = db.Column(db.Text, unique=False, nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    scale_inverse = db.Column(db.Boolean, nullable=True, default=False)
+    display_math = db.Column(db.Text, nullable=True)
     wburl = db.Column(db.Text, unique=True, nullable=True)
 
     def __repr__(self):

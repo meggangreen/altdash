@@ -1,21 +1,32 @@
-{% extends 'base.html' %}
-{% block headtitle %}World Bank Data Alternative Dashboard{% endblock %}
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- verify that bootstrap js not needed for navbar -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/united/bootstrap.min.css">
+  <link rel="stylesheet" href="static/style.css" />
+  <title>AltDash | World Bank Data Alternative Dashboard</title>
+</head>
+<body>
 
-{% block bodycontent %}
+  <div id="root"></div>
 
-  <div class="body-0">
-    <!-- show scatter chart and goal-score tiles -->
-    {% include 'charttiles.html' %}
-  </div><!-- /.body-0 -->
+<!-- react -->
+<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 
-  <div class="body-1">
-    <!-- show information about the world bank -->
-    {% include 'aboutme.html' ignore missing %}
-  </div><!-- /.body-1 -->
+<!-- react-router, for making our single-page-app -->
+<script src="https://unpkg.com/react-router-dom/umd/react-router-dom.min.js"></script>
 
-  <div class="body-2">
-    <!-- show information about the world bank -->
-    {% include 'sdgunwb.html' ignore missing %}
-  </div><!-- /.body-2 -->
+<!-- not all browsers support the new AJAX fetch API, so load a polyfill -->
+<script src="http://unpkg.com/whatwg-fetch"></script>
 
-{% endblock %}
+<!-- to convert our jsx -->
+<script src="http://unpkg.com/babel-standalone"></script>
+
+<!-- our overall site application JS -->
+<script src="static/js/components.jsx" type="text/jsx"></script>
+<script src="static/js/index.jsx" type="text/jsx"></script>
+
+</body>
+</html>

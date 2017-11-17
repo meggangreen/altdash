@@ -59,7 +59,7 @@ def get_wbdata_by_indicator(indicators):
 
     print "\n    I'm about to make the queries. Go get a coffee.\n"
 
-    for indic in indicators[0:10]:
+    for indic in indicators:
         if indic == '':
             continue
         qty = "1"
