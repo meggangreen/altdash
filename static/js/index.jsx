@@ -5,7 +5,7 @@
 class AltDash extends React.Component {
   render () {
     return (
-      <p>I love React</p>
+      <p>I love React ... but less now</p>
       // <div className="AltDash">
         // <p>I love React</p>
 
