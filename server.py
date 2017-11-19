@@ -24,12 +24,16 @@ app.jinja_env.undefined = StrictUndefined
 
 @app.route('/')
 def index():
-    """ Index """
+    """ Index
+
+        'index2.html' will render until React works.
+
+    """
 
     countries = get_country_list()
     selected = 'Cuba'  # need to make this randomly selected
 
-    return render_template("index.html", countries=countries, selected=selected)
+    return render_template("index2.html", countries=countries, selected=selected)
 
 #########
 # Helper Functions

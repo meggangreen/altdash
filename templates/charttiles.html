@@ -39,44 +39,37 @@
       </div><!-- /#row-chartdisp -->
       <div id="row-slider" class="row">
         <div id="col-slider" class="col-xs-12">
-          <input id="slider" class="slider" type="range" min="1990" max="2016" value="2016" />
+          <input id="slider" class="slider" 
+           type="range" min="2010" max="2011" value="2010" />
         </div><!-- /#col-slider -->
       </div><!-- /#row-slider -->
     </div><!-- /#col-scatterchart -->
     <div id="col-tiles" class="col-xs-12">
-      <button id="g01" type="button" class="btn btn-default btn-g-tiles g01">
-        <p class="btn-g-score">8</p>
+      <button id="g01" type="button" class="btn btn-default tile g01">
+        <p class="tile-score">8</p>
       </button>
-      <button id="g02" type="button" class="btn btn-default btn-g-tiles g02">
-        <p class="btn-g-score">9</p>
+      <button id="g02" type="button" class="btn btn-default tile g02">
+        <p class="tile-score">9</p>
       </button>
-      <button id="g03" type="button" class="btn btn-default btn-g-tiles g03">
-        <p class="btn-g-score">5</p>
+      <button id="g03" type="button" class="btn btn-default tile g03">
+        <p class="tile-score">5</p>
       </button>
-      <button id="g04" type="button" class="btn btn-default btn-g-tiles g04">
-        <p class="btn-g-score">7</p>
+      <button id="g04" type="button" class="btn btn-default tile g04">
+        <p class="tile-score">7</p>
       </button>
-      <button id="g05" type="button" class="btn btn-default btn-g-tiles g05">
-        <p class="btn-g-score">7</p>
+      <button id="g05" type="button" class="btn btn-default tile g05">
+        <p class="tile-score">7</p>
       </button>
-      <button id="g06" type="button" class="btn btn-default btn-g-tiles g06">
-        <p class="btn-g-score">10</p>
+      <button id="g06" type="button" class="btn btn-default tile g06">
+        <p class="tile-score">10</p>
       </button>
     </div><!-- /#col-tiles -->
   </div><!-- /#row-body-charts -->
 </div><!-- /#cont-body-charts -->
 
 <script>
-  // event listener for slider
-  // checks displayed year and slider year
-  // retrieves data for slider year --
-  //    from db |OR| from client-side stored data ?
-  // calls makeChartScatter, and updateButtons
+  // makeTiles();
+  updateChartTiles();
 
-  let cDatasets = {
-                   '2010': ['2010', {x: 2, y: 3}, {x: 2, y: 7}], 
-                   '2011': ['2011', {x: 3, y: 2}, {x: 3, y: 5}],
-                   };
-  let cYear = "2010";
-  makeChartScatter(cDatasets, cYear);
+  $('#slider').on('change', updateChartTiles);
 </script>

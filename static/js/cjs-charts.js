@@ -1,18 +1,39 @@
 'use strict';
 
-function makeChartScatter(cDatasets, cYear) {
-    /* Returns a preformatted scatter chart given a collection of data. 
+let cYear;
+let cDatasets = {
+    '2010': [{x: 2, y: 3}, {x: 2, y: 7}],
+    '2011': [{x: 3, y: 2}, {x: 3, y: 5}],
+};
+
+let cTileVals = new Map ([
+    ['2010', ([ ['g01', 5.2], ['g02', 7.9] ]) ],
+    ['2011', ([ ['g01', 7.1], ['g02', 8.2] ]) ],
+]);
+
+
+function updateChartTiles(evt) {
+    cYear = $('#slider').val();
+    makeChartScatter(cYear);
+    updateTiles(cYear);
+} // end updateChartTiles
+
+
+function makeChartScatter(cYear) {
+    /* Returns a preformatted scatter chart given a year. The data is loaded at
+       page load as dictionaries with the year as the key whose values are a
+       list of dictionaries of cartesian coordinates.
 
     */
 
-    let xlabel = cDatasets[cYear].slice(0,1);
+    let xlabel = cYear;
     let ctx = document.getElementById("scatter-chart").getContext('2d');
     let chartScatter = new Chart(ctx, {
         type: 'scatter',
         data: {
             datasets: [{
-                label: cDatasets[cYear].slice(0,1),
-                data: cDatasets[cYear].slice(1,cDatasets[cYear].length)
+                label: cYear,
+                data: cDatasets[cYear]
             }] // end datasets
         }, // end chart data
         options: {
@@ -40,4 +61,16 @@ function makeChartScatter(cDatasets, cYear) {
             } // end scales
         } // end chart options
     }); // end chartScatter
-} // end function
+} // end makeChartScatter
+
+
+function updateTiles(cYear) {
+    /* 
+
+    */
+    
+    for ( let [tileId, tileVal] of cTileVals.get(cYear) ) {
+        $('#' + tileId).html('<p class="tile-score">' + tileVal + '</p>');
+    } // end for
+
+} // end updateTiles
