@@ -13,13 +13,15 @@ def load_groups_and_countries():
 
     """
 
-    # WikiURL constant
-    WIKIURL = "https://en.wikipedia.org/wiki/"
+    print '\n\nLoading Groups and Countries now ...'
 
     # Delete all rows to start fresh
     # Group.query.delete()
     # Country.query.delete()
     # GroupCountry.query.delete()
+
+    # WikiURL constant
+    WIKIURL = "https://en.wikipedia.org/wiki/"
 
     # Empty dictionaries that will populate the countries and groups
     countries = {}
@@ -102,12 +104,16 @@ def load_groups_and_countries():
             db.session.add(gc)
     db.session.commit()  # Must commit 'gc' AFTER countries and groups
 
+    print '\nGroups and Countries loaded.'
+
 
 def load_goals_and_targets():
     """ Seed goal_design and goals records from csv file. Must run before
         creating goals_indicators records. * csv delimited by '|'.
 
     """
+
+    print '\n\nLoading Goals and Targets now ...'
 
     # Delete all rows to start fresh
     # GoalDesign.query.delete()
@@ -157,6 +163,8 @@ def load_goals_and_targets():
         db.session.add(goal)
     db.session.commit()  # Must commit goals AFTER goal_designs
 
+    print '\nGoals and Targets loaded.'
+
 
 def load_indicators():
     """ Seed indicator meta data via World Bank API from supplied list of
@@ -164,12 +172,14 @@ def load_indicators():
 
     """
 
-    # WB URL constant
-    URL = "https://data.worldbank.org/indicator/"
+    print '\n\nLoading Indicators (meta) now ...'
 
     # Delete all rows to start fresh
     # GoalIndic.query.delete
     # Indicator.query.delete
+
+    # WB URL constant
+    URL = "https://data.worldbank.org/indicator/"
 
     # Read csv file and parse data
     indic_csv = open('rawdata/indicators.csv').readlines()
@@ -201,19 +211,25 @@ def load_indicators():
                              .first()):
                 goal_indic.append(GoalIndic(indicator_id=indic_id,
                                             goal_id=goal_id))
-        # pdb.set_trace()
         db.session.commit()
         db.session.add_all(goal_indic)
         db.session.commit()
+
+    print '\nIndicators loaded.'
 
 
 def load_data():
     """ Seed indicator data via World Bank API from IDs in 'indicators' table.
 
     """
-    
-    # Delete all rows to start fresh
-    # Datum.query.delete
+
+    print '\n\nLoading Data now ...'
+
+    # Delete all rows to start fresh, if desired
+    delete_torf = raw_input("    Delete existing rows? ('Y'/'N') ")
+    if delete_torf.upper() == 'Y':
+        Datum.query.delete
+        print "    Deleted."
 
     # Get dict of 3- and 2-char country codes
     c_dict = {}
@@ -224,36 +240,69 @@ def load_data():
         c_dict[c2[:2]] = c3
     f.close()
 
-    # Get list of indicator codes from db
-    indicators = [i.indicator_id for i in Indicator.query.all()]
+    # The db change commits at the end of adding all datapoints for one
+    # indicator; therefore, unless it borked in a magical way, if one datapoint
+    # exists, they all exist for that indicator.
+    # Get set of indicator codes from db: 'possible' and 'present'
+    indic_poss = set(i.indicator_id for i in Indicator.query.all())
+    indic_pres = set(d.indicator_id for d in Datum.query.distinct())
+    indicators = indic_poss - indic_pres
 
-    # Get data dictionary for all indicators
+    # Get data dictionaries for each indicators, one at a time
+    print "    Starting API queries and DB insertions."
     i = 0
-    for j in range(len(indicators)):
-        if i > len(indicators):
-            break
-        indic = indicators[i:i+15]  # trying to do just 15 at a time
-        data = get_wbdata_by_indicator(indic)
+    for indic in indicators:
+        i += 1
+        data_tables = []
+        try:
+            data_tables.extend(get_wbdata_by_indicator(indic))
+        except:
+            pdb.set_trace()
+            continue
 
-        print "\n    Let's parse some data!", i, i + 15
+        for d_pt in data_tables:  # 'd_pt' is a dict about one data point
+            if ((d_pt['value'] is None) or (c_dict.get(d_pt['country']['id'])
+                                            is None)):
+                continue
+            country = c_dict[d_pt['country']['id']]
+            datum = Datum(indicator_id=d_pt['indicator']['id'],
+                          country_id=country,
+                          year=int(d_pt['date']),
+                          value=float(d_pt['value']))
+            db.session.add(datum)
+        db.session.commit()
+        if i == 20:
+            print "    ... still doing API queries and DB insertions ..."
+            i = 0
 
-        # Parse datum in data
-        for indicator in data:  # indicator code
-            for d_pt in data[indicator]:  # 'd_pt' is a dict about one data point
-                if ((d_pt['value'] is None) or
-                    (c_dict.get(d_pt['country']['id']) is None)):
-                    continue
-                country = c_dict[d_pt['country']['id']]
-                datum = Datum(indicator_id=indicator,
-                              country_id=country,
-                              year=int(d_pt['date']),
-                              value=float(d_pt['value']))
-                db.session.add(datum)
-                db.session.commit()  # Is there a limit to the amt of obj to commit?
+    # i = 0
+    # for j in range(len(indicators)):
+    #     if i > len(indicators):
+    #         break
+    #     indic = indicators[i:i+15]  # trying to do just 15 at a time
+    #     data = get_wbdata_by_indicator(indic)
 
-        i = i + 15
+    #     print "\n    Let's parse some data!", i, i + 15
+
+    #     # Parse datum in data
+    #     for indicator in data:  # indicator code
+    #         for d_pt in data[indicator]:  # 'd_pt' is a dict about one data point
+    #             if ((d_pt['value'] is None) or
+    #                 (c_dict.get(d_pt['country']['id']) is None)):
+    #                 continue
+    #             country = c_dict[d_pt['country']['id']]
+    #             datum = Datum(indicator_id=indicator,
+    #                           country_id=country,
+    #                           year=int(d_pt['date']),
+    #                           value=float(d_pt['value']))
+    #             db.session.add(datum)
+    #             db.session.commit()  # Is there a limit to the amt of obj to commit?
+
+    #     i = i + 15
 
         # Invert scale -- put on indicator
+    print '\nData loaded.'
+
 
 
 ###########################
@@ -268,22 +317,17 @@ if __name__ == "__main__":
 
     # Import different types of data
     load_torf = raw_input("Reload Groups and Countries? ('Y'/'N') ")
-    if load_torf.upper() == 'T':
-        print '\n\nLoading Groups and Countries now ...'
+    if load_torf.upper() == 'Y':
         load_groups_and_countries()
-        print '\nGroups and Countries loaded.'
+
     load_torf = raw_input("Reload Goals and Targets? ('Y'/'N') ")
-    if load_torf.upper() == 'T':
-        print '\n\nLoading Goals and Targets now ...'
+    if load_torf.upper() == 'Y':
         load_goals_and_targets()
-        print '\nGoals and Targets loaded.'
+
     load_torf = raw_input("Reload Indicator meta? ('Y'/'N') ")
-    if load_torf.upper() == 'T':
-        print '\n\nLoading Indicators (meta) now ...'
+    if load_torf.upper() == 'Y':
         load_indicators()
-        print '\nIndicators loaded.'
+
     load_torf = raw_input("Reload or Continue with Data? ('Y'/'N') ")
-    if load_torf.upper() == 'T':
-        print '\n\nLoading Data now ...'
+    if load_torf.upper() == 'Y':
         load_data()
-        print '\nData loaded.'

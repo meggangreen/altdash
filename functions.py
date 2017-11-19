@@ -31,9 +31,9 @@ def get_country_list(order_field=0):
 # SEEDING DATABASE
 ###########################
 
-def get_wbdata_by_indicator(indicators):
-    """ Given a list of indicators, returns a dictionary of JSON data for all
-        countries and all years using the World Bank API.
+def get_wbdata_by_indicator(indic):
+    """ Given a list of indicators, returns a list of dictionaries of JSON data
+        for all countries and all years using the World Bank API.
 
         The function first requests only the first result to get the 'total'
         quantity of values. It then re-requests the data with the total quantity
@@ -43,42 +43,42 @@ def get_wbdata_by_indicator(indicators):
         a person, because each has been tested multiple times and it is a known
         issue that sometimes the World Bank database can't find its own data.
 
-        >>>indicators = ['SP.DYN.CONM.ZS', 'notrealcode', 'SP.ADO.TFRT']
-        >>>test_dict = get_wbdata_by_indicator(indicators)
+        >>>indic = ['SP.DYN.CONM.ZS']
+        >>>test_dict = get_wbdata_by_indicator(indic)
+        >>> test_set = set(d_pt['indicator']['id'] for d_pt in data_table)
+        >>> test_set
+        ['SP.DYN.CONM.ZS']
+
+        >>>indic = ['notrealcode']
+        >>>test_dict = get_wbdata_by_indicator(indic)
         The following indicator codes are not working:
             notrealcode
-        >>> test_dict.keys()
-        ['SP.ADO.TFRT', 'SP.DYN.CONM.ZS']
 
     """
 
     WBAPI = 'http://api.worldbank.org/countries/all/indicators/'
     FORMAT = '?format=json&per_page='
-    data_tables = {}
+    data_table = None
     bad_indic = ""
 
-    print "\n    I'm about to make the queries. Go get a coffee.\n"
+    qty = "1"
+    for i in range(0, 2):
+        url = WBAPI + indic + FORMAT + qty
+        response = requests.get(url)
+        data = response.json()
+        qty = str(data[0].get('total', 0))
+        if qty == '0':  # no results for this indicator
+            if bad_indic == "":
+                bad_indic = "The following indicator codes are not working:"
+            bad_indic = "{}\n    {}".format(bad_indic, indic)
+            data = None
+            break
 
-    for indic in indicators:
-        if indic == '':
-            continue
-        qty = "1"
-        for i in range(0, 2):
-            url = WBAPI + indic + FORMAT + qty
-            response = requests.get(url)
-            data = response.json()
-            qty = str(data[0].get('total', 0))
-            if qty == '0':  # no results for this indicator
-                if bad_indic == "":
-                    bad_indic = "The following indicator codes are not working:"
-                bad_indic = "{}\n    {}".format(bad_indic, indic)
-                data = None
-                break
-            data_tables[indic] = data[1]
+    data_table = data[1]
 
     if bad_indic != "":
         print "\n", bad_indic
-    return data_tables
+    return data_table
 
 
 def get_wbmeta_by_indicator(indicators):
