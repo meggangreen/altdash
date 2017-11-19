@@ -267,15 +267,23 @@ if __name__ == "__main__":
     db.create_all()
 
     # Import different types of data
-    print '\n\nLoading Groups and Countries now ...'
-    load_groups_and_countries()
-    print '\nGroups and Countries loaded.'
-    print '\n\nLoading Goals and Targets now ...'
-    load_goals_and_targets()
-    print '\nGoals and Targets loaded.'
-    print '\n\nLoading Indicators (meta) now ...'
-    load_indicators()
-    print '\nIndicators loaded.'
-    print '\n\nLoading Data now ...'
-    load_data()
-    print '\nData loaded.'
+    load_torf = raw_input("Reload Groups and Countries? ('Y'/'N') ")
+    if load_torf.upper() == 'T':
+        print '\n\nLoading Groups and Countries now ...'
+        load_groups_and_countries()
+        print '\nGroups and Countries loaded.'
+    load_torf = raw_input("Reload Goals and Targets? ('Y'/'N') ")
+    if load_torf.upper() == 'T':
+        print '\n\nLoading Goals and Targets now ...'
+        load_goals_and_targets()
+        print '\nGoals and Targets loaded.'
+    load_torf = raw_input("Reload Indicator meta? ('Y'/'N') ")
+    if load_torf.upper() == 'T':
+        print '\n\nLoading Indicators (meta) now ...'
+        load_indicators()
+        print '\nIndicators loaded.'
+    load_torf = raw_input("Reload or Continue with Data? ('Y'/'N') ")
+    if load_torf.upper() == 'T':
+        print '\n\nLoading Data now ...'
+        load_data()
+        print '\nData loaded.'
