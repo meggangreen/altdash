@@ -87,6 +87,7 @@ def get_wbmeta_by_indicator(indicators):
         'get_wbdata_by_indicator(indicators)'.
 
     """
+    """ Refactor to be callable by get_wbdata_by_indicator with meta arg. """
 
     WBAPI = 'http://api.worldbank.org/indicators/'
     FORMAT = '?format=json&per_page='
