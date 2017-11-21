@@ -11,7 +11,7 @@
         </div><!-- /#col-mapbtn -->
         <div id="col-chartselect" class="col-xs-6">
           <form id="country-selector"> 
-            <select id="select-country" name="country">
+            <select id="select-country" name="country" class="form-control">
               {% for country in countries %}
                 {% if country.name == selected %}
                   <option value="{{ country.country_id }}" selected>
@@ -40,36 +40,27 @@
       <div id="row-slider" class="row">
         <div id="col-slider" class="col-xs-12">
           <input id="slider" class="slider" 
-           type="range" min="2010" max="2011" value="2010" />
+           type="range" min="1960" max="2016" value="2010" />
         </div><!-- /#col-slider -->
       </div><!-- /#row-slider -->
     </div><!-- /#col-scatterchart -->
     <div id="col-tiles" class="col-xs-12">
-      <button id="g01" type="button" class="btn btn-default tile g01">
-        <p class="tile-score">8</p>
-      </button>
-      <button id="g02" type="button" class="btn btn-default tile g02">
-        <p class="tile-score">9</p>
-      </button>
-      <button id="g03" type="button" class="btn btn-default tile g03">
-        <p class="tile-score">5</p>
-      </button>
-      <button id="g04" type="button" class="btn btn-default tile g04">
-        <p class="tile-score">7</p>
-      </button>
-      <button id="g05" type="button" class="btn btn-default tile g05">
-        <p class="tile-score">7</p>
-      </button>
-      <button id="g06" type="button" class="btn btn-default tile g06">
-        <p class="tile-score">10</p>
-      </button>
+      {% for goal in goals %}
+        <button id="g{{ goal.goal_pre }}" type="button"
+                class="btn btn-default tile g{{ goal.goal_pre }}"
+                style="background-image: url('static/{{ goal.iurl_blank }}');
+                       background-color: {{ goal.hexval }};">
+          <p class="tile-score"></p>
+        </button>
+      {% endfor %}
     </div><!-- /#col-tiles -->
   </div><!-- /#row-body-charts -->
 </div><!-- /#cont-body-charts -->
 
 <script>
-  // makeTiles();
   updateChartTiles();
 
+  // Event listeners
   $('#slider').on('change', updateChartTiles);
+  $('.tile').hover( tileGraphic, tileBlank);
 </script>

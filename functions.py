@@ -11,21 +11,6 @@ import pdb
 # Main Scatter Chart
 ###########################
 
-def get_country_list(order_field=0):
-    """ Get list of Country objects ordered by name within 'order_field'. """
-
-    query = Country.query
-
-    if order_field != 0:
-        order_field = 'countries.' + order_field
-        query = query.order_by(order_field)
-
-    query = query.order_by(Country.name)
-
-    countries = query.all()
-
-    return countries
-
 
 ###########################
 # SEEDING DATABASE

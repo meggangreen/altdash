@@ -32,6 +32,45 @@ class Country(db.Model):
         return ('<Country "{}" id={} region="{}" income="{}" (c.groups) >\n'
                 .format(self.name, self.country_id, self.region, self.income))
 
+    @classmethod
+    def get_db_objs(cls, country_id=None, name=None, region=None,
+                    income=None, limit=None):
+        """ Returns list of db objects from Country table ordered by name.
+            Optionally, can filter and order by id, name, region, and/or income
+            as well.
+
+        """
+
+        query = cls.query.order_by(cls.name)
+
+        if country_id:
+            country_id = "%" + str(country_id) + "%"
+            query = (query.filter(cls.country_id.ilike(country_id))
+                          .order_by(cls.country_id))
+
+        if name:
+            name = "%" + str(name) + "%"
+            query = (query.filter(cls.name.ilike(name))
+                          .order_by(cls.name))
+
+        if region:
+            region = "%" + str(region) + "%"
+            query = (query.filter(cls.region.ilike(region))
+                          .order_by(cls.region))
+
+        if income:
+            income = "%" + str(income) + "%"
+            query = (query.filter(cls.income.ilike(income))
+                          .order_by(cls.income))
+
+        if limit:
+            limit = int(limit)
+            query = query.limit(limit)
+
+        db_objs = query.all()
+
+        return db_objs
+
 
 class Group(db.Model):
     """ Group model.
@@ -99,6 +138,24 @@ class GoalDesign(db.Model):
     def __repr__(self):
         return ('<GoalDesign goal_pre={} hex="{}" >\n'
                 .format(self.goal_pre, self.hexval))
+
+    @classmethod
+    def get_db_objs(cls, goal_pre=None):
+        """ Returns list of db objects from GoalDesign table ordered by goal
+            prefix. Has no additional filter or order by fields.
+
+        """
+
+        query = cls.query.order_by(cls.goal_pre)
+
+        if goal_pre:
+            goal_pre = "%" + str(goal_pre) + "%"
+            query = (query.filter(cls.goal_pre.ilike(goal_pre))
+                          .order_by(cls.goal_pre))
+
+        db_objs = query.all()
+
+        return db_objs
 
 
 class Goal(db.Model):
@@ -205,6 +262,41 @@ class Datum(db.Model):
         return ('<Datum id={} val={} country="{}" indic="{}" year={} >\n'
                 .format(self.datum_id, self.value, self.country.name,
                         self.indicator.title, self.year))
+
+    @classmethod
+    def get_db_objs(cls, country_id=None, indicator_id=None,
+                    year=None, value=None):
+        """ Returns list of db objects from Datum table ordered by indicator id.
+            Optionally, can filter and order by country id, year, and/or value
+            as well.
+
+        """
+
+        query = cls.query.order_by(cls.indicator_id)
+
+        if indicator_id:
+            indicator_id = "%" + str(indicator_id) + "%"
+            query = (query.filter(cls.indicator_id.ilike(indicator_id))
+                          .order_by(cls.indicator_id))
+
+        if country_id:
+            country_id = "%" + str(country_id) + "%"
+            query = (query.filter(cls.country_id.ilike(country_id))
+                          .order_by(cls.country_id))
+
+        if year:
+            year = "%" + str(year) + "%"
+            query = (query.filter(cls.year.ilike(year))
+                          .order_by(cls.year))
+
+        if value:
+            value = "%" + str(value) + "%"
+            query = (query.filter(cls.value.ilike(value))
+                          .order_by(cls.value))
+
+        db_objs = query.all()
+
+        return db_objs
 
 
 ###########################

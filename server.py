@@ -5,6 +5,7 @@ from functions import *
 
 import requests
 import json
+from random import choice
 
 from flask import Flask, render_template, redirect, request
 from flask import jsonify, flash, session
@@ -30,10 +31,31 @@ def index():
 
     """
 
-    countries = get_country_list()
-    selected = 'Cuba'  # need to make this randomly selected
+    goals = GoalDesign.get_db_objs()
+    countries = Country.get_db_objs()
+    selected = choice(countries).name
 
-    return render_template("index2.html", countries=countries, selected=selected)
+    return render_template("index2.html", countries=countries,
+                                          selected=selected,
+                                          goals=goals)
+
+
+@app.route('/country.json')
+def get_country_data(country):
+    """ Manages request for data -- request, math and scale manipulation, and
+        packaging -- about a provided country and returns it packaged to the
+        chart and tiles.
+
+    """
+
+    # send request for data, receive all objects
+    data_objs = get_db_obj_list(table='Datum',
+                                f_filter='country_id',
+                                v_filter=country)
+    # send data to math manip, receive revised objects
+    # send data for unpacking and repackaging, receive packages
+    # return packages
+
 
 #########
 # Helper Functions

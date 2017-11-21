@@ -35,7 +35,7 @@ p {
     margin-bottom: 5px;
 }
 
-#body-dynamic {
+#body-dynamic, #body-content {
     padding-top: 50px;
 }
 
@@ -131,11 +131,15 @@ canvas {
     margin: 3px;
     border-radius: 6px;
     white-space: normal;
-    width: 65px;
-    height: 65px;
+    width: 73px;
+    height: 73px;
     border-width: 0;
     background-size: 120%;
-    background-position: 40% 10%;
+    background-position: 35% 12%;
+}
+
+.tile:focus, .tile:hover {
+    border: 2px solid #000;
 }
 
 .tile-score {
@@ -149,35 +153,7 @@ canvas {
 /* populate colors/imgs with js */
 /*https://stackoverflow.com/questions/1341358/set-size-on-background-image-with-css*/
 
-button.g01 {
-    background-image: url("img/icon_01_blank.png");
-    background-color: #e5233d;
-}
 
-button.g02 {
-    background-color: #dda73a;
-    background-image: url("img/icon_02_blank.png");
-}
-
-button.g03 {
-    background-color: #4ca146;
-    background-image: url("img/icon_03_blank.png");
-}
-
-button.g04 {
-    background-color: #c7212f;
-    background-image: url("img/icon_12_blank.png");
-}
-
-button.g05 {
-    background-color: #ef402d;
-    background-image: url("img/icon_15_blank.png");
-}
-
-button.g06 {
-    background-color: #27bfe6;
-    background-image: url("img/icon_16_blank.png");
-}
 
 /***************************/
 /* World Bank Section */

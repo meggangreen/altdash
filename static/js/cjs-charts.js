@@ -1,15 +1,29 @@
 'use strict';
 
-let cYear;
-let cDatasets = {
+let cYear, cDatasets, cTileVals;
+
+cDatasets = {
     '2010': [{x: 2, y: 3}, {x: 2, y: 7}],
     '2011': [{x: 3, y: 2}, {x: 3, y: 5}],
 };
 
-let cTileVals = new Map ([
+cTileVals = new Map ([
     ['2010', ([ ['g01', 5.2], ['g02', 7.9] ]) ],
     ['2011', ([ ['g01', 7.1], ['g02', 8.2] ]) ],
 ]);
+
+function tileGraphic(evt) {
+    let styleCurrent = $(this).attr('style');
+    let styleModified = styleCurrent.replace("_blank.png", ".png");
+    $(this).attr('style', styleModified);
+}
+
+
+function tileBlank(evt) {
+    let styleCurrent = $(this).attr('style');
+    let styleModified = styleCurrent.replace(".png", "_blank.png");
+    $(this).attr('style', styleModified);
+}
 
 
 function updateChartTiles(evt) {
@@ -21,8 +35,8 @@ function updateChartTiles(evt) {
 
 function makeChartScatter(cYear) {
     /* Returns a preformatted scatter chart given a year. The data is loaded at
-       page load as dictionaries with the year as the key whose values are a
-       list of dictionaries of cartesian coordinates.
+       page load as an object with the year as the identifier whose value is an
+       array of objects containing cartesian coordinates.
 
     */
 
@@ -65,10 +79,15 @@ function makeChartScatter(cYear) {
 
 
 function updateTiles(cYear) {
-    /* 
+    /* Changes the 'score' on each goal tile given a year. The scores are loaded
+       at page load as a map with the year as the key whose value is a map with
+       'goal_pre' ids (key) and 'score' (value). First all scores are cleared,
+       then the updated scores placed, to ensure that data is for chosen year.
 
     */
     
+    $('.tile').html('<p class="tile-score"></p>');
+
     for ( let [tileId, tileVal] of cTileVals.get(cYear) ) {
         $('#' + tileId).html('<p class="tile-score">' + tileVal + '</p>');
     } // end for
