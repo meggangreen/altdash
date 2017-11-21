@@ -31,30 +31,34 @@ def index():
 
     """
 
-    goals = GoalDesign.get_db_objs()
     countries = Country.get_db_objs()
-    selected = choice(countries).name
+    selected = choice(countries).country_id
+    goals = GoalDesign.get_db_objs()
 
     return render_template("index2.html", countries=countries,
                                           selected=selected,
                                           goals=goals)
 
 
-@app.route('/country.json')
-def get_country_data(country):
+@app.route('/country-data.json', methods=['GET'])
+def get_country_data():
     """ Manages request for data -- request, math and scale manipulation, and
         packaging -- about a provided country and returns it packaged to the
         chart and tiles.
 
     """
 
+    # pull id from GET request arguments
+    country_id = request.args.get('country_id')
+
     # send request for data, receive all objects
-    data_objs = get_db_obj_list(table='Datum',
-                                f_filter='country_id',
-                                v_filter=country)
+    data_objs = Datum.get_db_objs(country_id=country_id)
+
     # send data to math manip, receive revised objects
     # send data for unpacking and repackaging, receive packages
-    # return packages
+    data_pkg = None  # but will be the packaged-up data
+
+    return jsonify(message=country_id)
 
 
 #########

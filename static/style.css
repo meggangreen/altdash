@@ -46,7 +46,7 @@ p {
 
 .body-0 {
     background-color: #fff;
-    border-top: 10px solid #27bfe6;
+    border-top: 10px solid #0bc9f8;
 }
 
 .body-1 {
@@ -81,8 +81,8 @@ p {
 }
 
 canvas {
-    height: 400px;
-    width: 100px;
+    min-height: 1px;
+    min-width: 1px;
     margin-top: 15px;
 }
 

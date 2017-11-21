@@ -1,6 +1,6 @@
 'use strict';
 
-let cYear, cDatasets, cTileVals;
+let cCountries, cCountry, cYear, cDatasets, cTileVals;
 
 cDatasets = {
     '2010': [{x: 2, y: 3}, {x: 2, y: 7}],
@@ -11,6 +11,37 @@ cTileVals = new Map ([
     ['2010', ([ ['g01', 5.2], ['g02', 7.9] ]) ],
     ['2011', ([ ['g01', 7.1], ['g02', 8.2] ]) ],
 ]);
+
+
+function selectCountry(evt) {
+    /* Handles new country selection and resets page. Calls getCountryData. */
+
+    // set animation to 'play'
+    $('#slider').val($('#slider').attr('max'));
+    
+    if ( $(this).attr('id') === "btn-random" ) {
+        // Pick randomized country
+        cCountry = cCountries[Math.floor(Math.random()*cCountries.length)].value;
+    } else {
+        cCountry = $(this).val();
+    } // end if
+
+    getCountryData(cCountry);
+}
+
+
+function getCountryData(cCountry) {
+    /* Retrieves country data and calls updateChartTiles. On page load, cCountry
+       is the selected country assigned by the server. On update, it is selected
+       in selectCountry.
+
+    */
+
+    $('#select-country').val(cCountry);
+    $.get('/country-data.json', { 'country_id': cCountry }, updateChartTiles);
+
+}
+
 
 function tileGraphic(evt) {
     let styleCurrent = $(this).attr('style');

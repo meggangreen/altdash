@@ -11,17 +11,12 @@
         </div><!-- /#col-mapbtn -->
         <div id="col-chartselect" class="col-xs-6">
           <form id="country-selector"> 
-            <select id="select-country" name="country" class="form-control">
+            <select id="select-country" name="country" class="form-control"
+                    data-country="{{ selected }}">
               {% for country in countries %}
-                {% if country.name == selected %}
-                  <option value="{{ country.country_id }}" selected>
-                    {{ country.name }}
-                  </option>
-                {% else %}
-                  <option value="{{ country.country_id }}">
-                    {{ country.name }}
-                  </option>
-                {% endif %}
+                <option value="{{ country.country_id }}" class="opt-country">
+                  {{ country.name }}
+                </option>
               {% endfor %}
             </select>
           </form>
@@ -58,9 +53,13 @@
 </div><!-- /#cont-body-charts -->
 
 <script>
-  updateChartTiles();
+  cCountries = $('.opt-country').toArray();
+  cCountry = $('#select-country').data('country');
+  getCountryData(cCountry);
 
   // Event listeners
+  $('#select-country').on('change', selectCountry);
+  $('#btn-random').on('click', selectCountry);
   $('#slider').on('change', updateChartTiles);
   $('.tile').hover( tileGraphic, tileBlank);
 </script>
