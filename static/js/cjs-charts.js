@@ -1,31 +1,25 @@
 'use strict';
 
 let cCountries, cCountry, cYear, cDatasets, cTileVals;
-
-cDatasets = {
-    '2010': [{x: 2, y: 3}, {x: 2, y: 7}],
-    '2011': [{x: 3, y: 2}, {x: 3, y: 5}],
-};
-
-cTileVals = new Map ([
-    ['2010', ([ ['g01', 5.2], ['g02', 7.9] ]) ],
-    ['2011', ([ ['g01', 7.1], ['g02', 8.2] ]) ],
-]);
-
+let chartScatter;
 
 function selectCountry(evt) {
     /* Handles new country selection and resets page. Calls getCountryData. */
 
+    // Reset container defaults
     // set animation to 'play'
     $('#slider').val($('#slider').attr('max'));
     
     if ( $(this).attr('id') === "btn-random" ) {
         // Pick randomized country
-        cCountry = cCountries[Math.floor(Math.random()*cCountries.length)].value;
-    } else {
-        cCountry = $(this).val();
+        let rando = cCountries[Math.floor(Math.random()*cCountries.length)].value;
+        $('#select-country').data('country', rando);
+    } else if ( $(this).attr('id') === "select-country" ) {
+        $('#select-country').data('country', $(this).val()); 
     } // end if
 
+    cCountry = $('#select-country').data('country');
+    $('#select-country').val(cCountry);
     getCountryData(cCountry);
 }
 
@@ -37,23 +31,13 @@ function getCountryData(cCountry) {
 
     */
 
-    $('#select-country').val(cCountry);
-    $.get('/country-data.json', { 'country_id': cCountry }, updateChartTiles);
-
-}
-
-
-function tileGraphic(evt) {
-    let styleCurrent = $(this).attr('style');
-    let styleModified = styleCurrent.replace("_blank.png", ".png");
-    $(this).attr('style', styleModified);
-}
-
-
-function tileBlank(evt) {
-    let styleCurrent = $(this).attr('style');
-    let styleModified = styleCurrent.replace(".png", "_blank.png");
-    $(this).attr('style', styleModified);
+    $.get('/country-data.json', { 'country_id': cCountry }, function(results) {
+        cDatasets = results.cDatasets;
+        cTileVals = results.cTileVals;
+        updateChartTiles();
+    } // end func
+    ); // eng .get
+    
 }
 
 
@@ -71,11 +55,17 @@ function makeChartScatter(cYear) {
 
     */
 
+    // cDatasets = { '2011': [{x: 3, y: 2}, {x: 3, y: 5}] };
+
+    console.log("made it to mCS");
+    if ( chartScatter ) { chartScatter.destroy(); console.log("DESTROY!"); }
+
     let xlabel = cYear;
     let ctx = document.getElementById("scatter-chart").getContext('2d');
-    let chartScatter = new Chart(ctx, {
+    chartScatter = new Chart(ctx, {
         type: 'scatter',
         data: {
+            labels: ["indicator", "indicator 2"],
             datasets: [{
                 label: cYear,
                 data: cDatasets[cYear]
@@ -83,6 +73,13 @@ function makeChartScatter(cYear) {
         }, // end chart data
         options: {
             legend: { display: false },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        return 'custom label: ' + tooltipItem.yLabel;
+                    }
+                }
+            }, // end tooltips
             scales: {
                 xAxes: [{
                     type: 'linear',
@@ -116,11 +113,27 @@ function updateTiles(cYear) {
        then the updated scores placed, to ensure that data is for chosen year.
 
     */
-    
-    $('.tile').html('<p class="tile-score"></p>');
 
-    for ( let [tileId, tileVal] of cTileVals.get(cYear) ) {
+    // cTileVals = { '2010', {g01: 5.2, g02: 7.9} };
+
+    $('.tile').html('<p class="tile-score"></p>');
+    for ( let tileId in cTileVals[cYear] ) {
+        let tileVal = cTileVals[cYear][tileId];
         $('#' + tileId).html('<p class="tile-score">' + tileVal + '</p>');
     } // end for
 
 } // end updateTiles
+
+
+function tileGraphic(evt) {
+    let styleCurrent = $(this).attr('style');
+    let styleModified = styleCurrent.replace("_blank.png", ".png");
+    $(this).attr('style', styleModified);
+}
+
+
+function tileBlank(evt) {
+    let styleCurrent = $(this).attr('style');
+    let styleModified = styleCurrent.replace(".png", "_blank.png");
+    $(this).attr('style', styleModified);
+}

@@ -6,7 +6,8 @@ from functions import *
 import requests
 import json
 from random import choice
-from collections import defaultdict
+# from collections import defaultdict
+import pdb
 
 from flask import Flask, render_template, redirect, request
 from flask import jsonify, flash, session
@@ -49,11 +50,14 @@ def get_country_data():
 
     """
 
+    print "\n\n"
     # pull id from GET request arguments
     country_id = request.args.get('country_id')
+    print "   ", country_id
 
     # send request for data, receive all objects
     query_objs = Datum.get_db_objs(country_id=country_id)
+    print "   ", len(query_objs)
 
     # send data to math manip, receive revised objects
     # right now, this just cleans out inverted-scale and math-having values
@@ -65,18 +69,23 @@ def get_country_data():
     to_del.sort(reverse=True)
     for n in to_del:
         del query_objs[n]
+    print "   ", len(query_objs)
 
     # define a list of all of the years possible
     # BUT i only want to do this once ever
     y_start = Datum.query.order_by(Datum.year).first().year  # 1960
     y_end = Datum.query.order_by(Datum.year.desc()).first().year  # 2016
 
-    # maybe i have to do this part a lot
     c_datasets = {}
     c_tilevals = {}
     for i in range(y_start, y_end + 1):
         c_datasets[str(i)] = []
         c_tilevals[str(i)] = {}
+
+    # Clear the values from the c_ dictionaries
+    c_datasets.update((year, []) for year in c_datasets)
+    c_tilevals.update((year, {}) for year in c_tilevals)
+    print "   ", c_datasets['2011'], c_tilevals['2011']
 
     # send data for unpacking and repackaging, receive packages
     # makes 'cDatasets'
@@ -84,25 +93,34 @@ def get_country_data():
         x = q_obj.indicator.goals[0].goal_pre
         y = q_obj.value
         year = str(q_obj.year)
-        c_datasets[year].append((int(x), y))  # this is a tuple; needs to be an obj
-    c_datasets.sort()
+        c_datasets[year].append({'x': int(x), 'y': y})
+    print "   ", len(c_datasets['2011'])
 
     # makes 'cTileVals'
-    for year in c_tilevals.iterkeys():
-        sum_dict = defaultdict(float)
-        count_dict = defaultdict(int)
-        for goal, value in c_datasets[year]:
-            sum_dict[goal] += value
-            count_dict[goal] += 1
-
-        # use numpy mean? this is a generator and has no len or count
-        # goal_sum = sum(v for g, v in c_datasets[year] if g == int(goal_pre))
-
+    for year in c_tilevals.iterkeys():      # for each year
+        sum_dict = {}                       # make empty sum & count
+        count_dict = {}
+        for xy_dict in c_datasets[year]:     # for each set of coords
+            goal = xy_dict['x']               # set the g-v to x-y
+            value = xy_dict['y']              # then update sum & count
+            sum_dict[goal] = sum_dict.get(goal, 0) + float(value)
+            count_dict[goal] = count_dict.get(goal, 0) + 1
+        for goal in count_dict.keys():      # for each goal
+            try:                            # try to get the average
+                goal_avg = sum_dict[goal] / count_dict[goal]
+            except:
+                # if there's a prob with the math, just skip it
+                # this also prevents 0-value goal scores
+                continue
+            goal_id = "g{:0>2}".format(str(goal))
+            c_tilevals[year][goal_id] = goal_avg
+    print "   ", c_tilevals['2011']
+    print "\n\n"
 
 
     data_pkg = None  # but will be the packaged-up data
 
-    return jsonify(message=country_id)
+    return jsonify(cDatasets=c_datasets, cTileVals=c_tilevals)
 
 
 #########

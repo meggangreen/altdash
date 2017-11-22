@@ -35,7 +35,7 @@
       <div id="row-slider" class="row">
         <div id="col-slider" class="col-xs-12">
           <input id="slider" class="slider" 
-           type="range" min="1960" max="2016" value="2010" />
+           type="range" min="1960" max="2016" value="" />
         </div><!-- /#col-slider -->
       </div><!-- /#row-slider -->
     </div><!-- /#col-scatterchart -->
@@ -54,8 +54,7 @@
 
 <script>
   cCountries = $('.opt-country').toArray();
-  cCountry = $('#select-country').data('country');
-  getCountryData(cCountry);
+  selectCountry();
 
   // Event listeners
   $('#select-country').on('change', selectCountry);

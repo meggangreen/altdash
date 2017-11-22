@@ -254,7 +254,6 @@ def load_data():
         try:
             data_tables.extend(get_wbdata_by_indicator(indic))
         except:
-            pdb.set_trace()
             continue
 
         for d_pt in data_tables:  # 'd_pt' is a dict about one data point

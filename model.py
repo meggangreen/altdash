@@ -34,10 +34,10 @@ class Country(db.Model):
 
     @classmethod
     def get_db_objs(cls, country_id=None, name=None, region=None,
-                    income=None, limit=None):
+                         income=None, limit=None):
         """ Returns list of db objects from Country table ordered by name.
-            Optionally, can filter and order by id, name, region, and/or income
-            as well.
+            Optionally, can inclusively filter and order by id, name, region,
+            and/or income as well.
 
         """
 
@@ -267,7 +267,7 @@ class Datum(db.Model):
 
     @classmethod
     def get_db_objs(cls, country_id=None, indicator_id=None,
-                    year=None, value=None, normal=None):
+                         year=None, value=None):
         """ Returns list of db objects from Datum table ordered by indicator id.
             Optionally, can filter and order by country id, year, and/or value
             as well.
@@ -295,10 +295,6 @@ class Datum(db.Model):
             value = "%" + str(value) + "%"
             query = (query.filter(cls.value.ilike(value))
                           .order_by(cls.value))
-
-        if normal:
-            query = query.filter(cls.indicator.display_math != 'm',
-                                 cls.indicator.scale_inverse is False)
 
         db_objs = query.all()
 
