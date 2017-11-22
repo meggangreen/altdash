@@ -313,6 +313,52 @@ def connect_to_db(app):
     db.init_app(app)
 
 
+def sort_indicators(indicators):
+    """ Sort indicators into _norm, _inv, or _math. """
+
+    try_again = []
+
+    f = open('sortedindic.txt', 'a')
+
+    for indic in indicators:
+        print
+        print indic
+        location = raw_input("(N)ormal, (I)nverted, or (M)ath? ")
+        if location.upper() in ("N", "I", "M"):
+            f.write("\n" + location + "|" + indic.indicator_id)
+        else:
+            try_again.append(indic)
+
+    f.close()
+
+    if try_again:
+        sort_indicators(try_again)
+
+
+def update_indicator_scale():
+    """ After ALTER TABLE, set scale_inverse value for each indicator and note
+        which indicators will have math to display on 0-10 scale.
+
+    """
+
+    # Get dict of indicator and scale
+    scale_dict = {}
+    f = open('sortedindic.txt', 'r')
+    for row in f:
+        row.rstrip()
+        s, indic = row.split("|")
+        scale_dict[indic[:-1]] = s
+    f.close()
+
+    indicators = Indicator.query.all()
+    for indic in indicators:
+        if scale_dict.get(indic.indicator_id) == 'i':
+            indic.scale_inverse = True
+        elif scale_dict.get(indic.indicator_id) == 'm':
+            indic.display_math = 'm'
+    db.session.commit()
+
+
 if __name__ == "__main__":
     # As a convenience, if we run this module interactively, it will leave
     # us in a state of being able to work with the database directly.

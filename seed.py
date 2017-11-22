@@ -174,10 +174,6 @@ def load_indicators():
 
     print '\n\nLoading Indicators (meta) now ...'
 
-    # Delete all rows to start fresh
-    # GoalIndic.query.delete
-    # Indicator.query.delete
-
     # WB URL constant
     URL = "https://data.worldbank.org/indicator/"
 
@@ -274,31 +270,6 @@ def load_data():
         if i == 20:
             print "    ... still doing API queries and DB insertions ..."
             i = 0
-
-    # i = 0
-    # for j in range(len(indicators)):
-    #     if i > len(indicators):
-    #         break
-    #     indic = indicators[i:i+15]  # trying to do just 15 at a time
-    #     data = get_wbdata_by_indicator(indic)
-
-    #     print "\n    Let's parse some data!", i, i + 15
-
-    #     # Parse datum in data
-    #     for indicator in data:  # indicator code
-    #         for d_pt in data[indicator]:  # 'd_pt' is a dict about one data point
-    #             if ((d_pt['value'] is None) or
-    #                 (c_dict.get(d_pt['country']['id']) is None)):
-    #                 continue
-    #             country = c_dict[d_pt['country']['id']]
-    #             datum = Datum(indicator_id=indicator,
-    #                           country_id=country,
-    #                           year=int(d_pt['date']),
-    #                           value=float(d_pt['value']))
-    #             db.session.add(datum)
-    #             db.session.commit()  # Is there a limit to the amt of obj to commit?
-
-    #     i = i + 15
 
         # Invert scale -- put on indicator
     print '\nData loaded.'
