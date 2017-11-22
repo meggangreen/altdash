@@ -241,9 +241,11 @@ class Datum(db.Model):
     datum_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     country_id = db.Column(db.String(3),
                            db.ForeignKey('countries.country_id'),
+                           index=True,
                            nullable=False)
     indicator_id = db.Column(db.Text,
                              db.ForeignKey('indicators.indicator_id'),
+                             index=True,
                              nullable=False)
     year = db.Column(db.Integer, nullable=False)
     value = db.Column(db.Float, nullable=False)
@@ -265,7 +267,7 @@ class Datum(db.Model):
 
     @classmethod
     def get_db_objs(cls, country_id=None, indicator_id=None,
-                    year=None, value=None):
+                    year=None, value=None, normal=None):
         """ Returns list of db objects from Datum table ordered by indicator id.
             Optionally, can filter and order by country id, year, and/or value
             as well.
@@ -293,6 +295,10 @@ class Datum(db.Model):
             value = "%" + str(value) + "%"
             query = (query.filter(cls.value.ilike(value))
                           .order_by(cls.value))
+
+        if normal:
+            query = query.filter(cls.indicator.display_math != 'm',
+                                 cls.indicator.scale_inverse is False)
 
         db_objs = query.all()
 
@@ -337,7 +343,7 @@ def sort_indicators(indicators):
 
 def update_indicator_scale():
     """ After ALTER TABLE, set scale_inverse value for each indicator and note
-        which indicators will have math to display on 0-10 scale.
+        which indicators will have math in order to display on 0-10 scale.
 
     """
 

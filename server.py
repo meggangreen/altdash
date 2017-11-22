@@ -6,6 +6,7 @@ from functions import *
 import requests
 import json
 from random import choice
+from collections import defaultdict
 
 from flask import Flask, render_template, redirect, request
 from flask import jsonify, flash, session
@@ -52,10 +53,53 @@ def get_country_data():
     country_id = request.args.get('country_id')
 
     # send request for data, receive all objects
-    data_objs = Datum.get_db_objs(country_id=country_id)
+    query_objs = Datum.get_db_objs(country_id=country_id)
 
     # send data to math manip, receive revised objects
+    # right now, this just cleans out inverted-scale and math-having values
+    to_del = []
+    for i, q_obj in enumerate(query_objs):
+        if ((q_obj.indicator.display_math == "m") or
+            (q_obj.indicator.scale_inverse is True)):
+            to_del.append(i)
+    to_del.sort(reverse=True)
+    for n in to_del:
+        del query_objs[n]
+
+    # define a list of all of the years possible
+    # BUT i only want to do this once ever
+    y_start = Datum.query.order_by(Datum.year).first().year  # 1960
+    y_end = Datum.query.order_by(Datum.year.desc()).first().year  # 2016
+
+    # maybe i have to do this part a lot
+    c_datasets = {}
+    c_tilevals = {}
+    for i in range(y_start, y_end + 1):
+        c_datasets[str(i)] = []
+        c_tilevals[str(i)] = {}
+
     # send data for unpacking and repackaging, receive packages
+    # makes 'cDatasets'
+    for q_obj in query_objs:
+        x = q_obj.indicator.goals[0].goal_pre
+        y = q_obj.value
+        year = str(q_obj.year)
+        c_datasets[year].append((int(x), y))  # this is a tuple; needs to be an obj
+    c_datasets.sort()
+
+    # makes 'cTileVals'
+    for year in c_tilevals.iterkeys():
+        sum_dict = defaultdict(float)
+        count_dict = defaultdict(int)
+        for goal, value in c_datasets[year]:
+            sum_dict[goal] += value
+            count_dict[goal] += 1
+
+        # use numpy mean? this is a generator and has no len or count
+        # goal_sum = sum(v for g, v in c_datasets[year] if g == int(goal_pre))
+
+
+
     data_pkg = None  # but will be the packaged-up data
 
     return jsonify(message=country_id)

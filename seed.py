@@ -241,7 +241,8 @@ def load_data():
     # exists, they all exist for that indicator.
     # Get set of indicator codes from db: 'possible' and 'present'
     indic_poss = set(i.indicator_id for i in Indicator.query.all())
-    indic_pres = set(d.indicator_id for d in Datum.query.distinct())
+    indic_pres = set(d.indicator_id for d in
+                     db.session.query(Datum.indicator_id).distinct().all())
     indicators = indic_poss - indic_pres
 
     # Get data dictionaries for each indicators, one at a time
