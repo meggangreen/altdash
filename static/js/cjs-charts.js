@@ -1,7 +1,13 @@
 'use strict';
 
-let cCountries, cCountry, cYear, cDatasets, cTileVals;
-let chartScatter;
+let cCountries, cCountry, cGoalsRaw, cGoals = new Map ([]);
+let chartScatter, cYear, cDatasets, cTileVals;
+
+function storeGoalAttrs(element, index, array) {
+    let g_id = element.id;
+    let g_color = element.style['background-color'];
+    cGoals.set(g_id, g_color);
+}
 
 function selectCountry(evt) {
     /* Handles new country selection and resets page. Calls getCountryData. */
@@ -65,27 +71,97 @@ function makeChartScatter(cYear) {
     chartScatter = new Chart(ctx, {
         type: 'scatter',
         data: {
-            labels: ["indicator", "indicator 2"],
-            datasets: [{
-                label: cYear,
-                data: cDatasets[cYear]
-            }] // end datasets
+            labels: [],
+            datasets: [
+                {label: 'No Poverty',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 1),
+                 backgroundColor: cGoals.get('g01'),
+                 borderColor: cGoals.get('g01'),},
+                {label: 'Zero Hunger',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 2),
+                 backgroundColor: cGoals.get('g02'),
+                 borderColor: cGoals.get('g02'),},
+                {label: 'Good Health and Well-Being',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 3),
+                 backgroundColor: cGoals.get('g03'),
+                 borderColor: cGoals.get('g03'),},
+                {label: 'Quality Education',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 4),
+                 backgroundColor: cGoals.get('g04'),
+                 borderColor: cGoals.get('g04'),},
+                {label: 'Gender Equality',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 5),
+                 backgroundColor: cGoals.get('g05'),
+                 borderColor: cGoals.get('g05'),},
+                {label: 'Clean Water and Sanitation',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 6),
+                 backgroundColor: cGoals.get('g06'),
+                 borderColor: cGoals.get('g06'),},
+                {label: 'Affordable and Clean Energy',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 7),
+                 backgroundColor: cGoals.get('g07'),
+                 borderColor: cGoals.get('g07'),},
+                {label: 'Decent Work and Economic Growth',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 8),
+                 backgroundColor: cGoals.get('g08'),
+                 borderColor: cGoals.get('g08'),},
+                {label: 'Industry, Innovation, and Infrastructure',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 9),
+                 backgroundColor: cGoals.get('g09'),
+                 borderColor: cGoals.get('g09'),},
+                {label: 'Reduced Inequalities',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 10),
+                 backgroundColor: cGoals.get('g10'),
+                 borderColor: cGoals.get('g10'),},
+                {label: 'Sustainable Cities and Communities',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 11),
+                 backgroundColor: cGoals.get('g11'),
+                 borderColor: cGoals.get('g11'),},
+                {label: 'Responsible Consumption and Production',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 12),
+                 backgroundColor: cGoals.get('g12'),
+                 borderColor: cGoals.get('g12'),},
+                {label: 'Climate Action',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 13),
+                 backgroundColor: cGoals.get('g13'),
+                 borderColor: cGoals.get('g13'),},
+                {label: 'Life Below Water',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 14),
+                 backgroundColor: cGoals.get('g14'),
+                 borderColor: cGoals.get('g14'),},
+                {label: 'Life On Land',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 15),
+                 backgroundColor: cGoals.get('g15'),
+                 borderColor: cGoals.get('g15'),},
+                {label: 'Peace, Justice, and Strong Institutions',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 16),
+                 backgroundColor: cGoals.get('g16'),
+                 borderColor: cGoals.get('g16'),},
+                {label: 'Partnerships for the Goals',
+                 data: cDatasets[cYear].filter(cData => cData['x'] === 17),
+                 backgroundColor: cGoals.get('g17'),
+                 borderColor: cGoals.get('g17'),},
+            ] // end datasets
         }, // end chart data
         options: {
             legend: { display: false },
             tooltips: {
                 callbacks: {
+                    beforeLabel: function(tooltipItem, data) {
+                        let goal_label = tooltipItem.xLabel;
+                        return tooltipItem['x'];
+                    }, // end beforeLabel
                     label: function(tooltipItem, data) {
-                        return 'custom label: ' + tooltipItem.yLabel;
-                    }
-                }
+                        return tooltipItem.yLabel;
+                    }, // end label
+                } // end callbacks
             }, // end tooltips
             scales: {
                 xAxes: [{
                     type: 'linear',
                     scaleLabel: { display: true, labelString: xlabel },
                     position: 'bottom',
-                    ticks: { min: 1, max: 17.1, stepSize: 1, display: false }
+                    ticks: { min: 1, max: 17.2, stepSize: 1, display: false }
                 }], // end xAxes
                 yAxes: [{
                     type: 'linear',

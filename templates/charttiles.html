@@ -54,6 +54,8 @@
 
 <script>
   cCountries = $('.opt-country').toArray();
+  cGoalsRaw = $('.tile').toArray();
+  cGoalsRaw.forEach(storeGoalAttrs);
   selectCountry();
 
   // Event listeners
