@@ -146,10 +146,14 @@ function makeChartScatter(cYear) {
         options: {
             legend: { display: false },
             tooltips: {
+                displayColors: false,
+                bodyFontColor: 'rgb(0, 0, 0)',  // #000
+                backgroundColor: 'rgb(204, 204, 204)',  // #ccc
                 callbacks: {
                     beforeLabel: function(tooltipItem, data) {
-                        let goal_label = tooltipItem.xLabel;
-                        return tooltipItem['x'];
+                        let goal_label = data.datasets[tooltipItem.datasetIndex].label;
+                        let indic_label = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]['i'];
+                        return [goal_label, indic_label];
                     }, // end beforeLabel
                     label: function(tooltipItem, data) {
                         return tooltipItem.yLabel;

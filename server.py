@@ -92,8 +92,9 @@ def get_country_data():
     for q_obj in query_objs:
         x = q_obj.indicator.goals[0].goal_pre
         y = q_obj.value
+        i = q_obj.indicator.title
         year = str(q_obj.year)
-        c_datasets[year].append({'x': int(x), 'y': y})
+        c_datasets[year].append({'x': int(x), 'y': y, 'i': i})
     print "   ", len(c_datasets['2011'])
 
     # makes 'cTileVals'
