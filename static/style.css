@@ -67,11 +67,10 @@ p {
 /* Chart-Tiles */
 /***************************/
 .btn-btnselect {
-    /*width: 60px;*/
     white-space: normal;
-    padding: 5px;
+    padding: 2px;
     line-height: 1.2;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
 }
 
@@ -91,7 +90,7 @@ canvas {
     margin: 10px 0;
 }
 
-.ui-slider {
+.ui-slider, .ui-slider-horizontal {
     -webkit-appearance: none;  /* Override default CSS styles */
     appearance: none;
     width: 100%;
@@ -101,6 +100,9 @@ canvas {
     opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
     -webkit-transition: 0s; /* no transition time */
     transition: opacity 0s;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
 }
 
 /* Mouse-over effects */
@@ -111,15 +113,21 @@ canvas {
 /* Slider Handle */
 /* (override defaults webkit (Chrome, Opera, Safari, Edge) & moz (Firefox)) */
 /* great jq bs slider tooltip fiddle */
-.ui-slider-handle {
+.ui-slider .ui-slider-handle, 
+.ui-slider-horizontal .ui-slider-handle {
     width: 10px;
     height: 23px;
     background: #999;
     display: inline-block;
     top: -5px;
     cursor: pointer;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
 }
-.ui-slider-handle::-webkit-slider-thumb {
+
+.ui-slider .ui-slider-handle::-webkit-slider-thumb, 
+.ui-slider-horizontal .ui-slider-handle::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 10px;
@@ -130,7 +138,8 @@ canvas {
     cursor: pointer;
 }
 
-.ui-slider-handle::-moz-range-thumb {
+.ui-slider .ui-slider-handle::-moz-range-thumb,
+.ui-slider-horizontal .ui-slider-handle::-moz-range-thumb {
     width: 10px;
     height: 23px;
     background: #999;
@@ -207,9 +216,8 @@ canvas {
 /*https://stackoverflow.com/questions/1341358/set-size-on-background-image-with-css*/
 
 
-
 /***************************/
-/* World Bank Section */
+/* SDG, UN, WB Section */
 /***************************/
 #col-wb, #col-un, #col-sdg {
     /*margin-top: 10px;
