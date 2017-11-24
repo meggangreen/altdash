@@ -91,7 +91,7 @@ canvas {
     margin: 10px 0;
 }
 
-.slider {
+.ui-slider {
     -webkit-appearance: none;  /* Override default CSS styles */
     appearance: none;
     width: 100%;
@@ -104,26 +104,78 @@ canvas {
 }
 
 /* Mouse-over effects */
-.slider:hover {
+.ui-slider:hover {
     opacity: 1;
-
 }
 
-/* The slider handle (use webkit (Chrome, Opera, Safari, Edge) and moz (Firefox) to override default look) */
-.slider::-webkit-slider-thumb {
-    -webkit-appearance: none; /* Override default look */
+/* Slider Handle */
+/* (override defaults webkit (Chrome, Opera, Safari, Edge) & moz (Firefox)) */
+/* great jq bs slider tooltip fiddle */
+.ui-slider-handle {
+    width: 10px;
+    height: 23px;
+    background: #999;
+    display: inline-block;
+    top: -5px;
+    cursor: pointer;
+}
+.ui-slider-handle::-webkit-slider-thumb {
+    -webkit-appearance: none;
     appearance: none;
-    width: 10px; /* Handle width */
-    height: 15px; /* Slider & Handle height */
+    width: 10px;
+    height: 23px;
     background: #999;
+    display: inline-block;
+    top: -5px;
     cursor: pointer;
 }
 
-.slider::-moz-range-thumb {
-    width: 10px; /* Handle width */
-    height: 15px; /* Slider & Handle height */
+.ui-slider-handle::-moz-range-thumb {
+    width: 10px;
+    height: 23px;
     background: #999;
+    display: inline-block;
+    top: -5px;
     cursor: pointer;
+}
+
+.slider-tt {
+    position: absolute;
+    display: block;
+    padding: 5px;
+    font-size: 11px;
+    visibility: hidden;
+    margin-top: -2px;
+    bottom:120%;
+    margin-left: -2em;
+}
+
+.ui-slider:hover .slider-tt {
+  visibility: visible;
+}
+
+.slider-tt .slider-tt-arrow {
+    bottom: 0;
+    left: 50%;
+    margin-left: -5px;
+    border-top: 5px solid #ccc;
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+.slider-tt-inner {
+    max-width: 40px;
+    padding: 3px 7px;
+    color: #333;
+    text-align: center;
+    text-decoration: none;
+    background-color: #ccc;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
 }
 
 /* Goal Tiles */
