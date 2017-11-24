@@ -36,10 +36,13 @@ def index():
     countries = Country.get_db_objs()
     selected = choice(countries).country_id
     goals = GoalDesign.get_db_objs()
+    y_lbound, y_ubound = get_year_bounds()
 
     return render_template("index2.html", countries=countries,
                                           selected=selected,
-                                          goals=goals)
+                                          goals=goals,
+                                          slider_min=y_lbound,
+                                          slider_max=y_ubound)
 
 
 @app.route('/country-data.json', methods=['GET'])
