@@ -74,14 +74,12 @@ def get_country_data():
         del query_objs[n]
     print "   ", len(query_objs)
 
-    # define a list of all of the years possible
-    # BUT i only want to do this once ever
-    y_start = Datum.query.order_by(Datum.year).first().year  # 1960
-    y_end = Datum.query.order_by(Datum.year.desc()).first().year  # 2016
+    # Get least- and most-recent years
+    y_lbound, y_ubound = get_year_bounds()
 
     c_datasets = {}
     c_tilevals = {}
-    for i in range(y_start, y_end + 1):
+    for i in range(y_lbound, y_ubound + 1):
         c_datasets[str(i)] = []
         c_tilevals[str(i)] = {}
 
@@ -104,9 +102,9 @@ def get_country_data():
     for year in c_tilevals.iterkeys():      # for each year
         sum_dict = {}                       # make empty sum & count
         count_dict = {}
-        for xy_dict in c_datasets[year]:     # for each set of coords
-            goal = xy_dict['x']               # set the g-v to x-y
-            value = xy_dict['y']              # then update sum & count
+        for xy_dict in c_datasets[year]:    # for each set of coords
+            goal = xy_dict['x']             # set the g-v to x-y
+            value = xy_dict['y']            # then update sum & count
             sum_dict[goal] = sum_dict.get(goal, 0) + float(value)
             count_dict[goal] = count_dict.get(goal, 0) + 1
         for goal in count_dict.keys():      # for each goal
@@ -120,9 +118,6 @@ def get_country_data():
             c_tilevals[year][goal_id] = goal_avg
     print "   ", c_tilevals['2011']
     print "\n\n"
-
-
-    data_pkg = None  # but will be the packaged-up data
 
     return jsonify(cDatasets=c_datasets, cTileVals=c_tilevals)
 
@@ -142,7 +137,7 @@ if __name__ == "__main__":
 
     # connect to test db if testing
     if 'test' in sys.argv[-1]:
-        connect_to_db(app, 'postgres:///sdgTEST')
+        connect_to_db(app, 'postgres:///sdgTEST')  # Didn't ever implement
     else:
         connect_to_db(app)
 
@@ -151,3 +146,5 @@ if __name__ == "__main__":
 
     # Set server to localhost:5000
     app.run(port=5000, host='0.0.0.0')
+
+    #

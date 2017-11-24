@@ -8,10 +8,16 @@ import json
 import pdb
 
 ###########################
-# Main Scatter Chart
+# MAIN PAGE
 ###########################
 
+def get_year_bounds():
+    """ Return least- and most-recent years. """
 
+    y_lbound = Datum.query.order_by(Datum.year).first().year  # 1960
+    y_ubound = Datum.query.order_by(Datum.year.desc()).first().year  # 2016
+
+    return (y_lbound, y_ubound)
 
 
 ###########################
