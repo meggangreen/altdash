@@ -7,7 +7,6 @@ let cCountries, cCountry, cGoalsRaw, cGoals = new Map ([]);
 let chartScatter, cYear, cMin, cMax, cDatasets, cTileVals;
 
 cCountries = $('.opt-country').toArray();
-setupSlider();
 cGoalsRaw = $('.tile').toArray();
 cGoalsRaw.forEach(storeGoalAttrs);
 selectCountry();
@@ -15,12 +14,66 @@ selectCountry();
 // Event listeners
 $('#select-country').on('change', selectCountry);
 $('#btn-random').on('click', selectCountry);
-$('#slider').on('change', updateChartTiles);
-//$('.tile').hover( tileGraphic, tileBlank);
 
-function setupSlider() {
+
+function storeGoalAttrs(element, index, array) {
+    /*  */
+
+    let g_id = element.id;
+    let g_color = element.style['background-color'];
+    cGoals.set(g_id, g_color);
+}
+
+
+function selectCountry(evt) {
+    /* Handles new country selection. Calls getCountryData. */
+
+    if ( $(this).attr('id') === "btn-random" ) {
+        // Pick randomized country
+        let r = Math.floor(Math.random() * cCountries.length);
+        let rCountry = cCountries[r].value;
+        //this updates codewise but not in the page
+        $('#select-country').data('country', rCountry);
+        $('#select-country').val(rCountry);
+    } else if ( $(this).attr('id') === "select-country" ) {
+        $('#select-country').data('country', $(this).val()); 
+    } // end if
+    
+    cCountry = $('#select-country').data('country');
+
+    getCountryData(cCountry);
+}
+
+
+function getCountryData(cCountry) {
+    /* Retrieves country data and calls initializeChartTiles. */
+
+    $.get('/country-data.json', { 'country_id': cCountry }, function(results) {
+        cDatasets = results.cDatasets;
+        cTileVals = results.cTileVals;
+        initializeChartTiles();
+    } // end func
+    ); // end .get
+    
+}
+
+function initializeChartTiles() {
+    /*  */
+
+    makeSlider();
+    updateChartTiles();
+}
+
+
+function makeSlider() {
+    /*  */
+
+    if ( $('#slider').slider() ) { // always created on page load
+        $('#slider').slider('destroy'); console.log("slider DESTROYED!");
+    } // end if
     cMax = $('#slider').data('max');
     cMin = $('#slider').data('min');
+    cYear = cMax; // first time cYear is set
 
     let sliderTooltip = function(event, ui) {
         let ttYear = ui.value || cMax;
@@ -30,64 +83,26 @@ function setupSlider() {
         $('.ui-slider-handle').html(tooltip);
     }; // end sliderTooltip
 
+    let sliderSelectYear = function(event, ui) {
+        cYear = ui.value || cMax;
+        updateChartTiles();
+    }; // end sliderSelectYear
+
     $('#slider').slider({
-        value: cMax,
+        value: cYear,
         min: cMin,
         max: cMax,
         step: 1,
         create: sliderTooltip,
-        slide: sliderTooltip
+        slide: sliderTooltip,
+        stop: sliderSelectYear,
     }); // end slider initialize
 }
 
 
-function storeGoalAttrs(element, index, array) {
-    let g_id = element.id;
-    let g_color = element.style['background-color'];
-    cGoals.set(g_id, g_color);
-}
-
-function selectCountry(evt) {
-    /* Handles new country selection and resets page. Calls getCountryData. */
-
-    // Reset container defaults
-    // set animation to 'play'
-    $('#slider').val($('#slider').attr('max'));
-    
-    if ( $(this).attr('id') === "btn-random" ) {
-        // Pick randomized country
-        let rando = cCountries[Math.floor(Math.random()*cCountries.length)].value;
-        //this updates codewise but not in the page
-        $('#select-country').data('country', rando);
-    } else if ( $(this).attr('id') === "select-country" ) {
-        $('#select-country').data('country', $(this).val()); 
-    } // end if
-
-    cCountry = $('#select-country').data('country');
-    $('#select-country').val(cCountry);
-    getCountryData(cCountry);
-}
-
-
-function getCountryData(cCountry) {
-    /* Retrieves country data and calls updateChartTiles. On page load, cCountry
-       is the selected country assigned by the server. On update, it is selected
-       in selectCountry.
-
-    */
-
-    $.get('/country-data.json', { 'country_id': cCountry }, function(results) {
-        cDatasets = results.cDatasets;
-        cTileVals = results.cTileVals;
-        updateChartTiles();
-    } // end func
-    ); // eng .get
-    
-}
-
-
 function updateChartTiles(evt) {
-    cYear = $('#slider').val();
+    /*  */
+
     makeChartScatter(cYear);
     updateTiles(cYear);
 } // end updateChartTiles
@@ -100,10 +115,10 @@ function makeChartScatter(cYear) {
 
     */
 
-    // cDatasets = { '2011': [{x: 3, y: 2}, {x: 3, y: 5}] };
+    // cDatasets = { '2011': [{x: 3, y: 2, i: "name"}, {x: 3, y: 5, i: "name"}] };
 
     console.log("made it to mCS");
-    if ( chartScatter ) { chartScatter.destroy(); console.log("DESTROY!"); }
+    if ( chartScatter ) { chartScatter.destroy(); console.log("chart DESTROYED!"); }
 
     let xlabel = cYear;
     let ctx = document.getElementById("scatter-chart").getContext('2d');
@@ -179,8 +194,10 @@ function makeChartScatter(cYear) {
                 backgroundColor: 'rgb(204, 204, 204)',  // #ccc
                 callbacks: {
                     beforeLabel: function(tooltipItem, data) {
-                        let goal_label = data.datasets[tooltipItem.datasetIndex].label;
-                        let indic_label = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]['i'];
+                        let dsi = tooltipItem.datasetIndex;
+                        let dpti = tooltipItem.index;  // datapoint index
+                        let goal_label = data.datasets[dsi].label;
+                        let indic_label = data.datasets[dsi].data[dpti]['i'];
                         return [goal_label, indic_label];
                     }, // end beforeLabel
                     label: function(tooltipItem, data) {
