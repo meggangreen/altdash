@@ -1,7 +1,21 @@
 'use strict';
 
+$(document).ready(function() {
+    /* ALLLLL THE JS -- not indented */
+
 let cCountries, cCountry, cGoalsRaw, cGoals = new Map ([]);
 let chartScatter, cYear, cDatasets, cTileVals;
+
+cCountries = $('.opt-country').toArray();
+cGoalsRaw = $('.tile').toArray();
+cGoalsRaw.forEach(storeGoalAttrs);
+selectCountry();
+
+// Event listeners
+$('#select-country').on('change', selectCountry);
+$('#btn-random').on('click', selectCountry);
+$('#slider').on('change', updateChartTiles);
+//$('.tile').hover( tileGraphic, tileBlank);
 
 function storeGoalAttrs(element, index, array) {
     let g_id = element.id;
@@ -19,6 +33,7 @@ function selectCountry(evt) {
     if ( $(this).attr('id') === "btn-random" ) {
         // Pick randomized country
         let rando = cCountries[Math.floor(Math.random()*cCountries.length)].value;
+        //this updates codewise but not in the page
         $('#select-country').data('country', rando);
     } else if ( $(this).attr('id') === "select-country" ) {
         $('#select-country').data('country', $(this).val()); 
@@ -206,3 +221,7 @@ function tileBlank(evt) {
     let styleModified = styleCurrent.replace(".png", "_blank.png");
     $(this).attr('style', styleModified);
 }
+
+
+
+}); // end doc.ready

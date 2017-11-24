@@ -52,16 +52,3 @@
     </div><!-- /#col-tiles -->
   </div><!-- /#row-body-charts -->
 </div><!-- /#cont-body-charts -->
-
-<script>
-  cCountries = $('.opt-country').toArray();
-  cGoalsRaw = $('.tile').toArray();
-  cGoalsRaw.forEach(storeGoalAttrs);
-  selectCountry();
-
-  // Event listeners
-  $('#select-country').on('change', selectCountry);
-  $('#btn-random').on('click', selectCountry);
-  $('#slider').on('change', updateChartTiles);
-  //$('.tile').hover( tileGraphic, tileBlank);
-</script>

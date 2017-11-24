@@ -90,6 +90,7 @@ canvas {
 #col-slider {
     margin: 10px 0;
 }
+
 .slider {
     -webkit-appearance: none;  /* Override default CSS styles */
     appearance: none;

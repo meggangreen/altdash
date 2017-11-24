@@ -55,6 +55,9 @@ def get_country_data():
     country_id = request.args.get('country_id')
     print "   ", country_id
 
+    if not country_id:
+        return jsonify(message="No Country Sent")
+
     # send request for data, receive all objects
     query_objs = Datum.get_db_objs(country_id=country_id)
     print "   ", len(query_objs)
