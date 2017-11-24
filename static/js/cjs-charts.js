@@ -4,9 +4,10 @@ $(document).ready(function() {
     /* ALLLLL THE JS -- not indented */
 
 let cCountries, cCountry, cGoalsRaw, cGoals = new Map ([]);
-let chartScatter, cYear, cDatasets, cTileVals;
+let chartScatter, cYear, cMin, cMax, cDatasets, cTileVals;
 
 cCountries = $('.opt-country').toArray();
+setupSlider();
 cGoalsRaw = $('.tile').toArray();
 cGoalsRaw.forEach(storeGoalAttrs);
 selectCountry();
@@ -16,6 +17,29 @@ $('#select-country').on('change', selectCountry);
 $('#btn-random').on('click', selectCountry);
 $('#slider').on('change', updateChartTiles);
 //$('.tile').hover( tileGraphic, tileBlank);
+
+function setupSlider() {
+    cMax = $('#slider').data('max');
+    cMin = $('#slider').data('min');
+
+    let sliderTooltip = function(event, ui) {
+        let ttYear = ui.value || cMax;
+        let tooltip = '<div class="slider-tt"><div class="slider-tt-inner">'
+                      + ttYear 
+                      + '</div><div class="slider-tt-arrow"></div></div>';
+        $('.ui-slider-handle').html(tooltip);
+    }; // end sliderTooltip
+
+    $('#slider').slider({
+        value: cMax,
+        min: cMin,
+        max: cMax,
+        step: 1,
+        create: sliderTooltip,
+        slide: sliderTooltip
+    }); // end slider initialize
+}
+
 
 function storeGoalAttrs(element, index, array) {
     let g_id = element.id;
