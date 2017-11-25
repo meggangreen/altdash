@@ -4,10 +4,13 @@ $(document).ready(function() {
     /* ALLLLL THE JS -- not indented */
 
 let cCountries, cCountry, cGoalsRaw, cGoals = new Map ([]);
-let chartScatter, cYear, cMin, cMax, cDatasets, cTileVals;
+let chartScatter, cYear, cMin, cMax, cDatasets, cTileVals, cInformation;
+
+let divRowBodyChartTiles = $('#row-body-charttiles').html();
+let divRowBodyTileDetails = $('#row-body-tiledetails').html();
 
 cCountries = $('.opt-country').toArray();
-cGoalsRaw = $('.tile').toArray();
+cGoalsRaw = $('.tile-sm').toArray();
 cGoalsRaw.forEach(storeGoalAttrs);
 selectCountry();
 
@@ -19,7 +22,7 @@ $('#btn-random').on('click', selectCountry);
 function storeGoalAttrs(element, index, array) {
     /*  */
 
-    let g_id = element.id;
+    let g_id = element.id.slice(0,3);
     let g_color = element.style['background-color'];
     cGoals.set(g_id, g_color);
 }
@@ -27,7 +30,6 @@ function storeGoalAttrs(element, index, array) {
 
 function selectCountry(evt) {
     /* Handles new country selection. Calls getCountryData. */
-
     if ( $(this).attr('id') === "btn-random" ) {
         // Pick randomized country
         let r = Math.floor(Math.random() * cCountries.length);
@@ -40,6 +42,7 @@ function selectCountry(evt) {
     } // end if
     
     cCountry = $('#select-country').data('country');
+    $('#select-country').val(cCountry);
 
     getCountryData(cCountry);
 }
@@ -51,6 +54,7 @@ function getCountryData(cCountry) {
     $.get('/country-data.json', { 'country_id': cCountry }, function(results) {
         cDatasets = results.cDatasets;
         cTileVals = results.cTileVals;
+        cInformation = results.cInformation;
         initializeChartTiles();
     } // end func
     ); // end .get
@@ -103,9 +107,66 @@ function makeSlider() {
 function updateChartTiles(evt) {
     /*  */
 
+    makeCountryInfo();
     makeChartScatter(cYear);
     updateTiles(cYear);
 } // end updateChartTiles
+
+
+function makeCountryInfo() {
+    /* */
+
+    let cName = cInformation.name;
+    let cIncome = cInformation.income;
+    let cRegion = cInformation.region;
+    let cWikiurl = cInformation.wikiurl;
+    let cGroups = cInformation.groups;
+    let formatHTML = '';
+
+    if ( (cIncome && cRegion && cWikiurl) === null ) {
+        let formatH4 = `<h4>` + cName + `</h4>`;
+        let formatDIV = `<div id="col-tiles-push" class="hidden-xs col-md-4" 
+                              style="height: 17px;"></div>`;
+        formatHTML = formatH4 + formatDIV;
+        
+    } else {
+        let formatH4 = `
+            <h4>
+              <a href="` + cWikiurl + `" target="_blank" 
+                title="` + cName + ` at Wikipedia">` + cName + `</a>
+              | ` + cIncome + ` | ` + cRegion + `
+            </h4>
+            `
+        ;
+
+        let IRW = [cIncome, cRegion, "World"];
+        let cGroupList = new Array();
+        for (let i = 0; i < cGroups.length; i++) {
+            if (!IRW.includes(cGroups[i])) {
+                cGroupList.push(cGroups[i]);
+            } // end if
+        } // end for
+
+        if (cGroupList.length !== 0) {
+            cGroupList = cGroupList.join(", ");
+        } else {
+            cGroupList = "None";
+        } // end if
+
+        let formatP = `
+            <p>
+              Other groups: ` + cGroupList + `
+            </p>
+            `
+        ;
+
+        formatHTML = formatH4 + formatP;
+    }
+
+    
+    
+    $('.countryinfo').html(formatHTML);
+}
 
 
 function makeChartScatter(cYear) {
@@ -190,8 +251,8 @@ function makeChartScatter(cYear) {
             } }, // end elements
             tooltips: {
                 displayColors: false,
-                bodyFontColor: 'rgb(0, 0, 0)',  // #000
-                backgroundColor: 'rgb(204, 204, 204)',  // #ccc
+                bodyFontColor: 'rgb(51, 51, 51)',  // #33
+                backgroundColor: 'rgb(238, 238, 238)',  // #eee
                 callbacks: {
                     beforeLabel: function(tooltipItem, data) {
                         let dsi = tooltipItem.datasetIndex;
@@ -244,7 +305,7 @@ function updateTiles(cYear) {
     $('.tile').html('<p class="tile-score"></p>');
     for ( let tileId in cTileVals[cYear] ) {
         let tileVal = cTileVals[cYear][tileId];
-        $('#' + tileId).html('<p class="tile-score">' + tileVal + '</p>');
+        $('#' + tileId + 'sm').html('<p class="tile-score">' + tileVal + '</p>');
     } // end for
 
 } // end updateTiles

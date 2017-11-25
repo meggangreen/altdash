@@ -34,7 +34,7 @@ def index():
     """
 
     countries = Country.get_db_objs()
-    selected = choice(countries).country_id
+    selected = choice(countries)
     goals = GoalDesign.get_db_objs()
     y_lbound, y_ubound = get_year_bounds()
 
@@ -61,9 +61,17 @@ def get_country_data():
     if not country_id:
         return jsonify(message="No Country Sent")
 
-    # send request for data, receive all objects
+    # send request for data, receive all query objects
+    c_obj = Country.get_db_objs(country_id=country_id)[0]
     query_objs = Datum.get_db_objs(country_id=country_id)
-    print "   ", len(query_objs)
+    print "   ", c_obj, len(query_objs)
+
+    c_information = {}
+    c_information['name'] = c_obj.name
+    c_information['region'] = c_obj.region
+    c_information['income'] = c_obj.income
+    c_information['wikiurl'] = c_obj.wikiurl
+    c_information['groups'] = [g.name for g in c_obj.groups]
 
     # send data to math manip, receive revised objects
     # right now, this just cleans out inverted-scale and math-having values
@@ -122,7 +130,9 @@ def get_country_data():
     print "   ", c_tilevals['2011']
     print "\n\n"
 
-    return jsonify(cDatasets=c_datasets, cTileVals=c_tilevals)
+    return jsonify(cDatasets=c_datasets,
+                   cTileVals=c_tilevals,
+                   cInformation=c_information)
 
 
 #########
