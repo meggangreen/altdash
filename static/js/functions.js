@@ -38,14 +38,20 @@ function swapDivs(evt) {
 
     let toHide = $(this).data('sender');
     let toShow = $(this).data('target');
-    let toGoal = $(this).data('goalA');  // gEEd or gEEm
-
+    let toGoal = '#' + $(this).data('goalA');  // #gEEd or #gEEm
+    
+    if (toHide === '#row-body-goal-minutiae') {
+        $('.goal-minutiae').addClass("extra-hidden");
+    } // hide all 3-rd level divs when navigating away from 3rd level
     $(toHide).addClass("extra-hidden");
     $(toShow).removeClass("extra-hidden");
+    if (toShow === '#row-body-goal-minutiae') {
+        $(toGoal).parent().removeClass("extra-hidden");
+    } // hide all 3-rd level divs when navigating away from 3rd level
 
     if ( toGoal ) {
         $('html, body').animate({
-            scrollTop: $('#' + toGoal).offset().top -45
+            scrollTop: $(toGoal).offset().top -45
         }, 500, 'linear');
     } // end if
 }
@@ -293,6 +299,8 @@ function makeChartScatter(cYear) {
                     }, // end label
                 } // end callbacks
             }, // end tooltips
+            // Really good custom tooltip:
+            // https://jsfiddle.net/patrickactivatr/ytLtmLgs/
             scales: {
                 xAxes: [{
                     type: 'linear',
@@ -303,10 +311,10 @@ function makeChartScatter(cYear) {
                 yAxes: [{
                     type: 'linear',
                     scaleLabel: { display: false },
-                    ticks: {min: 0, max: 10, stepSize: 2.5, display: false},
+                    ticks: {min: 0, max: 100, stepSize: 25, display: false},
                     // thanks to L Bahr 'https://stackoverflow.com/questions/37451905/how-to-set-static-value-in-y-axis-in-chart-js'
                     afterBuildTicks: function(scale) {
-                      scale.ticks = [0, 3, 7, 10]; // set y-axis values exactly
+                      scale.ticks = [0, 30, 70, 100]; // set y-axis values exactly
                       return;
                     },
                     beforeUpdate: function(oScale) {
@@ -329,7 +337,7 @@ function updateTiles(cYear) {
 
     // cTileVals = { '2010', {g01: 5.2, g02: 7.9} };
 
-    $('.tile').html('<p class="tile-score"></p>');
+    $('.tile-sm').html('<p class="tile-score"></p>');
     for ( let tileId in cTileVals[cYear] ) {
         let tileVal = cTileVals[cYear][tileId];
         $('#' + tileId + 'sm').html('<p class="tile-score">' + tileVal + '</p>');

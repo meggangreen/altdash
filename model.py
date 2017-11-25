@@ -213,6 +213,41 @@ class Indicator(db.Model):
         return ('<Indicator id={} title="{}" (i.goals) >\n'
                 .format(self.indicator_id, self.title[:50]))
 
+    @classmethod
+    def get_db_objs(cls, indicator_id=None, title=None,
+                         scale_inverse=None, display_math=None):
+        """ Returns list of db objects from Datum table ordered by indicator id.
+            Optionally, can filter and order by country id, year, and/or value
+            as well.
+
+        """
+
+        query = cls.query.order_by(cls.indicator_id)
+
+        if indicator_id:
+            indicator_id = "%" + str(indicator_id) + "%"
+            query = (query.filter(cls.indicator_id.ilike(indicator_id))
+                          .order_by(cls.indicator_id))
+
+        if title:
+            title = "%" + str(title) + "%"
+            query = (query.filter(cls.title.ilike(title))
+                          .order_by(cls.title))
+
+        if scale_inverse:
+            scale_inverse = "%" + str(scale_inverse) + "%"
+            query = (query.filter(cls.scale_inverse.ilike(scale_inverse))
+                          .order_by(cls.scale_inverse))
+
+        if display_math:
+            display_math = "%" + str(display_math) + "%"
+            query = (query.filter(cls.display_math.ilike(display_math))
+                          .order_by(cls.display_math))
+
+        db_objs = query.all()
+
+        return db_objs
+
 
 class GoalIndic(db.Model):
     """ Association table for goal-indicator pairs. """

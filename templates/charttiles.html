@@ -2,7 +2,7 @@
 
 <div id="cont-body-charttiles" class="container-fluid container-body">
 
-  <div id="row-body-charttiles" class="row body-row">
+  <div id="row-body-charttiles" class="row body-row extra-hidden">
     <div id="col-scatterchart" class="col-xs-12 col-md-8">
       <div id="row-btnselect" class="row">
         <div id="col-mapbtn" class="col-xs-3">
@@ -13,7 +13,7 @@
         <div id="col-chartselect" class="col-xs-6">
           <form id="country-selector"> 
             <select id="select-country" name="country" class="form-control"
-                    data-country="{{ selected.country_id }}">
+                    data-country="">
               {% for country in countries %}
                 <option value="{{ country.country_id }}" class="opt-country">
                   {{ country.name }}
@@ -85,11 +85,17 @@
                       style="background-image: url('static/{{ goal.iurl_full }}');
                              background-color: {{ goal.hexval }};">
               </button>
+              <p>Learn about this goal from
+                <a href="{{ goal.unurl }}" target="_blank" 
+                   title="Goal {{ goal.goal_pre }} at the UN">the UN</a>
+              </p>
             </div><!-- /#col-tile-g{{ goal.goal_pre }} -->
             <div id="col-text-g{{ goal.goal_pre }}" class="col-xs-8 tile-text"
                  style="border-top: 3px solid {{ goal.hexval }};">
-              <h5>{{ goal.goals[0].description }}</h5>
-              <canvas id="chart-g{{ goal.goal_pre }}" height="1px"></canvas>
+              <div class="col-xs-12"><h5>{{ goal.goals[0].description }}</h5></div>
+              <div class="col-xs-12">
+                <canvas id="chart-g{{ goal.goal_pre }}d" height="1px"></canvas>
+              </div>
             </div><!-- /#col-text-g{{ goal.goal_pre }} -->
           </div><!-- /#col-td-{{ goal.goal_pre }} -->
         {% endfor %}
@@ -97,6 +103,65 @@
     </div><!-- /#col-tiledetails -->
   </div><!-- /#row-body-tiledetails -->
 
-  <div id="row-body-goal-minutiae" class="row body-row extra-hidden">sdfkjhsdk</div><!-- /#row-body-goal-minutiae -->
+  <div id="row-body-goal-minutiae" class="row body-row">
+    <div id="col-goalminutiae" class="col-xs-12">
+      <div id="row-detailback" class="row">
+        <div id="col-countryinfo3" class="col-xs-8 col-md-10 countryinfo">
+          <!-- Populated with JS -->
+        </div><!-- /#col-countryinfo3 -->
+        <div id="col-backbtn2" class="col-xs-4 col-md-2">
+          <button id="btn-back" class="btn btn-default form-control btn-btnselect" 
+                  data-toggle="extra-hidden" data-target="#row-body-charttiles"
+                  data-sender="#row-body-goal-minutiae" type="button">
+            Back to Chart
+          </button>
+          <button id="btn-back2" class="btn btn-default form-control btn-btnselect" 
+                  data-toggle="extra-hidden" data-target="#row-body-tiledetails"
+                  data-sender="#row-body-goal-minutiae" type="button">
+            Back to Tiles
+          </button>
+        </div><!-- /#col-backbtn2 -->
+      </div><!-- /#row-detailback -->
+      <div id="row-goalminutiae">
+        {% for goal in goals %}
+          <div id="col-gm-{{ goal.goal_pre }}" class="col-xs-12 goal-minutiae">
+            <a id="g{{ goal.goal_pre }}m"></a>
+            <div id="col-gm-g{{ goal.goal_pre }}" class="col-xs-4 col-lg-2 tile-indiv">
+              <button id="g{{ goal.goal_pre }}md2" type="button"
+                      class="btn btn-default tile tile-md g{{ goal.goal_pre }}"
+                      data-toggle="extra-hidden"
+                      data-target="#row-body-tiledetails"
+                      data-sender="#row-body-goal-minutiae"
+                      style="background-image: url('static/{{ goal.iurl_full }}');
+                             background-color: {{ goal.hexval }};">
+              </button>
+              <p>Learn about this goal from
+                <a href="{{ goal.unurl }}" target="_blank" 
+                   title="Goal {{ goal.goal_pre }} at the UN">the UN</a>
+              </p>
+            </div><!-- /#col-gm-g{{ goal.goal_pre }} -->
+            <div id="col-text-g{{ goal.goal_pre }}" class="col-xs-8 col-lg-10 tile-text"
+                 style="border-top: 3px solid {{ goal.hexval }};">
+              <div class="col-xs-12"><h4>{{ goal.goals[0].description }}</h4></div>
+              <div class="col-xs-12">
+                <canvas id="chart-g{{ goal.goal_pre }}m" height="1px"></canvas>
+              </div>
+              {% for indic in goal.goals[0].indicators %}
+                <div id="col-indic{{ indic.indicator_id }}" class="col-xs-12 col-md-6">
+                  <p>
+                    {{ indic.title }}
+                    (<a href="{{ indic.wburl }}" target="_blank" 
+                        title="{{ indic.indicator_id }} at the World Bank"
+                        >{{ indic.indicator_id }}</a>)
+                  </p>
+                  <canvas id="{{ indic.indicator_id }}" height="1px"></canvas>
+                </div><!-- /#col-indic{{ indic.indicator_id }} -->
+              {% endfor %}
+            </div><!-- /#col-text-g{{ goal.goal_pre }} -->
+          </div><!-- /#col-gm-{{ goal.goal_pre }} -->
+        {% endfor %}
+      </div><!-- /#row-goalminutiae -->
+    </div><!-- /#col-goalminutiae -->
+  </div><!-- /#row-body-goal-minutiae -->
 
 </div><!-- /#cont-body-charttiles -->

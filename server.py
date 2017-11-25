@@ -34,14 +34,9 @@ def index():
     """
 
     countries = Country.get_db_objs()
-    selected = choice(countries)
     goals = GoalDesign.get_db_objs()
-    y_lbound, y_ubound = get_year_bounds()
-    print "\n\n   ", goals[0]
-    print "   ", goals[0].goals
 
     return render_template("index2.html", countries=countries,
-                                          selected=selected,
                                           goals=goals,
                                           slider_min=y_lbound,
                                           slider_max=y_ubound)
@@ -55,18 +50,15 @@ def get_country_data():
 
     """
 
-    print "\n\n"
-    # pull id from GET request arguments
+    # Pull country id from GET request arguments
     country_id = request.args.get('country_id')
-    print "   ", country_id
 
     if not country_id:
         return jsonify(message="No Country Sent")
 
-    # send request for data, receive all query objects
+    # Send request for data, receive all query objects
     c_obj = Country.get_db_objs(country_id=country_id)[0]
     query_objs = Datum.get_db_objs(country_id=country_id)
-    print "   ", c_obj, len(query_objs)
 
     c_information = {}
     c_information['name'] = c_obj.name
@@ -85,21 +77,10 @@ def get_country_data():
     to_del.sort(reverse=True)
     for n in to_del:
         del query_objs[n]
-    print "   ", len(query_objs)
-
-    # Get least- and most-recent years
-    y_lbound, y_ubound = get_year_bounds()
-
-    c_datasets = {}
-    c_tilevals = {}
-    for i in range(y_lbound, y_ubound + 1):
-        c_datasets[str(i)] = []
-        c_tilevals[str(i)] = {}
 
     # Clear the values from the c_ dictionaries
     c_datasets.update((year, []) for year in c_datasets)
     c_tilevals.update((year, {}) for year in c_tilevals)
-    print "   ", c_datasets['2011'], c_tilevals['2011']
 
     # send data for unpacking and repackaging, receive packages
     # makes 'cDatasets'
@@ -109,7 +90,6 @@ def get_country_data():
         i = q_obj.indicator.title
         year = str(q_obj.year)
         c_datasets[year].append({'x': int(x), 'y': y, 'i': i})
-    print "   ", len(c_datasets['2011'])
 
     # makes 'cTileVals'
     for year in c_tilevals.iterkeys():      # for each year
@@ -129,9 +109,7 @@ def get_country_data():
                 continue
             goal_id = "g{:0>2}".format(str(goal))
             c_tilevals[year][goal_id] = goal_avg
-    print "   ", c_tilevals['2011']
-    print "\n\n"
-
+    
     return jsonify(cDatasets=c_datasets,
                    cTileVals=c_tilevals,
                    cInformation=c_information)
@@ -156,10 +134,16 @@ if __name__ == "__main__":
     else:
         connect_to_db(app)
 
+    # Get year bounds and set up data dictionaries
+    y_lbound, y_ubound = get_year_bounds()
+    c_datasets = {}
+    c_tilevals = {}
+    for i in range(y_lbound, y_ubound + 1):
+        c_datasets[str(i)] = []
+        c_tilevals[str(i)] = {}
+
     # Use the DebugToolbar
     DebugToolbarExtension(app)
 
     # Set server to localhost:5000
     app.run(port=5000, host='0.0.0.0')
-
-    #
