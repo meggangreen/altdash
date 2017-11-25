@@ -17,6 +17,7 @@ selectCountry();
 // Event listeners
 $('#select-country').on('change', selectCountry);
 $('#btn-random').on('click', selectCountry);
+$('.btn').on('click', swapDivs);
 
 
 function storeGoalAttrs(element, index, array) {
@@ -28,21 +29,47 @@ function storeGoalAttrs(element, index, array) {
 }
 
 
+function swapDivs(evt) {
+    /* Show and hide appropriate div elements after button click. */
+
+    if ( $(this).data('toggle') !== 'extra-hidden' ) {
+        return null;
+    }
+
+    let toHide = $(this).data('sender');
+    let toShow = $(this).data('target');
+    let toGoal = $(this).data('goalA');  // gEEd or gEEm
+
+    $(toHide).addClass("extra-hidden");
+    $(toShow).removeClass("extra-hidden");
+
+    if ( toGoal ) {
+        $('html, body').animate({
+            scrollTop: $('#' + toGoal).offset().top -45
+        }, 500, 'linear');
+    } // end if
+}
+
+
 function selectCountry(evt) {
     /* Handles new country selection. Calls getCountryData. */
-    if ( $(this).attr('id') === "btn-random" ) {
+
+    if ( $(this).attr('id') === "select-country" ) {
+        $('#select-country').data('country', $(this).val()); 
+    } else {
         // Pick randomized country
         let r = Math.floor(Math.random() * cCountries.length);
         let rCountry = cCountries[r].value;
         //this updates codewise but not in the page
         $('#select-country').data('country', rCountry);
         $('#select-country').val(rCountry);
-    } else if ( $(this).attr('id') === "select-country" ) {
-        $('#select-country').data('country', $(this).val()); 
     } // end if
     
     cCountry = $('#select-country').data('country');
     $('#select-country').val(cCountry);
+    $('html, body').animate({
+            scrollTop: $('body').offset().top
+        }, 500, 'linear');
 
     getCountryData(cCountry);
 }

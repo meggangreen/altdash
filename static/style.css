@@ -1,5 +1,5 @@
 .extra-hidden {
-    visibility: hidden;
+    display: none;
 }
 
 p {
@@ -116,6 +116,10 @@ p {
 canvas {
     min-height: 1px;
     min-width: 1px;
+    margin-top: 5px;
+}
+
+#scatter-chart {
     margin-top: 15px;
 }
 
@@ -265,6 +269,7 @@ canvas {
 
 .tile-text h5 {
     margin-top: 3px;
+    margin-bottom: 0;
     
 }
 
@@ -277,7 +282,7 @@ canvas {
 }
 
 .tile:focus, .tile:hover {
-    border: 2px solid #000;
+    border: 2px solid #333;
 }
 
 /* populate colors/imgs with js */

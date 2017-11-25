@@ -1,7 +1,7 @@
 <!-- needs to go in a full-width div -->
 
 <div id="cont-body-charttiles" class="container-fluid container-body">
-  
+
   <div id="row-body-charttiles" class="row body-row">
     <div id="col-scatterchart" class="col-xs-12 col-md-8">
       <div id="row-btnselect" class="row">
@@ -46,6 +46,10 @@
       {% for goal in goals %}
         <button id="g{{ goal.goal_pre }}sm" type="button"
                 class="btn btn-default tile tile-sm g{{ goal.goal_pre }}"
+                data-toggle="extra-hidden"
+                data-target="#row-body-tiledetails"
+                data-sender="#row-body-charttiles"
+                data-goal-a="g{{ goal.goal_pre }}d"
                 style="background-image: url('static/{{ goal.iurl_blank }}');
                        background-color: {{ goal.hexval }};">
         </button>
@@ -53,14 +57,16 @@
     </div><!-- /#col-tiles -->
   </div><!-- /#row-body-charttiles -->
 
-  <div id="row-body-tiledetails" class="row body-row">
+  <div id="row-body-tiledetails" class="row body-row extra-hidden">
     <div id="col-tiledetails" class="col-xs-12">
       <div id="row-countryback" class="row">
         <div id="col-countryinfo2" class="col-xs-8 col-md-10 countryinfo">
           <!-- Populated with JS -->
         </div><!-- /#col-countryinfo2 -->
         <div id="col-backbtn" class="col-xs-4 col-md-2">
-          <button id="btn-back" class="btn btn-default form-control btn-btnselect" type="button">
+          <button id="btn-back" class="btn btn-default form-control btn-btnselect" 
+                  data-toggle="extra-hidden" data-target="#row-body-charttiles"
+                  data-sender="#row-body-tiledetails" type="button">
             Back to Chart
           </button>
         </div><!-- /#col-backbtn -->
@@ -68,10 +74,14 @@
       <div id="row-tiledetails" class="row">
         {% for goal in goals %}
           <div id="col-td-{{ goal.goal_pre }}" class="col-xs-12 col-md-4 tile-row">
-            <a id="a-{{ goal.goal_pre }}"></a>
+            <a id="g{{ goal.goal_pre }}d"></a>
             <div id="col-tile-g{{ goal.goal_pre }}" class="col-xs-4 tile-indiv">
               <button id="g{{ goal.goal_pre }}md" type="button"
                       class="btn btn-default tile tile-md g{{ goal.goal_pre }}"
+                      data-toggle="extra-hidden"
+                      data-target="#row-body-goal-minutiae"
+                      data-sender="#row-body-tiledetails"
+                      data-goal-a="g{{ goal.goal_pre }}m"
                       style="background-image: url('static/{{ goal.iurl_full }}');
                              background-color: {{ goal.hexval }};">
               </button>
@@ -79,11 +89,14 @@
             <div id="col-text-g{{ goal.goal_pre }}" class="col-xs-8 tile-text"
                  style="border-top: 3px solid {{ goal.hexval }};">
               <h5>{{ goal.goals[0].description }}</h5>
+              <canvas id="chart-g{{ goal.goal_pre }}" height="1px"></canvas>
             </div><!-- /#col-text-g{{ goal.goal_pre }} -->
           </div><!-- /#col-td-{{ goal.goal_pre }} -->
         {% endfor %}
       </div><!-- /#row-tiledetails -->
     </div><!-- /#col-tiledetails -->
   </div><!-- /#row-body-tiledetails -->
+
+  <div id="row-body-goal-minutiae" class="row body-row extra-hidden">sdfkjhsdk</div><!-- /#row-body-goal-minutiae -->
 
 </div><!-- /#cont-body-charttiles -->
