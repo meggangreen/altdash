@@ -37,6 +37,8 @@ def index():
     selected = choice(countries)
     goals = GoalDesign.get_db_objs()
     y_lbound, y_ubound = get_year_bounds()
+    print "\n\n   ", goals[0]
+    print "   ", goals[0].goals
 
     return render_template("index2.html", countries=countries,
                                           selected=selected,

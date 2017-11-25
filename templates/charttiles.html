@@ -1,6 +1,7 @@
 <!-- needs to go in a full-width div -->
 
 <div id="cont-body-charttiles" class="container-fluid container-body">
+  
   <div id="row-body-charttiles" class="row body-row">
     <div id="col-scatterchart" class="col-xs-12 col-md-8">
       <div id="row-btnselect" class="row">
@@ -66,7 +67,8 @@
       </div><!-- /#row-countryback -->
       <div id="row-tiledetails" class="row">
         {% for goal in goals %}
-          <div class="col-xs-12 col-md-4 tile-row">
+          <div id="col-td-{{ goal.goal_pre }}" class="col-xs-12 col-md-4 tile-row">
+            <a id="a-{{ goal.goal_pre }}"></a>
             <div id="col-tile-g{{ goal.goal_pre }}" class="col-xs-4 tile-indiv">
               <button id="g{{ goal.goal_pre }}md" type="button"
                       class="btn btn-default tile tile-md g{{ goal.goal_pre }}"
@@ -74,9 +76,14 @@
                              background-color: {{ goal.hexval }};">
               </button>
             </div><!-- /#col-tile-g{{ goal.goal_pre }} -->
-          </div><!-- /#col-tileindiv -->
+            <div id="col-text-g{{ goal.goal_pre }}" class="col-xs-8 tile-text"
+                 style="border-top: 3px solid {{ goal.hexval }};">
+              <h5>{{ goal.goals[0].description }}</h5>
+            </div><!-- /#col-text-g{{ goal.goal_pre }} -->
+          </div><!-- /#col-td-{{ goal.goal_pre }} -->
         {% endfor %}
       </div><!-- /#row-tiledetails -->
     </div><!-- /#col-tiledetails -->
   </div><!-- /#row-body-tiledetails -->
+
 </div><!-- /#cont-body-charttiles -->

@@ -257,8 +257,15 @@ canvas {
     background-position: center;
 }
 
-.tile:focus, .tile:hover {
-    border: 2px solid #000;
+.tile-text {
+    padding-left: 0;
+    padding-right: 0;
+    margin-top: 7px;
+}
+
+.tile-text h5 {
+    margin-top: 3px;
+    
 }
 
 .tile-score {
@@ -267,6 +274,10 @@ canvas {
     line-height: 1;
     margin-top: 22px;
     color:  #fff;
+}
+
+.tile:focus, .tile:hover {
+    border: 2px solid #000;
 }
 
 /* populate colors/imgs with js */

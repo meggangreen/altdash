@@ -183,7 +183,8 @@ class Goal(db.Model):
                                  secondary='goals_indicators',
                                  backref=db.backref('goals', order_by=goal_id))
 
-    design = db.relationship('GoalDesign')
+    design = db.relationship('GoalDesign',
+                             backref=db.backref('goals', order_by=goal_id))
 
     def __repr__(self):
         return ('<Goal id={} descr="{}" (g.indicators) (g.design) >\n'
