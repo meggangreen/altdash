@@ -38,14 +38,22 @@ function swapDivs(evt) {
     let toShow = $(this).data('target');
     let toGoal = '#' + $(this).data('goalA');  // #gEEd or #gEEm or #undefined
     
+    // hide all 3rd level divs when navigating away from 3rd level
     if (toHide === '#row-body-goal-minutiae') {
         $('.goal-minutiae').addClass("extra-hidden");
-    } // hide all 3-rd level divs when navigating away from 3rd level
+    }
+
     $(toHide).addClass("extra-hidden");
     $(toShow).removeClass("extra-hidden");
+
+    // unhide appropriate goal row(s)
     if (toShow === '#row-body-goal-minutiae') {
-        $(toGoal).parent().removeClass("extra-hidden");
-    } // unhide appropriate goal row
+        if (toHide === '#row-body-gm-showall') {
+            $('#row-goalminutiae').children().removeClass("extra-hidden");
+        } else {
+            $(toGoal).parent().removeClass("extra-hidden");
+        }
+    }
 
     if ( toGoal !== '#undefined' ) {
         $('html, body').animate(
