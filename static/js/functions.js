@@ -49,7 +49,7 @@ function swapDivs(evt) {
 
     if ( toGoal !== '#undefined' ) {
         $('html, body').animate(
-            { scrollTop: $(toGoal).offset().top -45 }, 
+            { scrollTop: $(toGoal).offset().top -65 }, 
             500, 'linear');
     } // end if
 }
@@ -292,7 +292,7 @@ function makeChartScatter(cYear) {
             } }, // end elements
             tooltips: {
                 displayColors: false,
-                bodyFontColor: 'rgb(51, 51, 51)',  // #33
+                bodyFontColor: 'rgb(51, 51, 51)',  // #333
                 backgroundColor: 'rgb(238, 238, 238)',  // #eee
                 callbacks: {
                     beforeLabel: function(tooltipItem, data) {
@@ -322,7 +322,7 @@ function makeChartScatter(cYear) {
                     ticks: {min: 0, max: 100, stepSize: 25, display: false},
                     // thanks to L Bahr 'https://stackoverflow.com/questions/37451905/how-to-set-static-value-in-y-axis-in-chart-js'
                     afterBuildTicks: function(scale) {
-                      scale.ticks = [0, 30, 70, 100]; // set y-axis values exactly
+                      scale.ticks = [0, 10, 30, 70, 90, 100]; // set y-axis values exactly
                       return;
                     },
                     beforeUpdate: function(oScale) {

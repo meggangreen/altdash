@@ -26,52 +26,35 @@ p {
     padding: 0;
 }
 
+.navbar {
+    min-height: 65px;
+}
+
+.navbar-brand, .navbar-brand:focus, .navbar-brand:hover,
+.navbar-default .navbar-brand,
+.navbar-default .navbar-brand:focus, 
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand a:hover,
+.navbar-default .navbar-brand a:active,
+.navbar-default .navbar-brand a:visited {
+    font-size: 30px;
+    height: 65px;
+    padding: 23px 15px;
+    color: #fff;
+}
+
 .navbar-default {
     background-color: #02558b;
     border-color: #444;
-    border-width: 0 0 2px;
+    border-width: 0 0 3px;
 }
 
-.navbar-default .navbar-brand:focus, 
-.navbar-default .navbar-brand:hover {
-    color: #eee;
-}
-
-.navbar-toggle,
-.navbar-default .navbar-toggle:hover, 
-.navbar-default .navbar-toggle:focus {
-    background-color: #1c6fa5;
-}
-
-.navbar-default .navbar-nav > .active > a, 
-.navbar-default .navbar-nav > .active > a:focus, 
-.navbar-default .navbar-nav > .active > a:hover {
-    color: #fff;
-    background-color: #1c6fa5;
-}
-.navbar-default .navbar-nav > li > a {
-    color: #eee;
-}
-
-.navbar-default .navbar-nav > li > a:focus, 
-.navbar-default .navbar-nav > li > a:hover {
-    color: #fff;
-}
-
-.navbar-default .navbar-toggle .icon-bar {
-    background-color: #ddd;
-}
-
-.navbar-default .navbar-brand {
-    color: #fff;
+.navbar > .container-fluid .navbar-brand {
+    margin-left: 0;
 }
 
 #nav-container {
     max-width: 1400px;
-}
-
-.navbar-default .navbar-toggle {
-    border-color: #ddd;
 }
 
 .body-row {
@@ -80,7 +63,7 @@ p {
 }
 
 #body-dynamic, #body-content {
-    padding-top: 50px;
+    padding-top: 65px;
 }
 
 .body-0, .body-1, .body-2 {
@@ -347,11 +330,11 @@ div > svg > text {
 /* Much appreciation to http://jsfiddle.net/gaby/9Ryvs/7/ */
 .logo {
     position: relative;  /* to "brand" */
-    top: -29px;
-    left: -13px;
+    top: -35px;
+    left: -18px;
     margin: 0;
-    width: 40px;
-    height: 40px;
+    width: 53px;
+    height: 53px;
     background-color: transparent;
     z-index: -1;
     -webkit-animation-name: spin;
