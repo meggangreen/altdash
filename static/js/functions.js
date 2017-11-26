@@ -6,13 +6,11 @@ $(document).ready(function() {
 let cCountries, cCountry, cGoalsRaw, cGoals = new Map ([]);
 let chartScatter, cYear, cMin, cMax, cDatasets, cTileVals, cInformation;
 
-let divRowBodyChartTiles = $('#row-body-charttiles').html();
-let divRowBodyTileDetails = $('#row-body-tiledetails').html();
-
 cCountries = $('.opt-country').toArray();
 cGoalsRaw = $('.tile-sm').toArray();
 cGoalsRaw.forEach(storeGoalAttrs);
 selectCountry();
+
 
 // Event listeners
 $('#select-country').on('change', selectCountry);
@@ -38,7 +36,7 @@ function swapDivs(evt) {
 
     let toHide = $(this).data('sender');
     let toShow = $(this).data('target');
-    let toGoal = '#' + $(this).data('goalA');  // #gEEd or #gEEm
+    let toGoal = '#' + $(this).data('goalA');  // #gEEd or #gEEm or #undefined
     
     if (toHide === '#row-body-goal-minutiae') {
         $('.goal-minutiae').addClass("extra-hidden");
@@ -47,18 +45,18 @@ function swapDivs(evt) {
     $(toShow).removeClass("extra-hidden");
     if (toShow === '#row-body-goal-minutiae') {
         $(toGoal).parent().removeClass("extra-hidden");
-    } // hide all 3-rd level divs when navigating away from 3rd level
+    } // unhide appropriate goal row
 
-    if ( toGoal ) {
-        $('html, body').animate({
-            scrollTop: $(toGoal).offset().top -45
-        }, 500, 'linear');
+    if ( toGoal !== '#undefined' ) {
+        $('html, body').animate(
+            { scrollTop: $(toGoal).offset().top -45 }, 
+            500, 'linear');
     } // end if
 }
 
 
 function selectCountry(evt) {
-    /* Handles new country selection. Calls getCountryData. */
+    /* Handles new country selection and resets page. Calls getCountryData. */
 
     if ( $(this).attr('id') === "select-country" ) {
         $('#select-country').data('country', $(this).val()); 
@@ -73,9 +71,11 @@ function selectCountry(evt) {
     
     cCountry = $('#select-country').data('country');
     $('#select-country').val(cCountry);
-    $('html, body').animate({
-            scrollTop: $('body').offset().top
-        }, 500, 'linear');
+
+    // Reset page scroll to top
+    $('html, body').animate(
+        { scrollTop: $('body').offset().top },
+        500, 'linear');
 
     getCountryData(cCountry);
 }
@@ -96,6 +96,17 @@ function getCountryData(cCountry) {
 
 function initializeChartTiles() {
     /*  */
+
+    // On page load, the map has to be displayed to EVER be displayed
+    // #map_holder should have its width by now, so let's hide it
+    // unfortunately, this is a weird place to keep this bit of code
+    // fortunately, there is no negative consequence to that
+    if ( !chartScatter ) { 
+        $('#row-body-worldmap').addClass("extra-hidden");
+        $('#row-body-worldmap').removeClass("kinda-hidden");
+        console.log("hid the map!"); 
+    }
+    
 
     makeSlider();
     updateChartTiles();
@@ -194,9 +205,7 @@ function makeCountryInfo() {
         ;
 
         formatHTML = formatH4 + formatP;
-    }
-
-    
+    } // end if
     
     $('.countryinfo').html(formatHTML);
 }
@@ -211,7 +220,6 @@ function makeChartScatter(cYear) {
 
     // cDatasets = { '2011': [{x: 3, y: 2, i: "name"}, {x: 3, y: 5, i: "name"}] };
 
-    console.log("made it to mCS");
     if ( chartScatter ) { chartScatter.destroy(); console.log("chart DESTROYED!"); }
 
     let xlabel = cYear;

@@ -6,7 +6,9 @@
     <div id="col-scatterchart" class="col-xs-12 col-md-8">
       <div id="row-btnselect" class="row">
         <div id="col-mapbtn" class="col-xs-3">
-          <button id="btn-map" class="btn btn-default form-control btn-btnselect" type="button">
+          <button id="btn-map" class="btn btn-default form-control btn-btnselect"
+                  type="button" data-target="#row-body-worldmap"
+                  data-toggle="extra-hidden" data-sender="#row-body-charttiles">
             World Map
           </button>
         </div><!-- /#col-mapbtn -->
@@ -85,15 +87,15 @@
                       style="background-image: url('static/{{ goal.iurl_full }}');
                              background-color: {{ goal.hexval }};">
               </button>
-              <p>Learn about this goal from
+              <p class="footnote">Learn about this goal from
                 <a href="{{ goal.unurl }}" target="_blank" 
                    title="Goal {{ goal.goal_pre }} at the UN">the UN</a>
               </p>
             </div><!-- /#col-tile-g{{ goal.goal_pre }} -->
             <div id="col-text-g{{ goal.goal_pre }}" class="col-xs-8 tile-text"
                  style="border-top: 3px solid {{ goal.hexval }};">
-              <div class="col-xs-12"><h5>{{ goal.goals[0].description }}</h5></div>
-              <div class="col-xs-12">
+              <div class="col-xs-12 tile-row"><h5>{{ goal.goals[0].description }}</h5></div>
+              <div class="col-xs-12 tile-row">
                 <canvas id="chart-g{{ goal.goal_pre }}d" height="1px"></canvas>
               </div>
             </div><!-- /#col-text-g{{ goal.goal_pre }} -->
@@ -110,12 +112,12 @@
           <!-- Populated with JS -->
         </div><!-- /#col-countryinfo3 -->
         <div id="col-backbtn2" class="col-xs-4 col-md-2">
-          <button id="btn-back" class="btn btn-default form-control btn-btnselect" 
+          <button id="btn-back2" class="btn btn-default form-control btn-btnselect" 
                   data-toggle="extra-hidden" data-target="#row-body-charttiles"
                   data-sender="#row-body-goal-minutiae" type="button">
             Back to Chart
           </button>
-          <button id="btn-back2" class="btn btn-default form-control btn-btnselect" 
+          <button id="btn-back3" class="btn btn-default form-control btn-btnselect" 
                   data-toggle="extra-hidden" data-target="#row-body-tiledetails"
                   data-sender="#row-body-goal-minutiae" type="button">
             Back to Tiles
@@ -135,7 +137,7 @@
                       style="background-image: url('static/{{ goal.iurl_full }}');
                              background-color: {{ goal.hexval }};">
               </button>
-              <p>Learn about this goal from
+              <p class="footnote">Learn about this goal from
                 <a href="{{ goal.unurl }}" target="_blank" 
                    title="Goal {{ goal.goal_pre }} at the UN">the UN</a>
               </p>
@@ -150,9 +152,11 @@
                 <div id="col-indic{{ indic.indicator_id }}" class="col-xs-12 col-md-6">
                   <p>
                     {{ indic.title }}
+                    <span class="footnote">
                     (<a href="{{ indic.wburl }}" target="_blank" 
                         title="{{ indic.indicator_id }} at the World Bank"
                         >{{ indic.indicator_id }}</a>)
+                    </span>
                   </p>
                   <canvas id="{{ indic.indicator_id }}" height="1px"></canvas>
                 </div><!-- /#col-indic{{ indic.indicator_id }} -->
@@ -163,5 +167,24 @@
       </div><!-- /#row-goalminutiae -->
     </div><!-- /#col-goalminutiae -->
   </div><!-- /#row-body-goal-minutiae -->
+
+  <div id="row-body-worldmap" class="row body-row kinda-hidden">
+    <div id="col-worldmap" class="col-xs-12">
+      <div id="col-backbtn3" class="col-xs-4 col-xs-offset-8 col-md-2 col-md-offset-10">
+        <button id="btn-back4" class="btn btn-default form-control btn-btnselect" 
+                data-toggle="extra-hidden" data-target="#row-body-charttiles"
+                data-sender="#row-body-worldmap" type="button">
+          Back to Chart
+        </button>
+      </div><!-- /#col-backbtn3 -->
+      <div id="map" class="col-xs-12 col-md-10 col-md-offset-1"></div>
+      <div id="col-mapcredit" class="col-xs-4 col-xs-offset-8 col-md-2 col-md-offset-10">
+        <p>
+          Map by
+          <a href="http://simplemaps.com" target="_blank" title="SimpleMaps">SimpleMaps</a>
+        </p>
+      </div><!-- /#col-mapcredit -->
+    </div><!-- /#col-worldmap -->
+  </div><!-- /#row-body-worldmap -->
 
 </div><!-- /#cont-body-charttiles -->
