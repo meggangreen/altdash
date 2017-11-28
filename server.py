@@ -18,7 +18,7 @@ from jinja2 import StrictUndefined
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
-app.secret_key = "WBSDG-Dashboards"
+app.secret_key = "AltDash SDG UN WB"
 
 # Normally, if you use an undefined variable in Jinja2, it fails silently.
 # This is horrible. Make it raise an error instead.
