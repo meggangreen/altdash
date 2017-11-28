@@ -150,3 +150,30 @@ def get_wbmeta_by_country(c_id):
         data = None
     else:
         return data[1][0]
+
+
+def do_data_math(data_objs):
+    """ Put scaled and display values on data. Move to part of seed file. """
+
+    for dpt in data_objs:
+        if dpt.display_value is None:
+            # Do math as necessary
+            if dpt.indicator.display_math is not None:
+                n = dpt.value
+                dpt.scaled_value = eval(dpt.indicator.display_math)
+            else:
+                dpt.scaled_value = dpt.value
+            # Invert as necessary
+            if dpt.indicator.scale_inverse is True:
+                dpt.scaled_value = 100 - dpt.scaled_value
+            # Round as necessary
+            if dpt.scaled_value < 0.001:
+                dpt.display_value = 0.0
+            elif dpt.scaled_value > 99.991:
+                dpt.display_value = 100
+            else:
+                dpt.display_value = dpt.scaled_value
+
+    db.session.commit()
+
+    return data_objs

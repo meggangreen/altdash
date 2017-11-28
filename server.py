@@ -50,6 +50,8 @@ def get_country_data():
 
     """
 
+    print "\n\n"
+
     # Pull country id from GET request arguments
     country_id = request.args.get('country_id')
 
@@ -68,19 +70,10 @@ def get_country_data():
 
     # Send request for data points; receive all query objects
     query_objs = Datum.get_db_objs(country_id=country_id)
-    pdb.set_trace()
-    query_objs = do_data_math(query_objs)
-    pdb.set_trace()
 
-    # right now, this just cleans out inverted-scale and math-having values
-    # to_del = []
-    # for i, q_obj in enumerate(query_objs):
-    #     if ((q_obj.indicator.display_math == "m") or
-    #         (q_obj.indicator.scale_inverse is True)):
-    #         to_del.append(i)
-    # to_del.sort(reverse=True)
-    # for n in to_del:
-    #     del query_objs[n]
+    # Eventually, all the data points will have their scaled and display values,
+    # but not yet, so we need to call do_data_math for them
+    query_objs = do_data_math(query_objs)
 
     # Clear the values from the c_ dictionaries
     c_datasets.update((year, []) for year in c_datasets)
@@ -90,10 +83,13 @@ def get_country_data():
     # makes 'cDatasets'
     for q_obj in query_objs:
         x = q_obj.indicator.goals[0].goal_pre
-        y = q_obj.value
-        i = q_obj.indicator.title
+        y = round(q_obj.display_value, 2)
+        v = round(q_obj.value, 2)
+        s = round(q_obj.scaled_value, 2)
+        i = (q_obj.indicator.title if q_obj.indicator.scale_inverse is False
+                                   else q_obj.indicator.title + " (inverted)")
         year = str(q_obj.year)
-        c_datasets[year].append({'x': int(x), 'y': y, 'i': i})
+        c_datasets[year].append({'x': int(x), 'y': y, 'i': i, 'v': v, 's': s})
 
     # makes 'cTileVals'
     for year in c_tilevals.iterkeys():      # for each year
@@ -111,8 +107,8 @@ def get_country_data():
                 # if there's a prob with the math, just skip it
                 # this also prevents 0-value goal scores
                 continue
-            goal_id = "g{:0>2}".format(str(goal))
-            c_tilevals[year][goal_id] = goal_avg
+            goal_id = "g{:0>2}".format(str(goal))  # gEE
+            c_tilevals[year][goal_id] = round(goal_avg, 1)
 
     return jsonify(cDatasets=c_datasets,
                    cTileVals=c_tilevals,
