@@ -1,6 +1,7 @@
 """ Models and db functions for SDG db. """
 
 from flask_sqlalchemy import SQLAlchemy
+import pdb
 
 db = SQLAlchemy()
 
@@ -285,6 +286,8 @@ class Datum(db.Model):
                              nullable=False)
     year = db.Column(db.Integer, nullable=False)
     value = db.Column(db.Float, nullable=False)
+    scaled_value = db.Column(db.Float, nullable=True)
+    display_value = db.Column(db.Float, nullable=True)
 
     country = db.relationship('Country',
                               backref=db.backref('data_points',
@@ -303,7 +306,7 @@ class Datum(db.Model):
 
     @classmethod
     def get_db_objs(cls, country_id=None, indicator_id=None,
-                         year=None, value=None):
+                         year=None, value=None, display_value=None):
         """ Returns list of db objects from Datum table ordered by indicator id.
             Optionally, can filter and order by country id, year, and/or value
             as well.
@@ -323,14 +326,17 @@ class Datum(db.Model):
                           .order_by(cls.country_id))
 
         if year:
-            year = "%" + str(year) + "%"
-            query = (query.filter(cls.year.ilike(year))
+            query = (query.filter(cls.year == year)
                           .order_by(cls.year))
 
         if value:
-            value = "%" + str(value) + "%"
-            query = (query.filter(cls.value.ilike(value))
-                          .order_by(cls.value))
+            value_f = float(value[2:])
+            if value[0:2] == '==':
+                query = (query.filter(cls.value == value_f)
+                              .order_by(cls.value))
+
+        if display_value == 'None':
+            query = query.filter(cls.display_value == None)
 
         db_objs = query.all()
 
@@ -351,52 +357,6 @@ def connect_to_db(app):
     db.init_app(app)
 
 
-def sort_indicators(indicators):
-    """ Sort indicators into _norm, _inv, or _math. """
-
-    try_again = []
-
-    f = open('sortedindic.txt', 'a')
-
-    for indic in indicators:
-        print
-        print indic
-        location = raw_input("(N)ormal, (I)nverted, or (M)ath? ")
-        if location.upper() in ("N", "I", "M"):
-            f.write("\n" + location + "|" + indic.indicator_id)
-        else:
-            try_again.append(indic)
-
-    f.close()
-
-    if try_again:
-        sort_indicators(try_again)
-
-
-def update_indicator_scale():
-    """ After ALTER TABLE, set scale_inverse value for each indicator and note
-        which indicators will have math in order to display on 0-10 scale.
-
-    """
-
-    # Get dict of indicator and scale
-    scale_dict = {}
-    f = open('sortedindic.txt', 'r')
-    for row in f:
-        row.rstrip()
-        s, indic = row.split("|")
-        scale_dict[indic[:-1]] = s
-    f.close()
-
-    indicators = Indicator.query.all()
-    for indic in indicators:
-        if scale_dict.get(indic.indicator_id) == 'i':
-            indic.scale_inverse = True
-        elif scale_dict.get(indic.indicator_id) == 'm':
-            indic.display_math = 'm'
-    db.session.commit()
-
-
 if __name__ == "__main__":
     # As a convenience, if we run this module interactively, it will leave
     # us in a state of being able to work with the database directly.
@@ -404,3 +364,82 @@ if __name__ == "__main__":
     from server import app
     connect_to_db(app)
     print "\n\nConnected to DB.\n"
+
+
+###########################
+### DEPRECATED
+###########################
+def do_data_math(data_objs):
+    """ Put scaled and display values on data. Move to part of seed file. """
+
+    for dpt in data_objs:
+        if dpt.display_value is None:
+            pdb.set_trace()
+            # Do math as necessary
+            if dpt.indicator.display_math is not None:
+                n = dpt.value
+                dpt.scaled_value = eval(dpt.indicator.display_math)
+            else:
+                dpt.scaled_value = dpt.value
+            # Invert as necessary
+            if dpt.indicator.scale_inverse is True:
+                dpt.scaled_value = 100 - dpt.scaled_value
+            # Round as necessary
+            if dpt.scaled_value < 0.001:
+                dpt.display_value = 0.0
+            elif dpt.scaled_value > 99.991:
+                dpt.display_value = 100
+            else:
+                dpt.display_value = dpt.scaled_value
+
+    db.session.commit()
+
+    return data_objs
+
+
+# def update_indicator_scale():
+#     """ After ALTER TABLE, set scale_inverse value for each indicator and note
+#         which indicators will have math in order to display on 0-10 scale.
+
+#     """
+
+#     # Get dict of indicator and scale
+#     scale_dict = {}
+#     f = open('sortedindic.txt', 'r')
+#     for row in f:
+#         row.rstrip()
+#         s, indic = row.split("|")
+#         scale_dict[indic[:-1]] = s
+#     f.close()
+
+#     indicators = Indicator.query.all()
+#     for indic in indicators:
+#         if scale_dict.get(indic.indicator_id) == 'i':
+#             indic.scale_inverse = True
+#         elif scale_dict.get(indic.indicator_id) == 'm':
+#             indic.display_math = 'm'
+#     db.session.commit()
+
+
+# def sort_indicators(indicators):
+#     """ Sort indicators into _norm, _inv, or _math. """
+
+#     try_again = []
+
+#     f = open('sortedindic.txt', 'a')
+
+#     for indic in indicators:
+#         print
+#         print indic
+#         location = raw_input("(N)ormal, (I)nverted, or (M)ath? ")
+#         if location.upper() in ("N", "I", "M"):
+#             f.write("\n" + location + "|" + indic.indicator_id)
+#         else:
+#             try_again.append(indic)
+
+#     f.close()
+
+#     if try_again:
+#         sort_indicators(try_again)
+
+

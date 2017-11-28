@@ -56,9 +56,8 @@ def get_country_data():
     if not country_id:
         return jsonify(message="No Country Sent")
 
-    # Send request for data, receive all query objects
+    # Send request for country; receive all objects, keep only the first
     c_obj = Country.get_db_objs(country_id=country_id)[0]
-    query_objs = Datum.get_db_objs(country_id=country_id)
 
     c_information = {}
     c_information['name'] = c_obj.name
@@ -67,16 +66,21 @@ def get_country_data():
     c_information['wikiurl'] = c_obj.wikiurl
     c_information['groups'] = [g.name for g in c_obj.groups]
 
-    # send data to math manip, receive revised objects
+    # Send request for data points; receive all query objects
+    query_objs = Datum.get_db_objs(country_id=country_id)
+    pdb.set_trace()
+    query_objs = do_data_math(query_objs)
+    pdb.set_trace()
+
     # right now, this just cleans out inverted-scale and math-having values
-    to_del = []
-    for i, q_obj in enumerate(query_objs):
-        if ((q_obj.indicator.display_math == "m") or
-            (q_obj.indicator.scale_inverse is True)):
-            to_del.append(i)
-    to_del.sort(reverse=True)
-    for n in to_del:
-        del query_objs[n]
+    # to_del = []
+    # for i, q_obj in enumerate(query_objs):
+    #     if ((q_obj.indicator.display_math == "m") or
+    #         (q_obj.indicator.scale_inverse is True)):
+    #         to_del.append(i)
+    # to_del.sort(reverse=True)
+    # for n in to_del:
+    #     del query_objs[n]
 
     # Clear the values from the c_ dictionaries
     c_datasets.update((year, []) for year in c_datasets)
@@ -109,7 +113,7 @@ def get_country_data():
                 continue
             goal_id = "g{:0>2}".format(str(goal))
             c_tilevals[year][goal_id] = goal_avg
-    
+
     return jsonify(cDatasets=c_datasets,
                    cTileVals=c_tilevals,
                    cInformation=c_information)
