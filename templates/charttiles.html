@@ -151,7 +151,7 @@
                  style="border-top: 3px solid {{ goal.hexval }};">
               <div class="col-xs-12"><h4>{{ goal.goals[0].description }}</h4></div>
               <div class="col-xs-12">
-                <canvas id="chart-g{{ goal.goal_pre }}m" height="1px"></canvas>
+                <canvas id="chart-{{ goal.goal_pre }}" height="1px"></canvas>
               </div>
               {% for indic in goal.goals[0].indicators %}
                 <div id="col-indic{{ indic.indicator_id }}" class="col-xs-12 col-md-6">
@@ -166,7 +166,7 @@
                     </p>
                   </div>
                   <div class="col-xs-12 indicator-chart">
-                    <canvas id="{{ indic.indicator_id }}" height="1px"></canvas>
+                    <canvas id="chart-{{ indic.indicator_id }}" height="1px"></canvas>
                   </div>
                 </div><!-- /#col-indic{{ indic.indicator_id }} -->
               {% endfor %}
