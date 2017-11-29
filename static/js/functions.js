@@ -32,7 +32,8 @@ function storeGoalAttrs(element, index, array) {
 
     let g_id = element.id.slice(0,3);
     let g_color = element.style['background-color'];
-    cGoals.set(g_id, g_color);
+    let g_descr = element.title.slice(9);
+    cGoals.set(g_id, [g_color, g_descr]);
 
 } // end storeGoalAttrs
 
@@ -279,9 +280,11 @@ function makeChartScatter(cYear) {
        page load as an object with the year as the identifier whose value is an
        array of objects containing cartesian coordinates.
 
+       This is the "first level chart".
+
     */
 
-    // cDatasets = { '2011': [{x: 3, y: 2, i: "name"}, {x: 3, y: 5, i: "name"}] };
+    // cDatasets = { '2011': [{x: 3, y: 2, i: "name", v: 7, s: 10}, ] };
 
     if ( chartScatter ) { chartScatter.destroy(); console.log("chart DESTROYED!"); }
 
@@ -292,57 +295,57 @@ function makeChartScatter(cYear) {
         data: {
             labels: [],
             datasets: [
-                {label: '1: No Poverty',
+                {label: '1: N' + cGoals.get('g01')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 1),
-                 backgroundColor: cGoals.get('g01'),},
-                {label: '2: Zero Hunger',
+                 backgroundColor: cGoals.get('g01')[0],},
+                {label: '2: Z' + cGoals.get('g02')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 2),
-                 backgroundColor: cGoals.get('g02'),},
-                {label: '3: Good Health and Well-Being',
+                 backgroundColor: cGoals.get('g02')[0],},
+                {label: '3: G' + cGoals.get('g03')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 3),
-                 backgroundColor: cGoals.get('g03'),},
-                {label: '4: Quality Education',
+                 backgroundColor: cGoals.get('g03')[0],},
+                {label: '4: Q' + cGoals.get('g04')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 4),
-                 backgroundColor: cGoals.get('g04'),},
-                {label: '5: Gender Equality',
+                 backgroundColor: cGoals.get('g04')[0],},
+                {label: '5: G' + cGoals.get('g05')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 5),
-                 backgroundColor: cGoals.get('g05'),},
-                {label: '6: Clean Water and Sanitation',
+                 backgroundColor: cGoals.get('g05')[0],},
+                {label: '6: C' + cGoals.get('g06')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 6),
-                 backgroundColor: cGoals.get('g06'),},
-                {label: '7: Affordable and Clean Energy',
+                 backgroundColor: cGoals.get('g06')[0],},
+                {label: '7: A' + cGoals.get('g07')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 7),
-                 backgroundColor: cGoals.get('g07'),},
-                {label: '8: Decent Work and Economic Growth',
+                 backgroundColor: cGoals.get('g07')[0],},
+                {label: '8: D' + cGoals.get('g08')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 8),
-                 backgroundColor: cGoals.get('g08'),},
-                {label: '9: Industry, Innovation, and Infrastructure',
+                 backgroundColor: cGoals.get('g08')[0],},
+                {label: '9: I' + cGoals.get('g09')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 9),
-                 backgroundColor: cGoals.get('g09'),},
-                {label: '10: Reduced Inequalities',
+                 backgroundColor: cGoals.get('g09')[0],},
+                {label: '10: ' + cGoals.get('g10')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 10),
-                 backgroundColor: cGoals.get('g10'),},
-                {label: '11: Sustainable Cities and Communities',
+                 backgroundColor: cGoals.get('g10')[0],},
+                {label: '11: ' + cGoals.get('g11')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 11),
-                 backgroundColor: cGoals.get('g11'),},
-                {label: '12: Responsible Consumption and Production',
+                 backgroundColor: cGoals.get('g11')[0],},
+                {label: '12: ' + cGoals.get('g12')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 12),
-                 backgroundColor: cGoals.get('g12'),},
-                {label: '13: Climate Action',
+                 backgroundColor: cGoals.get('g12')[0],},
+                {label: '13: ' + cGoals.get('g13')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 13),
-                 backgroundColor: cGoals.get('g13'),},
-                {label: '14: Life Below Water',
+                 backgroundColor: cGoals.get('g13')[0],},
+                {label: '14: ' + cGoals.get('g14')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 14),
-                 backgroundColor: cGoals.get('g14'),},
-                {label: '15: Life On Land',
+                 backgroundColor: cGoals.get('g14')[0],},
+                {label: '15: ' + cGoals.get('g15')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 15),
-                 backgroundColor: cGoals.get('g15'),},
-                {label: '16: Peace, Justice, and Strong Institutions',
+                 backgroundColor: cGoals.get('g15')[0],},
+                {label: '16: ' + cGoals.get('g16')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 16),
-                 backgroundColor: cGoals.get('g16'),},
-                {label: '17: Partnerships for the Goals',
+                 backgroundColor: cGoals.get('g16')[0],},
+                {label: '17: ' + cGoals.get('g17')[1],
                  data: cDatasets[cYear].filter(cData => cData['x'] === 17),
-                 backgroundColor: cGoals.get('g17'),},
+                 backgroundColor: cGoals.get('g17')[0],},
             ] // end datasets
         }, // end chart data
         options: {
@@ -446,6 +449,8 @@ function updateTiles(cYear) {
        at page load as a map with the year as the key whose value is a map with
        'goal_pre' ids (key) and 'score' (value). First all scores are cleared,
        then the updated scores placed, to ensure that data is for chosen year.
+
+       These are the "first level small tiles".
 
     */
 

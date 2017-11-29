@@ -131,6 +131,7 @@ class GoalDesign(db.Model):
     __tablename__ = 'goal_design'
 
     goal_pre = db.Column(db.String(2), primary_key=True)
+    title = db.Column(db.Text, unique=True, nullable=False)
     hexval = db.Column(db.String(7), unique=True, nullable=False)
     iurl_blank = db.Column(db.Text, unique=True, nullable=False)
     iurl_full = db.Column(db.Text, unique=True, nullable=False)
