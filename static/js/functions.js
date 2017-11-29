@@ -6,20 +6,19 @@ let chartScatter, cDatasets, cTileVals, cInformation;
 let chartGoals = new Set ([]), chartIndicators = new Set ([]);
 
 $(document).ready(function() {
-    /* T -- not indented */
+    /* When the page loads, calls chart and tile making functions. */
 
-cCountries = $('.opt-country').toArray();
-cGoalsRaw = $('.tile-sm').toArray();
-cGoalsRaw.forEach(storeGoalAttrs);
-$('.goal-chart > canvas').each(function() { chartGoals.add(this.id); });
-$('.indicator-chart > canvas').each(function() { chartIndicators.add(this.id); });
-selectCountry();
+    cCountries = $('.opt-country').toArray();
+    cGoalsRaw = $('.tile-sm').toArray();
+    cGoalsRaw.forEach(storeGoalAttrs);
+    $('.goal-chart > canvas').each(function() { chartGoals.add(this.id); });
+    $('.indicator-chart > canvas').each(function() { chartIndicators.add(this.id); });
+    selectCountry();
 
-
-// Event listeners
-$('#select-country').on('change', selectCountry);
-$('#btn-random').on('click', selectCountry);
-$('.btn').on('click', swapDivs);
+    // Event listeners
+    $('#select-country').on('change', selectCountry);
+    $('#btn-random').on('click', selectCountry);
+    $('.btn').on('click', swapDivs);
 
 }); // end doc.ready
 
