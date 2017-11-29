@@ -28,12 +28,13 @@ $(document).ready(function() {
 /*******************/
 
 function storeGoalAttrs(element, index, array) {
-    /*  */
+    /* Populate map of goal ids-colors for use in charts. */
 
     let g_id = element.id.slice(0,3);
     let g_color = element.style['background-color'];
     cGoals.set(g_id, g_color);
-}
+
+} // end storeGoalAttrs
 
 
 function swapDivs(evt) {
@@ -71,7 +72,8 @@ function swapDivs(evt) {
             { scrollTop: $(toGoal).offset().top -65 }, 
             500, 'linear');
     } // end if
-}
+
+} // end swapDivs
 
 
 function selectCountry(evt) {
@@ -99,7 +101,8 @@ function selectCountry(evt) {
         500, 'linear');
 
     getCountryData(cCountry);
-}
+
+} // end selectCountry
 
 
 function getCountryData(cCountry) {
@@ -114,10 +117,13 @@ function getCountryData(cCountry) {
     } // end func
     ); // end .get
     
-}
+} // end getCountryData
 
 function initializeChartTiles() {
-    /*  */
+    /* Mostly calls the functions to make the slider and update the first level
+       scatter chart and small tiles. 
+
+    */
 
     // On page load, the map has to be displayed to EVER be displayed
     // #map_holder should have its width by now, so let's hide it
@@ -131,11 +137,15 @@ function initializeChartTiles() {
 
     makeSlider();
     updateChartTiles();
-}
+
+} // end initializeChartTiles
 
 
 function makeSlider() {
-    /*  */
+    /* Make the slider to control the first level scatter chart and tiles.
+       Define the functions that get called when the slider is moved.
+
+    */
 
     if ( $('#slider').slider() ) { // always created on page load
         $('#slider').slider('destroy'); console.log("slider DESTROYED!");
@@ -169,11 +179,11 @@ function makeSlider() {
         stop: sliderSelectYear,
     }); // end slider initialize
 
-}
+} // end makeSlider
 
 
 function updateChartTiles(evt) {
-    /*  */
+    /* Call the functions to make / update the first level chart and tiles. */
 
     makeCountryInfo();
     updateTiles(cYear);
@@ -210,7 +220,7 @@ function scrollScatter() {
 
 
 function makeCountryInfo() {
-    /* */
+    /* Populate the divs reserved in each level for the country information. */
 
     let cName = cInformation.name;
     let cIncome = cInformation.income;
@@ -261,7 +271,7 @@ function makeCountryInfo() {
     
     $('.countryinfo').html(formatHTML);
 
-}
+} // end makeCountryInfo
 
 
 function makeChartScatter(cYear) {
@@ -428,7 +438,7 @@ function splitTextIntoLines(fullText, chars) {
 
     return ftLines;
 
-}
+} // end splitTextIntoLines
 
 
 function updateTiles(cYear) {
