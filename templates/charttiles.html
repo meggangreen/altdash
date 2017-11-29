@@ -48,7 +48,7 @@
       {% for goal in goals %}
         <button id="g{{ goal.goal_pre }}sm" type="button"
                 class="btn btn-default tile tile-sm g{{ goal.goal_pre }}"
-                title="Goal {{ goal.goal_pre }}: {{ goal.goals[0].description }}"
+                title="Goal {{ goal.goal_pre }}: {{ goal.title }}"
                 data-toggle="extra-hidden"
                 data-target="#row-body-tiledetails"
                 data-sender="#row-body-charttiles"
@@ -81,7 +81,7 @@
             <div id="col-tile-g{{ goal.goal_pre }}" class="col-xs-4 tile-indiv">
               <button id="g{{ goal.goal_pre }}md" type="button"
                       class="btn btn-default tile tile-md g{{ goal.goal_pre }}"
-                      title="Goal {{ goal.goal_pre }}: {{ goal.goals[0].description }}"
+                      title="Goal {{ goal.goal_pre }}: {{ goal.title }}"
                       data-toggle="extra-hidden"
                       data-target="#row-body-goal-minutiae"
                       data-sender="#row-body-tiledetails"
@@ -138,7 +138,7 @@
             <div id="col-gm-g{{ goal.goal_pre }}" class="col-xs-4 col-lg-2 tile-indiv">
               <button id="g{{ goal.goal_pre }}md2" type="button"
                       class="btn btn-default tile tile-md g{{ goal.goal_pre }}"
-                      title="Goal {{ goal.goal_pre }}: {{ goal.goals[0].description }}"
+                      title="Goal {{ goal.goal_pre }}: {{ goal.title }}"
                       data-toggle="extra-hidden"
                       data-target="#row-body-tiledetails"
                       data-sender="#row-body-goal-minutiae"
