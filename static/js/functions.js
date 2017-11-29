@@ -5,7 +5,7 @@ let cYear, cYears, cMin, cMax, yearI, scrollStop;
 let chartScatter, cDatasets, cTileVals, cInformation;
 
 $(document).ready(function() {
-    /* ALLLLL THE JS -- not indented */
+    /* T -- not indented */
 
 cCountries = $('.opt-country').toArray();
 cGoalsRaw = $('.tile-sm').toArray();
@@ -18,29 +18,12 @@ $('#select-country').on('change', selectCountry);
 $('#btn-random').on('click', selectCountry);
 $('.btn').on('click', swapDivs);
 
+}); // end doc.ready
 
-function scrollScatter() {
-    /* Controls the chartScroll setInterval. */
-        
-    cYears = Object.keys(cDatasets);
-    yearI = 0;
 
-    let chartScroll = setInterval(function() {
-        cYear = cYears[yearI];
-        makeChartScatter(cYear);
-        yearI += 1;
-        if (yearI === cYears.length) {
-            yearI = 0;
-        }
-        if (scrollStop === true) {
-            clearInterval(chartScroll);
-        }
-    },
-    500);
-
-    
-}
-
+/*******************/
+/**** FUNCTIONS ****/
+/*******************/
 
 function storeGoalAttrs(element, index, array) {
     /*  */
@@ -53,6 +36,8 @@ function storeGoalAttrs(element, index, array) {
 
 function swapDivs(evt) {
     /* Show and hide appropriate div elements after button click. */
+
+    scrollStop = true;  // stop scrolling scatter chart
 
     if ( $(this).data('toggle') !== 'extra-hidden' ) {
         return null;
@@ -89,6 +74,8 @@ function swapDivs(evt) {
 
 function selectCountry(evt) {
     /* Handles new country selection and resets page. Calls getCountryData. */
+
+    scrollStop = true;  // stop scrolling scatter chart
 
     if ( $(this).attr('id') === "select-country" ) {
         $('#select-country').data('country', $(this).val()); 
@@ -151,6 +138,7 @@ function makeSlider() {
     if ( $('#slider').slider() ) { // always created on page load
         $('#slider').slider('destroy'); console.log("slider DESTROYED!");
     } // end if
+
     cMax = $('#slider').data('max');
     cMin = $('#slider').data('min');
     cYear = cMax; // first time cYear is set
@@ -164,6 +152,7 @@ function makeSlider() {
     }; // end sliderTooltip
 
     let sliderSelectYear = function(event, ui) {
+        scrollStop = true;  // stop scrolling scatter chart
         cYear = ui.value || cMax;
         updateChartTiles();
     }; // end sliderSelectYear
@@ -185,13 +174,37 @@ function updateChartTiles(evt) {
     /*  */
 
     makeCountryInfo();
-    makeChartScatter(cYear);
     updateTiles(cYear);
     if (scrollStop === false) {
         scrollScatter();
+    } else {
+        makeChartScatter(cYear);
     }
 
 } // end updateChartTiles
+
+
+function scrollScatter() {
+    /* Controls the chartScroll setInterval. */
+        
+    cYears = Object.keys(cDatasets);
+    yearI = 0;
+
+    let chartScroll = setInterval(function() {
+        cYear = cYears[yearI];
+        makeChartScatter(cYear);
+        yearI += 1;
+        if (yearI === cYears.length) {
+            yearI = 0;
+        }
+        if (scrollStop === true) {
+            clearInterval(chartScroll);
+            // set overlay with 'play' button on chart div
+        }
+    },
+    500);
+
+} // end scrollScatter
 
 
 function makeCountryInfo() {
@@ -448,6 +461,3 @@ function tileBlank(evt) {
     $(this).attr('style', styleModified);
 }
 
-
-
-}); // end doc.ready
