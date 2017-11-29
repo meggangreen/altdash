@@ -237,55 +237,55 @@ function makeChartScatter(cYear) {
         data: {
             labels: [],
             datasets: [
-                {label: 'No Poverty',
+                {label: '1: No Poverty',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 1),
                  backgroundColor: cGoals.get('g01'),},
-                {label: 'Zero Hunger',
+                {label: '2: Zero Hunger',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 2),
                  backgroundColor: cGoals.get('g02'),},
-                {label: 'Good Health and Well-Being',
+                {label: '3: Good Health and Well-Being',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 3),
                  backgroundColor: cGoals.get('g03'),},
-                {label: 'Quality Education',
+                {label: '4: Quality Education',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 4),
                  backgroundColor: cGoals.get('g04'),},
-                {label: 'Gender Equality',
+                {label: '5: Gender Equality',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 5),
                  backgroundColor: cGoals.get('g05'),},
-                {label: 'Clean Water and Sanitation',
+                {label: '6: Clean Water and Sanitation',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 6),
                  backgroundColor: cGoals.get('g06'),},
-                {label: 'Affordable and Clean Energy',
+                {label: '7: Affordable and Clean Energy',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 7),
                  backgroundColor: cGoals.get('g07'),},
-                {label: 'Decent Work and Economic Growth',
+                {label: '8: Decent Work and Economic Growth',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 8),
                  backgroundColor: cGoals.get('g08'),},
-                {label: 'Industry, Innovation, and Infrastructure',
+                {label: '9: Industry, Innovation, and Infrastructure',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 9),
                  backgroundColor: cGoals.get('g09'),},
-                {label: 'Reduced Inequalities',
+                {label: '10: Reduced Inequalities',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 10),
                  backgroundColor: cGoals.get('g10'),},
-                {label: 'Sustainable Cities and Communities',
+                {label: '11: Sustainable Cities and Communities',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 11),
                  backgroundColor: cGoals.get('g11'),},
-                {label: 'Responsible Consumption and Production',
+                {label: '12: Responsible Consumption and Production',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 12),
                  backgroundColor: cGoals.get('g12'),},
-                {label: 'Climate Action',
+                {label: '13: Climate Action',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 13),
                  backgroundColor: cGoals.get('g13'),},
-                {label: 'Life Below Water',
+                {label: '14: Life Below Water',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 14),
                  backgroundColor: cGoals.get('g14'),},
-                {label: 'Life On Land',
+                {label: '15: Life On Land',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 15),
                  backgroundColor: cGoals.get('g15'),},
-                {label: 'Peace, Justice, and Strong Institutions',
+                {label: '16: Peace, Justice, and Strong Institutions',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 16),
                  backgroundColor: cGoals.get('g16'),},
-                {label: 'Partnerships for the Goals',
+                {label: '17: Partnerships for the Goals',
                  data: cDatasets[cYear].filter(cData => cData['x'] === 17),
                  backgroundColor: cGoals.get('g17'),},
             ] // end datasets
@@ -308,11 +308,20 @@ function makeChartScatter(cYear) {
                         let dpti = tooltipItem.index;  // datapoint index
                         let goal_label = data.datasets[dsi].label;
                         let indic_label = data.datasets[dsi].data[dpti]['i'];
-                        return [goal_label, indic_label];
+                        indic_label = splitTextIntoLines(indic_label, 30);
+                        let ttBeforeLabel = new Array(goal_label, '');
+                        indic_label.forEach(function(item) {
+                            ttBeforeLabel.push(item);
+                        });
+                        ttBeforeLabel.push('');
+                        return ttBeforeLabel;
                     }, // end beforeLabel
                     label: function(tooltipItem, data) {
                         return tooltipItem.yLabel;
                     }, // end label
+                    afterLabel: function(tooltipItem, data) {
+                        return
+                    }, // end afterLabel
                 } // end callbacks
             }, // end tooltips
             // Really good custom tooltip:
@@ -341,6 +350,38 @@ function makeChartScatter(cYear) {
         } // end chart options
     }); // end chartScatter
 } // end makeChartScatter
+
+function splitTextIntoLines(fullText, chars) {
+    /* Splits a fullText into lines of chars or shorter length, taking care to
+       split only on spaces.
+
+    */
+
+    let ftWords = fullText.split(' ');
+    let ftLines = new Array();
+    let j = 0;
+
+    do {
+        let currLine = '';
+        for (let i = j; i < ftWords.length; i++) {
+            if (currLine.length + ftWords[i].length + 1 > chars) {
+                ftLines.push(currLine);
+                j = i;
+                break;
+            } else {
+                currLine += " " + ftWords[i];
+                if (i === ftWords.length - 1) {
+                    ftLines.push(currLine);
+                    j = ftWords.length;
+                    break;
+                } // end if
+            }// end if
+        } // end for
+    } // end do
+    while (j < ftWords.length);
+
+    return ftLines;
+}
 
 
 function updateTiles(cYear) {
