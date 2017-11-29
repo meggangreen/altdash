@@ -290,64 +290,20 @@ function makeChartScatter(cYear) {
 
     let xlabel = cYear;
     let ctx = document.getElementById("scatter-chart").getContext('2d');
+    let cYearData = new Array();
+    for ( let i = 1; i < 18; i++ ) {
+        let iStr = String(i).padStart(2, "0");
+        let obj = {
+            label: iStr + ': ' + cGoals.get('g' + iStr)[1],
+            data: cDatasets[cYear].filter(cData => cData['x'] === i),
+            backgroundColor: cGoals.get('g' + iStr)[0],
+        }; // end obj
+        cYearData.push(obj);
+    } // end for
+
     chartScatter = new Chart(ctx, {
         type: 'scatter',
-        data: {
-            labels: [],
-            datasets: [
-                {label: '1: ' + cGoals.get('g01')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 1),
-                 backgroundColor: cGoals.get('g01')[0],},
-                {label: '2: ' + cGoals.get('g02')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 2),
-                 backgroundColor: cGoals.get('g02')[0],},
-                {label: '3: ' + cGoals.get('g03')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 3),
-                 backgroundColor: cGoals.get('g03')[0],},
-                {label: '4: ' + cGoals.get('g04')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 4),
-                 backgroundColor: cGoals.get('g04')[0],},
-                {label: '5: ' + cGoals.get('g05')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 5),
-                 backgroundColor: cGoals.get('g05')[0],},
-                {label: '6: ' + cGoals.get('g06')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 6),
-                 backgroundColor: cGoals.get('g06')[0],},
-                {label: '7: ' + cGoals.get('g07')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 7),
-                 backgroundColor: cGoals.get('g07')[0],},
-                {label: '8: ' + cGoals.get('g08')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 8),
-                 backgroundColor: cGoals.get('g08')[0],},
-                {label: '9: ' + cGoals.get('g09')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 9),
-                 backgroundColor: cGoals.get('g09')[0],},
-                {label: '10: ' + cGoals.get('g10')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 10),
-                 backgroundColor: cGoals.get('g10')[0],},
-                {label: '11: ' + cGoals.get('g11')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 11),
-                 backgroundColor: cGoals.get('g11')[0],},
-                {label: '12: ' + cGoals.get('g12')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 12),
-                 backgroundColor: cGoals.get('g12')[0],},
-                {label: '13: ' + cGoals.get('g13')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 13),
-                 backgroundColor: cGoals.get('g13')[0],},
-                {label: '14: ' + cGoals.get('g14')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 14),
-                 backgroundColor: cGoals.get('g14')[0],},
-                {label: '15: ' + cGoals.get('g15')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 15),
-                 backgroundColor: cGoals.get('g15')[0],},
-                {label: '16: ' + cGoals.get('g16')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 16),
-                 backgroundColor: cGoals.get('g16')[0],},
-                {label: '17: ' + cGoals.get('g17')[0],
-                 data: cDatasets[cYear].filter(cData => cData['x'] === 17),
-                 backgroundColor: cGoals.get('g17')[0],},
-            ] // end datasets
-        }, // end chart data
+        data: { labels: [], datasets: cYearData, }, // end chart data
         options: {
             animation: { duration: 0 },
             legend: { display: false },
@@ -397,7 +353,7 @@ function makeChartScatter(cYear) {
                     ticks: {min: 0, max: 100, stepSize: 25, display: false},
                     // thanks to L Bahr 'https://stackoverflow.com/questions/37451905/how-to-set-static-value-in-y-axis-in-chart-js'
                     afterBuildTicks: function(scale) {
-                      scale.ticks = [0, 10, 30, 70, 90, 100]; // set y-axis values exactly
+                      scale.ticks = [0, 10, 30, 70, 90, 100];  // set y-axis values exactly
                       return;
                     },
                     beforeUpdate: function(oScale) {
