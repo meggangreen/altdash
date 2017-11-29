@@ -3,6 +3,7 @@
 let cCountries, cCountry, cGoalsRaw, cGoals = new Map ([]);
 let cYear, cYears, cMin, cMax, yearI, scrollStop;
 let chartScatter, cDatasets, cTileVals, cInformation;
+let chartGoals = new Set ([]), chartIndicators = new Set ([]);
 
 $(document).ready(function() {
     /* T -- not indented */
@@ -10,6 +11,8 @@ $(document).ready(function() {
 cCountries = $('.opt-country').toArray();
 cGoalsRaw = $('.tile-sm').toArray();
 cGoalsRaw.forEach(storeGoalAttrs);
+$('.goal-chart > canvas').each(function() { chartGoals.add(this.id); });
+$('.indicator-chart > canvas').each(function() { chartIndicators.add(this.id); });
 selectCountry();
 
 
@@ -76,7 +79,7 @@ function selectCountry(evt) {
     /* Handles new country selection and resets page. Calls getCountryData. */
 
     scrollStop = true;  // stop scrolling scatter chart
-
+    
     if ( $(this).attr('id') === "select-country" ) {
         $('#select-country').data('country', $(this).val()); 
     } else {

@@ -48,7 +48,7 @@
       {% for goal in goals %}
         <button id="g{{ goal.goal_pre }}sm" type="button"
                 class="btn btn-default tile tile-sm g{{ goal.goal_pre }}"
-                data-toggle="extra-hidden"
+                title="Goal {{ goal.goal_pre }}" data-toggle="extra-hidden"
                 data-target="#row-body-tiledetails"
                 data-sender="#row-body-charttiles"
                 data-goal-a="g{{ goal.goal_pre }}d"
@@ -80,7 +80,7 @@
             <div id="col-tile-g{{ goal.goal_pre }}" class="col-xs-4 tile-indiv">
               <button id="g{{ goal.goal_pre }}md" type="button"
                       class="btn btn-default tile tile-md g{{ goal.goal_pre }}"
-                      data-toggle="extra-hidden"
+                      title="Goal {{ goal.goal_pre }}" data-toggle="extra-hidden"
                       data-target="#row-body-goal-minutiae"
                       data-sender="#row-body-tiledetails"
                       data-goal-a="g{{ goal.goal_pre }}m"
@@ -95,7 +95,7 @@
             <div id="col-text-g{{ goal.goal_pre }}" class="col-xs-8 tile-text"
                  style="border-top: 3px solid {{ goal.hexval }};">
               <div class="col-xs-12 tile-row"><h5>{{ goal.goals[0].description }}</h5></div>
-              <div class="col-xs-12 tile-row">
+              <div class="col-xs-12 tile-row goal-chart">
                 <canvas id="chart-g{{ goal.goal_pre }}d" height="1px"></canvas>
               </div>
             </div><!-- /#col-text-g{{ goal.goal_pre }} -->
@@ -136,7 +136,7 @@
             <div id="col-gm-g{{ goal.goal_pre }}" class="col-xs-4 col-lg-2 tile-indiv">
               <button id="g{{ goal.goal_pre }}md2" type="button"
                       class="btn btn-default tile tile-md g{{ goal.goal_pre }}"
-                      data-toggle="extra-hidden"
+                      title="Goal {{ goal.goal_pre }}" data-toggle="extra-hidden"
                       data-target="#row-body-tiledetails"
                       data-sender="#row-body-goal-minutiae"
                       style="background-image: url('static/{{ goal.iurl_full }}');
@@ -155,15 +155,19 @@
               </div>
               {% for indic in goal.goals[0].indicators %}
                 <div id="col-indic{{ indic.indicator_id }}" class="col-xs-12 col-md-6">
-                  <p>
-                    {{ indic.title }}
-                    <span class="footnote">
-                    (<a href="{{ indic.wburl }}" target="_blank" 
-                        title="{{ indic.indicator_id }} at the World Bank"
-                        >{{ indic.indicator_id }}</a>)
-                    </span>
-                  </p>
-                  <canvas id="{{ indic.indicator_id }}" height="1px"></canvas>
+                  <div class="col-xs-12">
+                    <p>
+                      {{ indic.title }}
+                      <span class="footnote">
+                      (<a href="{{ indic.wburl }}" target="_blank" 
+                          title="{{ indic.indicator_id }} at the World Bank"
+                          >{{ indic.indicator_id }}</a>)
+                      </span>
+                    </p>
+                  </div>
+                  <div class="col-xs-12 indicator-chart">
+                    <canvas id="{{ indic.indicator_id }}" height="1px"></canvas>
+                  </div>
                 </div><!-- /#col-indic{{ indic.indicator_id }} -->
               {% endfor %}
             </div><!-- /#col-text-g{{ goal.goal_pre }} -->
