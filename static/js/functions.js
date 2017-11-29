@@ -1,10 +1,11 @@
 'use strict';
 
+let cCountries, cCountry, cGoalsRaw, cGoals = new Map ([]);
+let cYear, cYears, cMin, cMax, yearI, scrollStop;
+let chartScatter, cDatasets, cTileVals, cInformation;
+
 $(document).ready(function() {
     /* ALLLLL THE JS -- not indented */
-
-let cCountries, cCountry, cGoalsRaw, cGoals = new Map ([]);
-let chartScatter, cYear, cMin, cMax, cDatasets, cTileVals, cInformation;
 
 cCountries = $('.opt-country').toArray();
 cGoalsRaw = $('.tile-sm').toArray();
@@ -16,6 +17,29 @@ selectCountry();
 $('#select-country').on('change', selectCountry);
 $('#btn-random').on('click', selectCountry);
 $('.btn').on('click', swapDivs);
+
+
+function scrollScatter() {
+    /* Controls the chartScroll setInterval. */
+        
+    cYears = Object.keys(cDatasets);
+    yearI = 0;
+
+    let chartScroll = setInterval(function() {
+        cYear = cYears[yearI];
+        makeChartScatter(cYear);
+        yearI += 1;
+        if (yearI === cYears.length) {
+            yearI = 0;
+        }
+        if (scrollStop === true) {
+            clearInterval(chartScroll);
+        }
+    },
+    500);
+
+    
+}
 
 
 function storeGoalAttrs(element, index, array) {
@@ -96,6 +120,7 @@ function getCountryData(cCountry) {
         cDatasets = results.cDatasets;
         cTileVals = results.cTileVals;
         cInformation = results.cInformation;
+        scrollStop = false;  // only reset if the country has changed
         initializeChartTiles();
     } // end func
     ); // end .get
@@ -114,7 +139,6 @@ function initializeChartTiles() {
         $('#row-body-worldmap').removeClass("kinda-hidden");
         console.log("hid the map!"); 
     }
-    
 
     makeSlider();
     updateChartTiles();
@@ -153,6 +177,7 @@ function makeSlider() {
         slide: sliderTooltip,
         stop: sliderSelectYear,
     }); // end slider initialize
+
 }
 
 
@@ -162,6 +187,10 @@ function updateChartTiles(evt) {
     makeCountryInfo();
     makeChartScatter(cYear);
     updateTiles(cYear);
+    if (scrollStop === false) {
+        scrollScatter();
+    }
+
 } // end updateChartTiles
 
 
@@ -216,6 +245,7 @@ function makeCountryInfo() {
     } // end if
     
     $('.countryinfo').html(formatHTML);
+
 }
 
 
@@ -349,6 +379,7 @@ function makeChartScatter(cYear) {
             } // end scales
         } // end chart options
     }); // end chartScatter
+
 } // end makeChartScatter
 
 function splitTextIntoLines(fullText, chars) {
@@ -381,6 +412,7 @@ function splitTextIntoLines(fullText, chars) {
     while (j < ftWords.length);
 
     return ftLines;
+
 }
 
 
