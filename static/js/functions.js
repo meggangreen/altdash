@@ -157,9 +157,9 @@ function makeSlider() {
 
     let sliderTooltip = function(event, ui) {
         let ttYear = ui.value || cMax;
-        let tooltip = '<div class="slider-tt"><div class="slider-tt-inner">'
-                      + ttYear 
-                      + '</div><div class="slider-tt-arrow"></div></div>';
+        let tooltip = '<div class="slider-tt"><div class="slider-tt-inner">' +
+                      ttYear +
+                      '</div><div class="slider-tt-arrow"></div></div>';
         $('.ui-slider-handle').html(tooltip);
     }; // end sliderTooltip
 

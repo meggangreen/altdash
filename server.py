@@ -5,9 +5,6 @@ from functions import *
 
 import requests
 import json
-from random import choice
-# from collections import defaultdict
-import pdb
 
 from flask import Flask, render_template, redirect, request
 from flask import jsonify, flash, session
@@ -50,15 +47,14 @@ def get_country_data():
 
     """
 
-    print "\n\n"
-
     # Pull country id from GET request arguments
     country_id = request.args.get('country_id')
 
     if not country_id:
         return jsonify(message="No Country Sent")
 
-    # Send request for country; receive all objects, keep only the first
+    # Send request for country; receive all objects (should be all of one),
+    # keep only the first
     c_obj = Country.get_db_objs(country_id=country_id)[0]
 
     c_information = {}
@@ -73,7 +69,7 @@ def get_country_data():
 
     # Eventually, all the data points will have their scaled and display values,
     # but not yet, so we need to call do_data_math for them
-    query_objs = do_data_math(query_objs)
+    do_data_math(query_objs)
 
     # Clear the values from the c_ dictionaries
     c_datasets.update((year, []) for year in c_datasets)

@@ -153,7 +153,11 @@ def get_wbmeta_by_country(c_id):
 
 
 def do_data_math(data_objs):
-    """ Put scaled and display values on data. Move to part of seed file. """
+    """ Put scaled and display values on data objects AND commits those values
+        to the database. In theory, eventually all the data points will be
+        populated and this will just walk through and check.
+
+    """
 
     for dpt in data_objs:
         if dpt.display_value is None:
@@ -176,4 +180,4 @@ def do_data_math(data_objs):
 
     db.session.commit()
 
-    return data_objs
+    return
