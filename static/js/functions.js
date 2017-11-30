@@ -59,8 +59,16 @@ function swapDivs(evt) {
 
     if (toShow === '#row-body-tiledetails') {
         if ($(toShow).find('.chartjs-size-monitor').length === 0) {
-            chartGoals.forEach( function callback(chartGoalID, val2, Set) {
+            chartGoals.forEach( function callback(chartGoalID, junk, Set) {
                 makeChartGoal(chartGoalID);
+            });
+        } // end if
+    } // end if
+
+    if (toShow === '#row-body-goal-minutiae') {
+        if ($(toShow).find('.chartjs-size-monitor').length === 0) {
+            chartIndicators.forEach( function callback(chartIndicID, junk, Set) {
+                makeChartIndicator(chartIndicID);
             });
         } // end if
     } // end if
@@ -391,9 +399,6 @@ function makeChartGoal(chartGoalID) {
     // cTileVals = { '2010', {g01: 5.2, g02: 7.9} };
     // chartGoalID = 'chart-gEE';
 
-    // let gCanv = `<canvas id="` + chartGoalID + `-ctx" height="1px" width="1px"></canvas>`;
-    // $(chartGoalID).html(gCanv);
-
     let cGoalID = chartGoalID.slice(-3);
     let cGoalColor = cGoals.get(cGoalID)[0];
     let ctx = $('#' + chartGoalID + '-ctx')[0].getContext('2d');
@@ -405,7 +410,7 @@ function makeChartGoal(chartGoalID) {
         cGoalData.push(obj);
     } // end for
 
-    chartScatter = new Chart(ctx, {
+    chartGoal = new Chart(ctx, {
         type: 'line',
         data: { 
             labels: [], 
@@ -435,19 +440,6 @@ function makeChartGoal(chartGoalID) {
                 bodyFontColor: 'rgb(51, 51, 51)',  // #333
                 backgroundColor: 'rgb(238, 238, 238)',  // #eee
                 callbacks: {
-                    // beforeLabel: function(tooltipItem, data) {
-                    //     let dsi = tooltipItem.datasetIndex;
-                    //     let dpti = tooltipItem.index;  // datapoint index
-                    //     let goal_label = data.datasets[dsi].label;
-                    //     let indic_label = data.datasets[dsi].data[dpti]['i'];
-                    //     indic_label = splitTextIntoLines(indic_label, 30);
-                    //     let ttBeforeLabel = new Array(goal_label, '');
-                    //     indic_label.forEach(function(item) {
-                    //         ttBeforeLabel.push(item);
-                    //     });
-                    //     ttBeforeLabel.push('');
-                    //     return ttBeforeLabel;
-                    // }, // end beforeLabel
                     label: function(tooltipItem, data) {
                         let ttYLabel = tooltipItem.yLabel;
                         let ttXLabel = tooltipItem.xLabel;
@@ -479,9 +471,102 @@ function makeChartGoal(chartGoalID) {
                 }] // end yAxes
             } // end scales
         } // end chart options
-    }); // end chartScatter
+    }); // end chartGoal
 
 } // end makeChartGoal
+
+
+function makeChartIndicator(chartIndicatorID) {
+    /* Returns a preformatted line chart given an indicator id. The scores are
+       loaded at page load as a map with the year as the key whose value is a 
+       map with 'goal_pre' ids (key) and 'score' (value). Indicator chart ids are
+       saved in chartIndicators.
+
+       Only called the first time that the goal-minutiae section is shown for the
+       first time for a given country.
+
+       This is the "third level chart" or "indicator chart".
+
+    */
+
+    // cTileVals = { '2010', {g01: 5.2, g02: 7.9} };
+    // chartIndicatorID = 'chart-...';
+
+    let cIndicatorID = chartIndicatorID.slice(-3);
+    //let cGoalColor = cGoals.get(cGoalID)[0];
+    let ctx = $('#' + chartIndicatorID + '-ctx')[0].getContext('2d');
+    let cIndicatorData = new Array();
+    for ( let yearI = cMin; yearI <= cMax; yearI++ ) {
+        let yearStr = String(yearI);
+        //let dataY = cTileVals[yearStr][cGoalID];
+        let obj = { x: yearI, y: dataY };
+        cIndicatorData.push(obj);
+    } // end for
+
+    chartIndicator = new Chart(ctx, {
+        type: 'line',
+        data: { 
+            labels: [], 
+            datasets: [{
+                data: cIndicatorData, 
+                backgroundColor: cGoalColor,
+            }] // end datasets
+         }, // end chart data
+        options: {
+            animation: { duration: 0 },
+            legend: { display: false },
+            elements: { 
+                point: { 
+                    radius: 2, 
+                    hoverRadius: 7,
+                    borderColor: cGoalColor,
+                }, // end points
+                line: { 
+                    fill: false,
+                    backgroundColor: cGoalColor,
+                    borderColor: cGoalColor,
+                    borderWidth: 0,
+                }, // end line
+            }, // end elements
+            tooltips: {
+                displayColors: false,
+                bodyFontColor: 'rgb(51, 51, 51)',  // #333
+                backgroundColor: 'rgb(238, 238, 238)',  // #eee
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        let ttYLabel = tooltipItem.yLabel;
+                        let ttXLabel = tooltipItem.xLabel;
+                        return ttXLabel + ": " + ttYLabel;
+                    }, // end label
+                } // end callbacks
+            }, // end tooltips
+            // Really good custom tooltip:
+            // https://jsfiddle.net/patrickactivatr/ytLtmLgs/
+            scales: {
+                xAxes: [{
+                    type: 'linear',
+                    scaleLabel: { display: true, labelString: 'Year' },
+                    position: 'bottom',
+                    ticks: { min: cMin, max: cMax, stepSize: 20, display: true }
+                }], // end xAxes
+                yAxes: [{
+                    type: 'linear',
+                    scaleLabel: { display: false },
+                    ticks: {min: 0, max: 100, stepSize: 25, display: false},
+                    // thanks to L Bahr 'https://stackoverflow.com/questions/37451905/how-to-set-static-value-in-y-axis-in-chart-js'
+                    afterBuildTicks: function(scale) {
+                      scale.ticks = [0, 10, 30, 70, 90, 100];  // set y-axis values exactly
+                      return;
+                    },
+                    beforeUpdate: function(oScale) {
+                      return;
+                    }
+                }] // end yAxes
+            } // end scales
+        } // end chart options
+    }); // end chartIndicator
+
+} // end makeChartIndicator
 
 
 function splitTextIntoLines(fullText, chars) {

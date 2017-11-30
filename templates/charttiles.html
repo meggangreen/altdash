@@ -175,6 +175,9 @@
                     <canvas id="chart-{{ indic.indicator_id }}-ctx" height="1px" width="1px"></canvas>
                   </div>
                 </div><!-- /#col-indic{{ indic.indicator_id }} -->
+                {% if loop.index is divisibleby 2 %}
+                <div class="clearfix"></div>
+                {% endif %}
               {% endfor %}
             </div><!-- /#col-text-g{{ goal.goal_pre }} -->
           </div><!-- /#col-gm-{{ goal.goal_pre }} -->
