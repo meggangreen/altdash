@@ -97,11 +97,14 @@
             <div id="col-text-g{{ goal.goal_pre }}" class="col-xs-8 tile-text"
                  style="border-top: 3px solid {{ goal.hexval }};">
               <div class="col-xs-12 tile-row"><h5>{{ goal.goals[0].description }}</h5></div>
-              <div class="col-xs-12 tile-row goal-chart">
-                <canvas id="chart-g{{ goal.goal_pre }}d" height="1px"></canvas>
+              <div id="chart-g{{ goal.goal_pre }}" class="col-xs-12 tile-row goal-chart">
+                <canvas id="chart-g{{ goal.goal_pre }}-ctx" height="1px" width="1px"></canvas>
               </div>
             </div><!-- /#col-text-g{{ goal.goal_pre }} -->
           </div><!-- /#col-td-{{ goal.goal_pre }} -->
+          {% if loop.index is divisibleby 3 %}
+          <div class="clearfix"></div>
+          {% endif %}
         {% endfor %}
       </div><!-- /#row-tiledetails -->
     </div><!-- /#col-tiledetails -->
@@ -168,8 +171,8 @@
                       </span>
                     </p>
                   </div>
-                  <div class="col-xs-12 indicator-chart">
-                    <canvas id="chart-{{ indic.indicator_id }}" height="1px"></canvas>
+                  <div id="chart-{{ indic.indicator_id }}" class="col-xs-12 indicator-chart">
+                    <canvas id="chart-{{ indic.indicator_id }}-ctx" height="1px" width="1px"></canvas>
                   </div>
                 </div><!-- /#col-indic{{ indic.indicator_id }} -->
               {% endfor %}
