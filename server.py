@@ -82,10 +82,16 @@ def get_country_data():
         y = round(q_obj.display_value, 2)
         v = round(q_obj.value, 2)
         s = round(q_obj.scaled_value, 2)
-        i = (q_obj.indicator.title if q_obj.indicator.scale_inverse is False
-                                   else q_obj.indicator.title + " (inverted)")
+        i = q_obj.indicator.indicator_id
+        i_text = (q_obj.indicator.title if q_obj.indicator.scale_inverse is False
+                                        else q_obj.indicator.title + " (inverted)")
         year = str(q_obj.year)
-        c_datasets[year].append({'x': int(x), 'y': y, 'i': i, 'v': v, 's': s})
+        c_datasets[year].append({'x': int(x),
+                                 'y': y,
+                                 'v': v,
+                                 's': s,
+                                 'i': i,
+                                 'i_text': i_text})
 
     # makes 'cTileVals'
     for year in c_tilevals.iterkeys():      # for each year

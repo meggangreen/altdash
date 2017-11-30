@@ -68,6 +68,7 @@ function swapDivs(evt) {
     if (toShow === '#row-body-goal-minutiae') {
         if ($(toShow).find('.chartjs-size-monitor').length === 0) {
             chartIndicators.forEach( function callback(chartIndicID, junk, Set) {
+                console.log(chartIndicID);
                 makeChartIndicator(chartIndicID);
             });
         } // end if
@@ -301,7 +302,7 @@ function makeChartScatter(cYear) {
 
     */
 
-    // cDatasets = { '2011': [{x: 3, y: 2, i: "name", v: 7, s: 10}, ] };
+    // cDatasets = { '2011': [{x: 3, y: 2, v: 7, s: 10, i: "id", i_text: "name"} ] };
 
     if ( chartScatter ) { chartScatter.destroy(); console.log("chart DESTROYED!"); }
 
@@ -337,7 +338,7 @@ function makeChartScatter(cYear) {
                         let dsi = tooltipItem.datasetIndex;
                         let dpti = tooltipItem.index;  // datapoint index
                         let goal_label = data.datasets[dsi].label;
-                        let indic_label = data.datasets[dsi].data[dpti]['i'];
+                        let indic_label = data.datasets[dsi].data[dpti]['i_text'];
                         indic_label = splitTextIntoLines(indic_label, 30);
                         let ttBeforeLabel = new Array(goal_label, '');
                         indic_label.forEach(function(item) {
@@ -410,7 +411,7 @@ function makeChartGoal(chartGoalID) {
         cGoalData.push(obj);
     } // end for
 
-    chartGoal = new Chart(ctx, {
+    let chartGoal = new Chart(ctx, {
         type: 'line',
         data: { 
             labels: [], 
@@ -479,8 +480,9 @@ function makeChartGoal(chartGoalID) {
 function makeChartIndicator(chartIndicatorID) {
     /* Returns a preformatted line chart given an indicator id. The scores are
        loaded at page load as a map with the year as the key whose value is a 
-       map with 'goal_pre' ids (key) and 'score' (value). Indicator chart ids are
-       saved in chartIndicators.
+       map with 'v' ids (key) whose value WILL BE the actual score but for now
+       is still the display value. Indicator chart ids are saved in 
+       chartIndicators.
 
        Only called the first time that the goal-minutiae section is shown for the
        first time for a given country.
@@ -489,21 +491,29 @@ function makeChartIndicator(chartIndicatorID) {
 
     */
 
-    // cTileVals = { '2010', {g01: 5.2, g02: 7.9} };
+    // cDatasets = { '2011': [{x: 3, y: 2, v: 7, s: 10, i: "id", i_text: "name"}] };
     // chartIndicatorID = 'chart-...';
 
-    let cIndicatorID = chartIndicatorID.slice(-3);
-    //let cGoalColor = cGoals.get(cGoalID)[0];
-    let ctx = $('#' + chartIndicatorID + '-ctx')[0].getContext('2d');
+    let cIndicID = chartIndicatorID.slice(6);
+    // currently only replaces first instance
+    // regex https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace
+    let cIndicLookup = cIndicID.replace('.', '');
+    let cGoalColor = $('#chart-' + cIndicLookup + '-ctx').data('color');
+    let ctx = $('#chart-' + cIndicLookup + '-ctx')[0].getContext('2d');
     let cIndicatorData = new Array();
+    console.log('502');
     for ( let yearI = cMin; yearI <= cMax; yearI++ ) {
         let yearStr = String(yearI);
-        //let dataY = cTileVals[yearStr][cGoalID];
-        let obj = { x: yearI, y: dataY };
-        cIndicatorData.push(obj);
+        let indicData = cDatasets[yearStr].filter(cData => cData['i'] === cIndicID);
+        if (indicData.length > 0) {
+            let dataY = indicData[0]['y'];
+            let obj = { x: yearI, y: dataY };
+            cIndicatorData.push(obj);
+        } // end if
     } // end for
+    console.log('510');
 
-    chartIndicator = new Chart(ctx, {
+    let chartIndicator = new Chart(ctx, {
         type: 'line',
         data: { 
             labels: [], 
