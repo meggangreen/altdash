@@ -13,7 +13,6 @@ $(document).ready(function() {
     cGoalsRaw.forEach(storeGoalAttrs);
     $('.goal-chart').each(function() { chartGoals.add(this.id); });
     $('.indicator-chart').each(function() { chartIndicators.add(this.id); });
-    console.log(chartGoals);
     selectCountry();
 
     // Event listeners
@@ -68,7 +67,6 @@ function swapDivs(evt) {
     if (toShow === '#row-body-goal-minutiae') {
         if ($(toShow).find('.chartjs-size-monitor').length === 0) {
             chartIndicators.forEach( function callback(chartIndicID, junk, Set) {
-                console.log(chartIndicID);
                 makeChartIndicator(chartIndicID);
             });
         } // end if
@@ -114,7 +112,8 @@ function selectCountry(evt) {
     cCountry = $('#select-country').data('country');
     $('#select-country').val(cCountry);
 
-    // Reset page scroll to top
+    // Reset page; scroll to top
+    destroyGoalIndicCharts();
     $('html, body').animate(
         { scrollTop: $('body').offset().top },
         500, 'linear');
@@ -423,6 +422,8 @@ function makeChartGoal(chartGoalID) {
         options: {
             animation: { duration: 0 },
             legend: { display: false },
+            responsive: true,
+            maintainAspectRatio: false,
             elements: { 
                 point: { 
                     radius: 2, 
@@ -496,12 +497,11 @@ function makeChartIndicator(chartIndicatorID) {
 
     let cIndicID = chartIndicatorID.slice(6);
     // currently only replaces first instance
-    // regex https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace
-    let cIndicLookup = cIndicID.replace('.', '');
-    let cGoalColor = $('#chart-' + cIndicLookup + '-ctx').data('color');
+    let cIndicLookup = cIndicID.replace(/\./g, '');
+    let cGoalColor = $('.chart-' + cIndicLookup).data('color');
     let ctx = $('#chart-' + cIndicLookup + '-ctx')[0].getContext('2d');
     let cIndicatorData = new Array();
-    console.log('502');
+    
     for ( let yearI = cMin; yearI <= cMax; yearI++ ) {
         let yearStr = String(yearI);
         let indicData = cDatasets[yearStr].filter(cData => cData['i'] === cIndicID);
@@ -511,7 +511,6 @@ function makeChartIndicator(chartIndicatorID) {
             cIndicatorData.push(obj);
         } // end if
     } // end for
-    console.log('510');
 
     let chartIndicator = new Chart(ctx, {
         type: 'line',
@@ -525,6 +524,8 @@ function makeChartIndicator(chartIndicatorID) {
         options: {
             animation: { duration: 0 },
             legend: { display: false },
+            responsive: true,
+            maintainAspectRatio: false,
             elements: { 
                 point: { 
                     radius: 2, 
@@ -634,16 +635,29 @@ function updateTiles(cYear) {
 } // end updateTiles
 
 
-function tileGraphic(evt) {
-    let styleCurrent = $(this).attr('style');
-    let styleModified = styleCurrent.replace("_blank.png", ".png");
-    $(this).attr('style', styleModified);
-}
+function destroyGoalIndicCharts() {
+    /* Replaces inner html on all goal and indicator (second and third level)
+       charts with the plain canvas element only, effectively destroying
+       existing charts.js-created elements, classes, and objects.
+    
+    */
 
+    const htmlBefore = '<canvas id="';
+    const htmlAfter = '-ctx" height="1px" width="1px"></canvas>';
 
-function tileBlank(evt) {
-    let styleCurrent = $(this).attr('style');
-    let styleModified = styleCurrent.replace(".png", "_blank.png");
-    $(this).attr('style', styleModified);
-}
+    // Destroy goal and indicator charts
+    $('.goal-chart').empty();
+    $('.indicator-chart').empty();
 
+    // Append canvas element to each .goal-chart with appropriate id
+    for (let goal of chartGoals) {
+        $('#' + goal).append(htmlBefore + goal + htmlAfter);
+    }
+
+    // Append canvas element to each .indicator-chart with appropriate id
+    for (let indicator of chartIndicators) {
+        let indic = indicator.replace(/\./g, '');
+        $('.' + indic).append(htmlBefore + indic + htmlAfter);
+    }
+
+} // end destroyGoalIndicCharts

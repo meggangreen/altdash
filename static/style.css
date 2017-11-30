@@ -280,8 +280,16 @@ canvas {
     color:  #fff;
 }
 
-.tile:focus, .tile:hover {
+.tile:focus, .tile:hover, .tile:active {
     border: 2px solid #333;
+}
+
+.goal-chart {
+    height: 200px;
+}
+
+.indicator-chart {
+    height: 200px;
 }
 
 /* populate colors/imgs with js */

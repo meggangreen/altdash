@@ -161,6 +161,7 @@
                   <div class="col-xs-12">
                     <p>
                       {{ indic.title }}
+                      {% if indic.scale_inverse == True %}(inverted){% endif %}
                       <span class="footnote">
                       (<a href="{{ indic.wburl }}" target="_blank" 
                           title="{{ indic.indicator_id }} at the World Bank"
@@ -168,9 +169,11 @@
                       </span>
                     </p>
                   </div>
-                  <div id="chart-{{ indic.indicator_id }}" class="col-xs-12 indicator-chart">
+                  <div id="chart-{{ indic.indicator_id }}" data-color="{{ goal.hexval }}"
+                       class="col-xs-12 indicator-chart
+                             chart-{{ indic.indicator_id|replace(".", "") }}">
                     <canvas id="chart-{{ indic.indicator_id|replace(".", "") }}-ctx"
-                            height="1px" width="1px" data-color="{{ goal.hexval }}">
+                            height="1px" width="1px">
                     </canvas>
                   </div>
                 </div><!-- /#col-indic{{ indic.indicator_id }} -->
