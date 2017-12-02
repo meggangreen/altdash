@@ -268,7 +268,9 @@ function makeCountryInfo() {
     let formatHTML = '';
 
     if ( (cIncome && cRegion && cWikiurl) === null ) {
+
         let formatH4 = `<h4>` + cName + `</h4>`;
+        
         let formatDIV = `<div id="col-tiles-push" class="hidden-xs col-md-4" 
                               style="height: 17px;"></div>`;
         formatHTML = formatH4 + formatDIV;
