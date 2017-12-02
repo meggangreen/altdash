@@ -15,7 +15,7 @@ $(document).ready(function() {
     $('.goal-chart').each(function() { chartGoals.add(this.id); });
     $('.indicator-chart').each(function() { chartIndicators.add(this.id); });
 
-    // Conductors say which functions to call
+    // Start the data-to-chart flow
     selectCountry();
 
     // Event listeners
@@ -111,8 +111,6 @@ function selectCountry(evt) {
 
     scrollStop = true;
 
-    getCountryData(cCountry);
-
     if ( $(this).attr('id') === "select-country" ) {
         //this updates codewise but not in the page
         $('#select-country').data('country', $(this).val()); 
@@ -134,6 +132,8 @@ function selectCountry(evt) {
 
 function getCountryData(cCountry) {
     /* Retrieves country data and calls mapExtraHidden and updateChartTiles. */
+
+    console.log('calling getCountryData');
 
     $.get('/country-data.json', { 'country_id': cCountry }, function(results) {
         cDatasets = results.cDatasets;
