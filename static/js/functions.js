@@ -154,6 +154,7 @@ function getCountryData(cCountry) {
     
 } // end getCountryData
 
+
 function mapExtraHidden() {
     /* Sets the map div to 'extra-hidden'. 
 
