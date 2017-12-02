@@ -30,6 +30,16 @@ p {
     min-height: 65px;
 }
 
+.navbar-brand {
+    font-family: 'Mitr', Helvetica, sans-serif;
+}
+
+.navbar-default .navbar-collapse p {
+    color: #fff;
+    margin: 15px;
+    float: right;
+}
+
 .navbar-brand, .navbar-brand:focus, .navbar-brand:hover,
 .navbar-default .navbar-brand,
 .navbar-default .navbar-brand:focus, 
@@ -77,7 +87,7 @@ p {
 }
 
 .body-1 {
-    background-color: #ccc;
+    background-color: #eee;
     border-top: 8px solid #e5233d;
 }
 
@@ -308,7 +318,7 @@ canvas {
     background-color: #02558b;
     width: 100%;
     min-height: 60px;
-    border-top: 8px solid #3dac47;
+    border-top: 8px solid #fdb713;
 }
 
 #footer-container {
@@ -336,10 +346,10 @@ div > svg > text {
 /* Logo */
 /***************************/
 /* Much appreciation to http://jsfiddle.net/gaby/9Ryvs/7/ */
-.logo {
+.logo, .logo-load {
     position: relative;  /* to "brand" */
     top: -35px;
-    left: -18px;
+    left: -15px;
     margin: 0;
     width: 53px;
     height: 53px;
@@ -384,3 +394,47 @@ div > svg > text {
     }
 }
 
+.logo-load {
+    position: relative;  /* to "overlay-loading" */
+    top: auto;
+    left: -221px;
+    margin: 0;
+    width: 100px;
+    height: 100px;
+    opacity: 1;
+}
+
+#overlay {
+    background-color: #fff;
+    opacity: 0.5;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 4000;
+    top: 0;
+    left: 0;
+    float: left;
+    text-align: center;
+    padding-top: 25%;
+}
+
+#spinner {
+    background: transparent;
+    opacity: 1;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 5000;
+    top: 0;
+    left: 0;
+    float: left;
+    text-align: center;
+    padding-top: 25%;
+}
+
+#spinner p {
+    opacity: 1;
+    font-family: 'Mitr', Helvetica, sans-serif;
+    font-size: 50px;
+    color: #02558b;
+}

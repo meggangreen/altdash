@@ -1,24 +1,15 @@
-<!doctype html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- verify that bootstrap js not needed for navbar -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/united/bootstrap.min.css">
-  <link rel="stylesheet" href="static/style.css" />
-  <title>AltDash | World Bank Data Alternative Dashboard</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-  <div id="root"></div>
+{% block bodycontent %}
 
-<!-- react-router, for making our single-page-app -->
-<!-- <script src="https://unpkg.com/react-router-dom/umd/react-router-dom.js"></script> -->
+  <div class="body-0">
+    <!-- show scatter chart and goal-score tiles -->
+    {% include 'charttiles.html' %}
+  </div><!-- /.body-0 -->
 
-<!-- not all browsers support the new AJAX fetch API, so load a polyfill -->
-<script src="http://unpkg.com/whatwg-fetch"></script>
+  <div class="body-1">
+    <!-- show information about the world bank -->
+    {% include 'sdgunwb.html' ignore missing %}
+  </div><!-- /.body-2 -->
 
-<!-- our converted jsx -->
-<script src="static/js/bundle.js"></script>
-
-</body>
-</html>
+{% endblock %}

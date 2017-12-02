@@ -6,13 +6,16 @@ let chartScatter, cDatasets, cTileVals, cInformation;
 let chartGoals = new Set ([]), chartIndicators = new Set ([]);
 
 $(document).ready(function() {
-    /* When the page loads, calls chart and tile making functions. */
+    /* When the page loads, sets up some variables and event listeners, calls
+       the 'conductorLoadWholePage' function. */
 
     cCountries = $('.opt-country').toArray();
     cGoalsRaw = $('.tile-sm').toArray();
     cGoalsRaw.forEach(storeGoalAttrs);
     $('.goal-chart').each(function() { chartGoals.add(this.id); });
     $('.indicator-chart').each(function() { chartIndicators.add(this.id); });
+
+    // Conductors say which functions to call
     selectCountry();
 
     // Event listeners
@@ -39,7 +42,10 @@ function storeGoalAttrs(element, index, array) {
 
 
 function swapDivs(evt) {
-    /* Show and hide appropriate div elements after button click. */
+    /* Show and hide appropriate div elements after button click. Makes goal and
+       indicator (second- and third-level) charts on first use.
+
+    */
 
     scrollStop = true;  // stop scrolling scatter chart
 
@@ -50,6 +56,8 @@ function swapDivs(evt) {
     let toHide = $(this).data('sender');
     let toShow = $(this).data('target');
     let toGoal = '#' + $(this).data('goalA');  // #gEEd or #gEEm or #undefined
+
+    $(toHide).addClass("extra-hidden");
     
     // hide all 3rd level divs when navigating away from 3rd level
     if (toHide === '#row-body-goal-minutiae') {
@@ -62,6 +70,11 @@ function swapDivs(evt) {
                 makeChartGoal(chartGoalID);
             });
         } // end if
+        if ( toGoal !== '#undefined' ) {
+            $('html, body').animate(
+                { scrollTop: $(toGoal).offset().top -65 }, 
+                500, 'linear');
+        } // end if
     } // end if
 
     if (toShow === '#row-body-goal-minutiae') {
@@ -72,9 +85,6 @@ function swapDivs(evt) {
         } // end if
     } // end if
 
-    $(toHide).addClass("extra-hidden");
-    $(toShow).removeClass("extra-hidden");
-
     // unhide appropriate goal row(s)
     if (toShow === '#row-body-goal-minutiae') {
         if (toHide === '#row-body-gm-showall') {
@@ -84,21 +94,27 @@ function swapDivs(evt) {
         }
     }
 
-    if ( toGoal !== '#undefined' ) {
-        $('html, body').animate(
-            { scrollTop: $(toGoal).offset().top -65 }, 
-            500, 'linear');
-    } // end if
+    // history.pushState(data, title, 'level-two');
+    $(toShow).removeClass("extra-hidden");
 
 } // end swapDivs
 
 
 function selectCountry(evt) {
-    /* Handles new country selection and resets page. Calls getCountryData. */
+    /* Handles new country selection. */
 
-    scrollStop = true;  // stop scrolling scatter chart
-    
+    $('#loading-overlay').fadeIn();
+    destroyGoalIndicCharts();
+    $('html, body').animate(
+        { scrollTop: $('body').offset().top },
+        500, 'linear');
+
+    scrollStop = true;
+
+    getCountryData(cCountry);
+
     if ( $(this).attr('id') === "select-country" ) {
+        //this updates codewise but not in the page
         $('#select-country').data('country', $(this).val()); 
     } else {
         // Pick randomized country
@@ -106,17 +122,10 @@ function selectCountry(evt) {
         let rCountry = cCountries[r].value;
         //this updates codewise but not in the page
         $('#select-country').data('country', rCountry);
-        $('#select-country').val(rCountry);
     } // end if
     
     cCountry = $('#select-country').data('country');
     $('#select-country').val(cCountry);
-
-    // Reset page; scroll to top
-    destroyGoalIndicCharts();
-    $('html, body').animate(
-        { scrollTop: $('body').offset().top },
-        500, 'linear');
 
     getCountryData(cCountry);
 
@@ -124,39 +133,40 @@ function selectCountry(evt) {
 
 
 function getCountryData(cCountry) {
-    /* Retrieves country data and calls initializeChartTiles. */
+    /* Retrieves country data and calls mapExtraHidden and updateChartTiles. */
 
     $.get('/country-data.json', { 'country_id': cCountry }, function(results) {
         cDatasets = results.cDatasets;
         cTileVals = results.cTileVals;
         cInformation = results.cInformation;
-        scrollStop = false;  // only reset if the country has changed
-        initializeChartTiles();
+
+        // All have to stay inside callback for now, until promise implemented
+        scrollStop = false;
+        mapExtraHidden();
+        makeSlider();
+        updateChartTiles();
     } // end func
     ); // end .get
     
 } // end getCountryData
 
-function initializeChartTiles() {
-    /* Mostly calls the functions to make the slider and update the first level
-       scatter chart and small tiles. 
+function mapExtraHidden() {
+    /* Sets the map div to 'extra-hidden'. 
+
+       On page load, the map has to be displayed to EVER be displayed;
+       #map_holder should have its width by now, so let's hide it.
+       Unfortunately, this is a weird place to keep this bit of code.
+       Fortunately, there is no negative consequence to that.
 
     */
 
-    // On page load, the map has to be displayed to EVER be displayed
-    // #map_holder should have its width by now, so let's hide it
-    // unfortunately, this is a weird place to keep this bit of code
-    // fortunately, there is no negative consequence to that
     if ( !chartScatter ) { 
         $('#row-body-worldmap').addClass("extra-hidden");
         $('#row-body-worldmap').removeClass("kinda-hidden");
         console.log("hid the map!"); 
     }
 
-    makeSlider();
-    updateChartTiles();
-
-} // end initializeChartTiles
+} // end mapExtraHidden
 
 
 function makeSlider() {
@@ -201,7 +211,10 @@ function makeSlider() {
 
 
 function updateChartTiles(evt) {
-    /* Call the functions to make / update the first level chart and tiles. */
+    /* Call the functions to make / update the first level chart and tiles.
+       'getCountryData' and the slider stop event both call this function.
+
+    */
 
     makeCountryInfo();
     updateTiles(cYear);
@@ -210,6 +223,8 @@ function updateChartTiles(evt) {
     } else {
         makeChartScatter(cYear);
     }
+    $('.btn').removeAttr('disabled');
+    $('#loading-overlay').fadeOut();
 
 } // end updateChartTiles
 
@@ -290,6 +305,27 @@ function makeCountryInfo() {
     $('.countryinfo').html(formatHTML);
 
 } // end makeCountryInfo
+
+
+function updateTiles(cYear) {
+    /* Changes the 'score' on each goal tile given a year. The scores are loaded
+       at page load as a map with the year as the key whose value is a map with
+       'goal_pre' ids (key) and 'score' (value). First all scores are cleared,
+       then the updated scores placed, to ensure that data is for chosen year.
+
+       These are the "first level small tiles".
+
+    */
+
+    // cTileVals = { '2010', {g01: 5.2, g02: 7.9} };
+
+    $('.tile-sm').html('<p class="tile-score"></p>');
+    for ( let tileId in cTileVals[cYear] ) {
+        let tileVal = cTileVals[cYear][tileId];
+        $('#' + tileId + 'sm').html('<p class="tile-score">' + tileVal + '</p>');
+    } // end for
+
+} // end updateTiles
 
 
 function makeChartScatter(cYear) {
@@ -612,27 +648,6 @@ function splitTextIntoLines(fullText, chars) {
     return ftLines;
 
 } // end splitTextIntoLines
-
-
-function updateTiles(cYear) {
-    /* Changes the 'score' on each goal tile given a year. The scores are loaded
-       at page load as a map with the year as the key whose value is a map with
-       'goal_pre' ids (key) and 'score' (value). First all scores are cleared,
-       then the updated scores placed, to ensure that data is for chosen year.
-
-       These are the "first level small tiles".
-
-    */
-
-    // cTileVals = { '2010', {g01: 5.2, g02: 7.9} };
-
-    $('.tile-sm').html('<p class="tile-score"></p>');
-    for ( let tileId in cTileVals[cYear] ) {
-        let tileVal = cTileVals[cYear][tileId];
-        $('#' + tileId + 'sm').html('<p class="tile-score">' + tileVal + '</p>');
-    } // end for
-
-} // end updateTiles
 
 
 function destroyGoalIndicCharts() {

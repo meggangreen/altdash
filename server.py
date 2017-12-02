@@ -24,16 +24,12 @@ app.jinja_env.undefined = StrictUndefined
 
 @app.route('/')
 def index():
-    """ Index
-
-        'index2.html' will render until React works.
-
-    """
+    """ Index (until React works). """
 
     countries = Country.get_db_objs()
     goals = GoalDesign.get_db_objs()
 
-    return render_template("index2.html", countries=countries,
+    return render_template("index.html", countries=countries,
                                           goals=goals,
                                           slider_min=y_lbound,
                                           slider_max=y_ubound)
