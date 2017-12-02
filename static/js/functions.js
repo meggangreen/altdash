@@ -101,7 +101,10 @@ function swapDivs(evt) {
 
 
 function selectCountry(evt) {
-    /* Handles new country selection. */
+    /* Handles new country selection. Calls 'destroyGoalIndicCharts' and
+       'getCountryData'. 
+
+    */
 
     $('#loading-overlay').fadeIn();
     destroyGoalIndicCharts();
@@ -131,9 +134,10 @@ function selectCountry(evt) {
 
 
 function getCountryData(cCountry) {
-    /* Retrieves country data and calls mapExtraHidden and updateChartTiles. */
+    /* Retrieves country data and calls 'mapExtraHidden', 'makeSlider', and
+       'updateChartTiles'.
 
-    console.log('calling getCountryData');
+    */
 
     $.get('/country-data.json', { 'country_id': cCountry }, function(results) {
         cDatasets = results.cDatasets;
