@@ -90,7 +90,7 @@ class Group(db.Model):
 
     countries = db.relationship('Country',
                                 secondary='groups_countries',
-                                order_by='Country.country_id',
+                                order_by='Country.name',
                                 backref=db.backref('groups',
                                                    order_by=group_id))
 

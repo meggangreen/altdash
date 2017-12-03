@@ -71,6 +71,7 @@ function swapDivs(evt) {
             });
         } // end if
         if ( toGoal !== '#undefined' ) {
+            console.log('not scrolling!');
             $('html, body').animate(
                 { scrollTop: $(toGoal).offset().top -65 }, 
                 500, 'linear');
@@ -106,22 +107,28 @@ function selectCountry(evt) {
 
     */
 
-    $('#loading-overlay').fadeIn();
-    destroyGoalIndicCharts();
-    $('html, body').animate(
-        { scrollTop: $('body').offset().top },
-        500, 'linear');
-
+    // Stop scatter scroll
     scrollStop = true;
 
-    if ( $(this).attr('id') === "select-country" ) {
-        //this updates codewise but not in the page
+    // Start loading screen
+    $('#loading-overlay').fadeIn();
+
+    // Destroy existing goal and indicator charts
+    destroyGoalIndicCharts();
+
+    // Scroll to the top of the page
+    $('html, body').animate({scrollTop: $('body').offset().top}, 500, 'linear');
+
+    // Where did the country selection come from?
+    // URL, drop-down list, map (not written), no where OR random button
+    if ( true === false /* url contained country, pull from url */ ) {
+        // pull from url
+        // stick in data-country
+    } else if ( $(this).attr('id') === "select-country" ) {
         $('#select-country').data('country', $(this).val()); 
-    } else {
-        // Pick randomized country
+    } else {  // Pick randomized country
         let r = Math.floor(Math.random() * cCountries.length);
         let rCountry = cCountries[r].value;
-        //this updates codewise but not in the page
         $('#select-country').data('country', rCountry);
     } // end if
     

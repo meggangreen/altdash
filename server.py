@@ -17,8 +17,7 @@ app = Flask(__name__)
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "AltDash SDG UN WB"
 
-# Normally, if you use an undefined variable in Jinja2, it fails silently.
-# This is horrible. Make it raise an error instead.
+# Make undefined variables in Jinja2 raise an error
 app.jinja_env.undefined = StrictUndefined
 
 
@@ -26,13 +25,29 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """ Index (until React works). """
 
+    # url_country = request.args.get('country')
+    # if url_country:
+    #     # 'goal', 'indic', 'map', or None
+    #     url_level = request.args.get('level')
+    # if url_level == 'goal':
+    #     # 'EE' or None
+    #     url_goal = request.args.get('goal')
+    # elif url_level == 'indic':
+    #     # 'EE' or 'all'
+    #     url_goal = request.args.get('goal', 'all')
+    # elif url_level == 'map':
+    #     # 'indicator_id' or None
+    #     url_indic = request.args.get('indic')
+
+    print request.args
+
     countries = Country.get_db_objs()
     goals = GoalDesign.get_db_objs()
 
     return render_template("index.html", countries=countries,
-                                          goals=goals,
-                                          slider_min=y_lbound,
-                                          slider_max=y_ubound)
+                                         goals=goals,
+                                         slider_min=y_lbound,
+                                         slider_max=y_ubound)
 
 
 @app.route('/country-data.json', methods=['GET'])
@@ -59,6 +74,9 @@ def get_country_data():
     c_information['income'] = c_obj.income
     c_information['wikiurl'] = c_obj.wikiurl
     c_information['groups'] = [g.name for g in c_obj.groups]
+
+    # Countries will have groups, but groups in the countries table will not
+    # Instead we get the group's countries (unless the group is the World)
     if (not c_information['groups']) and (country_id != 'WLD'):
         g_obj = Group.get_db_objs(group_id=country_id)[0]
         c_information['groups'] = [c.name for c in g_obj.countries]
