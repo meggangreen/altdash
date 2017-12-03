@@ -269,21 +269,16 @@ function makeCountryInfo() {
 
     if ( (cIncome && cRegion && cWikiurl) === null ) {
 
-        let formatH4 = `<h4>` + cName + `</h4>`;
-        
-        let formatDIV = `<div id="col-tiles-push" class="hidden-xs col-md-4" 
-                              style="height: 17px;"></div>`;
-        formatHTML = formatH4 + formatDIV;
+        formatHTML = `<h4>${cName}</h4>
+                      <div id="col-tiles-push" class="hidden-xs col-md-4" 
+                           style="height: 17px;"></div>`;
         
     } else {
-        let formatH4 = `
-            <h4>
-              <a href="` + cWikiurl + `" target="_blank" 
-                title="` + cName + ` at Wikipedia">` + cName + `</a>
-              | ` + cIncome + ` | ` + cRegion + `
-            </h4>
-            `
-        ;
+        let formatH4 = `<h4>
+                          <a href="${cWikiurl}" target="_blank" 
+                            title="${cName} at Wikipedia">${cName}</a>
+                          | ${cIncome} | ${cRegion}
+                        </h4>`;
 
         let IRW = [cIncome, cRegion, "World"];
         let cGroupList = new Array();
@@ -299,12 +294,7 @@ function makeCountryInfo() {
             cGroupList = "None";
         } // end if
 
-        let formatP = `
-            <p>
-              Other groups: ` + cGroupList + `
-            </p>
-            `
-        ;
+        let formatP = `<p>Other groups: ${cGroupList}</p>`;
 
         formatHTML = formatH4 + formatP;
     } // end if
