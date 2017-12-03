@@ -265,39 +265,46 @@ function makeCountryInfo() {
     let cRegion = cInformation.region;
     let cWikiurl = cInformation.wikiurl;
     let cGroups = cInformation.groups;
-    let formatHTML = '';
+    let formatHTML, formatH4, formatPHead;
 
     if ( (cIncome && cRegion && cWikiurl) === null ) {
 
-        formatHTML = `<h4>${cName}</h4>
-                      <div id="col-tiles-push" class="hidden-xs col-md-4" 
-                           style="height: 17px;"></div>`;
+        formatH4 = `<h4>${cName}</h4>`;
+        formatPHead = 'Member Countries';
+
+                      // <div id="col-tiles-push" class="hidden-xs col-md-4" 
+                      //      style="height: 17px;"></div>`;
         
     } else {
-        let formatH4 = `<h4>
-                          <a href="${cWikiurl}" target="_blank" 
-                            title="${cName} at Wikipedia">${cName}</a>
-                          | ${cIncome} | ${cRegion}
-                        </h4>`;
+        
+        formatH4 = `<h4>
+                      <a href="${cWikiurl}" target="_blank" 
+                        title="${cName} at Wikipedia">${cName}</a>
+                      | ${cIncome} | ${cRegion}
+                    </h4>`;
+        formatPHead = 'Other groups';
 
-        let IRW = [cIncome, cRegion, "World"];
-        let cGroupList = new Array();
-        for (let i = 0; i < cGroups.length; i++) {
-            if (!IRW.includes(cGroups[i])) {
-                cGroupList.push(cGroups[i]);
-            } // end if
-        } // end for
-
-        if (cGroupList.length !== 0) {
-            cGroupList = cGroupList.join(", ");
-        } else {
-            cGroupList = "None";
-        } // end if
-
-        let formatP = `<p>Other groups: ${cGroupList}</p>`;
-
-        formatHTML = formatH4 + formatP;
     } // end if
+
+    console.log(formatH4);
+
+    let IRW = [cIncome, cRegion, "World"];
+    let cGroupList = new Array();
+    for (let i = 0; i < cGroups.length; i++) {
+        if (!IRW.includes(cGroups[i])) {
+            cGroupList.push(cGroups[i]);
+        } // end if
+    } // end for
+
+    if (cGroupList.length !== 0) {
+        cGroupList = cGroupList.join(", ");
+    } else {
+        cGroupList = "None";
+    } // end if
+
+    let formatP = `<p>${formatPHead}: ${cGroupList}</p>`;
+
+    formatHTML = formatH4 + formatP;
     
     $('.countryinfo').html(formatHTML);
 

@@ -98,6 +98,39 @@ class Group(db.Model):
         return ('<Group "{}" id={} (g.countries) >\n'
                 .format(self.name, self.group_id))
 
+    @classmethod
+    def get_db_objs(cls, group_id=None, name=None, char2=None, limit=None):
+        """ Returns list of db objects from Country table ordered by name.
+            Optionally, can inclusively filter and order by id, name, and/or
+            char2 as well.
+
+        """
+
+        query = cls.query.order_by(cls.name)
+
+        if group_id:
+            group_id = "%" + str(group_id) + "%"
+            query = (query.filter(cls.group_id.ilike(group_id))
+                          .order_by(cls.group_id))
+
+        if name:
+            name = "%" + str(name) + "%"
+            query = (query.filter(cls.name.ilike(name))
+                          .order_by(cls.name))
+
+        if char2:
+            char2 = "%" + str(char2) + "%"
+            query = (query.filter(cls.char2.ilike(char2))
+                          .order_by(cls.char2))
+
+        if limit:
+            limit = int(limit)
+            query = query.limit(limit)
+
+        db_objs = query.all()
+
+        return db_objs
+
 
 class GroupCountry(db.Model):
     """ Association table for group-country pairs. """

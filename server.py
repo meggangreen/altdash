@@ -59,6 +59,10 @@ def get_country_data():
     c_information['income'] = c_obj.income
     c_information['wikiurl'] = c_obj.wikiurl
     c_information['groups'] = [g.name for g in c_obj.groups]
+    if (not c_information['groups']) and (country_id != 'WLD'):
+        g_obj = Group.get_db_objs(group_id=country_id)[0]
+        c_information['groups'] = [c.name for c in g_obj.countries]
+
 
     # Send request for data points; receive all query objects
     query_objs = Datum.get_db_objs(country_id=country_id)
