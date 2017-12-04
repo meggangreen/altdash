@@ -1,6 +1,11 @@
 <!-- needs to go in a full-width div -->
 
-<div id="cont-body-charttiles" class="container-fluid container-body">
+<div id="cont-body-chartstilesmap" class="container-fluid container-body">
+  <input type="hidden" id="first-load-url" name="first-load-url"
+    {% for key, value in url_args.items() %}
+      data-url-{{ key }}="{{ value }}"
+    {% endfor %}
+  />
 
   <div id="row-body-charttiles" class="row body-row">
     <div id="col-scatterchart" class="col-xs-12 col-md-8">
@@ -210,4 +215,4 @@
     </div><!-- /#col-worldmap -->
   </div><!-- /#row-body-worldmap -->
 
-</div><!-- /#cont-body-charttiles -->
+</div><!-- /#cont-body-chartstilesmap -->

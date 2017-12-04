@@ -4,6 +4,7 @@ let cCountries, cCountry, cGoalsRaw, cGoals = new Map ([]);
 let cYear, cYears, cMin, cMax, yearI, scrollStop;
 let chartScatter, cDatasets, cTileVals, cInformation;
 let chartGoals = new Set ([]), chartIndicators = new Set ([]);
+let urlArgs, doPushState = false;
 
 $(document).ready(function() {
     /* When the page loads, sets up some variables and event listeners, calls
@@ -16,6 +17,7 @@ $(document).ready(function() {
     $('.indicator-chart').each(function() { chartIndicators.add(this.id); });
 
     // Start the data-to-chart flow
+    
     selectCountry();
 
     // Event listeners
@@ -70,12 +72,6 @@ function swapDivs(evt) {
                 makeChartGoal(chartGoalID);
             });
         } // end if
-        if ( toGoal !== '#undefined' ) {
-            console.log('not scrolling!');
-            $('html, body').animate(
-                { scrollTop: $(toGoal).offset().top -65 }, 
-                500, 'linear');
-        } // end if
     } // end if
 
     if (toShow === '#row-body-goal-minutiae') {
@@ -97,6 +93,11 @@ function swapDivs(evt) {
 
     // history.pushState(data, title, 'level-two');
     $(toShow).removeClass("extra-hidden");
+    if (toShow === '#row-body-tiledetails' && toGoal !== '#undefined') {
+        $('html, body').animate(
+            { scrollTop: $(toGoal).offset().top -65 }, 
+            500, 'linear');
+    } // end if
 
 } // end swapDivs
 
@@ -141,8 +142,8 @@ function selectCountry(evt) {
 
 
 function getCountryData(cCountry) {
-    /* Retrieves country data and calls 'mapExtraHidden', 'makeSlider', and
-       'updateChartTiles'.
+    /* Retrieves country data and calls 'mapExtraHidden', 'makeSlider',
+       'makeCountryInfo', and 'updateChartTiles'.
 
     */
 
@@ -155,6 +156,7 @@ function getCountryData(cCountry) {
         scrollStop = false;
         mapExtraHidden();
         makeSlider();
+        makeCountryInfo();
         updateChartTiles();
     } // end func
     ); // end .get
@@ -228,7 +230,6 @@ function updateChartTiles(evt) {
 
     */
 
-    makeCountryInfo();
     updateTiles(cYear);
     if (scrollStop === false) {
         scrollScatter();
@@ -236,6 +237,7 @@ function updateChartTiles(evt) {
         makeChartScatter(cYear);
     }
     $('.btn').removeAttr('disabled');
+    doPushState = true;
     $('#loading-overlay').fadeOut();
 
 } // end updateChartTiles
@@ -292,8 +294,6 @@ function makeCountryInfo() {
         formatPHead = 'Other groups';
 
     } // end if
-
-    console.log(formatH4);
 
     let IRW = [cIncome, cRegion, "World"];
     let cGroupList = new Array();

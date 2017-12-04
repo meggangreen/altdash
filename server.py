@@ -25,26 +25,30 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """ Index (until React works). """
 
-    # url_country = request.args.get('country')
-    # if url_country:
-    #     # 'goal', 'indic', 'map', or None
-    #     url_level = request.args.get('level')
-    # if url_level == 'goal':
-    #     # 'EE' or None
-    #     url_goal = request.args.get('goal')
-    # elif url_level == 'indic':
-    #     # 'EE' or 'all'
-    #     url_goal = request.args.get('goal', 'all')
-    # elif url_level == 'map':
-    #     # 'indicator_id' or None
-    #     url_indic = request.args.get('indic')
+    url_args = {}
+    url_args['view'] = request.args.get('view', 'charts')  # maps or charts
+    
+    if url_args['view'] == 'charts':
+        # '2', '3', or 0
+        url_args['level'] = request.args.get('level', 0)
+        if url_args['level'] == '2':
+            # 'EE' or 0
+            url_args['goal'] = request.args.get('goal', 0)
+        elif url_args['level'] == '3':
+            # 'EE' or 'all'
+            url_args['goal'] = request.args.get('goal', 'all')
+    # elif url_args['view'] == 'map':
+    #     # Configure later
 
-    print request.args
+    url_args['country'] = request.args.get('country')
+
+    print url_args
 
     countries = Country.get_db_objs()
     goals = GoalDesign.get_db_objs()
 
-    return render_template("index.html", countries=countries,
+    return render_template("index.html", url_args=url_args,
+                                         countries=countries,
                                          goals=goals,
                                          slider_min=y_lbound,
                                          slider_max=y_ubound)
