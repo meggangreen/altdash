@@ -17,7 +17,8 @@ app = Flask(__name__)
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "AltDash SDG UN WB"
 
-# Make undefined variables in Jinja2 raise an error
+# Normally, if you use an undefined variable in Jinja2, it fails silently.
+# This is horrible. Make it raise an error instead.
 app.jinja_env.undefined = StrictUndefined
 
 
@@ -25,30 +26,10 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """ Index (until React works). """
 
-    url_args = {}
-    url_args['view'] = request.args.get('view', 'charts')  # maps or charts
-    
-    if url_args['view'] == 'charts':
-        # '2', '3', or 0
-        url_args['level'] = request.args.get('level', 0)
-        if url_args['level'] == '2':
-            # 'EE' or 0
-            url_args['goal'] = request.args.get('goal', 0)
-        elif url_args['level'] == '3':
-            # 'EE' or 'all'
-            url_args['goal'] = request.args.get('goal', 'all')
-    # elif url_args['view'] == 'map':
-    #     # Configure later
-
-    url_args['country'] = request.args.get('country')
-
-    print url_args
-
     countries = Country.get_db_objs()
     goals = GoalDesign.get_db_objs()
 
-    return render_template("index.html", url_args=url_args,
-                                         countries=countries,
+    return render_template("index.html", countries=countries,
                                          goals=goals,
                                          slider_min=y_lbound,
                                          slider_max=y_ubound)
@@ -78,9 +59,6 @@ def get_country_data():
     c_information['income'] = c_obj.income
     c_information['wikiurl'] = c_obj.wikiurl
     c_information['groups'] = [g.name for g in c_obj.groups]
-
-    # Countries will have groups, but groups in the countries table will not
-    # Instead we get the group's countries (unless the group is the World)
     if (not c_information['groups']) and (country_id != 'WLD'):
         g_obj = Group.get_db_objs(group_id=country_id)[0]
         c_information['groups'] = [c.name for c in g_obj.countries]
@@ -147,7 +125,7 @@ if __name__ == "__main__":
     import sys
 
     # app.debug has to be True at the point we invoke the DebugToolbarExtension
-    app.debug = True
+    app.debug = False
 
     # Ensure templates, etc. are not cached in debug mode
     app.jinja_env.auto_reload = app.debug
