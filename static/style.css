@@ -1,9 +1,49 @@
+/***************************/
+/* General */
+/***************************/
+.container-body {
+    max-width: 1400px;
+}
+
+.plain {
+    padding: 0;
+}
+
 .extra-hidden {
     display: none;
 }
 
 .kinda-hidden {
     visibility: hidden;
+}
+
+.body-row {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#body-content {
+    padding-top: 70px;
+}
+
+.body-0, .body-1, .body-2 {
+    width: 100%;
+    padding: 0 0 15px;
+}
+
+.body-0 {
+    background-color: #fff;
+    border-top: 10px solid #3dac47;
+}
+
+.body-1 {
+    background-color: #eee;
+    border-top: 8px solid #e5233d;
+}
+
+.body-2 {
+    background-color: #eee;
+    border-top: 8px solid #fdb713;
 }
 
 p {
@@ -22,10 +62,28 @@ p {
     margin-top: 2px;
 }
 
-.plain {
-    padding: 0;
+a.outside-link, a:visited.outside-link {
+    text-decoration: none;
+    color: inherit;
 }
 
+a:hover.outside-link, a:active.outside-link, a:focus.outside-link {
+    text-decoration: underline;
+}
+
+a.inside-link, a:visited.inside-link {
+    text-decoration: none;
+    color: #02558b;
+}
+
+a:hover.inside-link, a:active.inside-link, a:focus.inside-link {
+    text-decoration: underline;
+}
+
+
+/***************************/
+/* Navigation Bar */
+/***************************/
 .navbar {
     min-height: 65px;
 }
@@ -56,7 +114,7 @@ p {
 .navbar-default {
     background-color: #02558b;
     border-color: #444;
-    border-width: 0 0 3px;
+    border-width: 0 0 5px;
 }
 
 .navbar > .container-fluid .navbar-brand {
@@ -67,38 +125,6 @@ p {
     max-width: 1400px;
 }
 
-.body-row {
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-#body-dynamic, #body-content {
-    padding-top: 65px;
-}
-
-.body-0, .body-1, .body-2 {
-    width: 100%;
-    padding: 0 0 15px;
-}
-
-.body-0 {
-    background-color: #fff;
-    border-top: 10px solid #3dac47;
-}
-
-.body-1 {
-    background-color: #eee;
-    border-top: 8px solid #e5233d;
-}
-
-.body-2 {
-    background-color: #eee;
-    border-top: 8px solid #fdb713;
-}
-
-.container-body {
-    max-width: 1400px;
-}
 
 /***************************/
 /* Chart-Tiles */
@@ -300,11 +326,30 @@ canvas {
     height: 200px;
 }
 
-.indicator-chart {
-    height: 200px;
+.indicator-container {
+    margin-top: 20px;
+    max-height: 300px;
+    overflow: hidden;
 }
 
-/* populate colors/imgs with js */
+.indicator-container:after {
+    content:""; 
+    background: #999; 
+    position: absolute; 
+    top: 0; 
+    left: 5%; 
+    height: 1px; 
+    width: 90%;
+}
+
+.indicator-chart {
+    height: 150px;
+}
+
+.indicator-chart-none {
+    height: 50px;
+}
+
 /*https://stackoverflow.com/questions/1341358/set-size-on-background-image-with-css*/
 
 
@@ -333,15 +378,12 @@ canvas {
     max-width: 1400px;
 }
 
-#col-footer a, a:active, a:hover, a:visited {
-    color: #18e;
-}
-
 
 /***************************/
 /* Map */
 /***************************/
-/* Much appreciation to http://simplemaps.com */
+/* Much appreciation to http://simplemaps.com
+   ... but your attribution tag is horrendous. */
 
 div > svg > text {
     display: none;
@@ -412,7 +454,7 @@ div > svg > text {
 
 #overlay {
     background-color: #fff;
-    opacity: 0.5;
+    opacity: 0.7;
     position: fixed;
     height: 100%;
     width: 100%;

@@ -1,11 +1,6 @@
 <!-- needs to go in a full-width div -->
 
-<div id="cont-body-chartstilesmap" class="container-fluid container-body">
-  <input type="hidden" id="first-load-url" name="first-load-url"
-    {% for key, value in url_args.items() %}
-      data-url-{{ key }}="{{ value }}"
-    {% endfor %}
-  />
+<div id="cont-body-charttiles" class="container-fluid container-body">
 
   <div id="row-body-charttiles" class="row body-row">
     <div id="col-scatterchart" class="col-xs-12 col-md-8">
@@ -165,7 +160,8 @@
                  style="border-top: 3px solid {{ goal.hexval }};">
               <div class="col-xs-12"><h4>{{ goal.goals[0].description }}</h4></div>
               {% for indic in goal.goals[0].indicators %}
-                <div id="col-indic{{ indic.indicator_id }}" class="col-xs-12 col-md-6">
+                <div id="col-indic{{ indic.indicator_id }}" 
+                     class="col-xs-12 col-md-6 indicator-container">
                   <div class="col-xs-12">
                     <p>
                       {{ indic.title }}
@@ -215,4 +211,4 @@
     </div><!-- /#col-worldmap -->
   </div><!-- /#row-body-worldmap -->
 
-</div><!-- /#cont-body-chartstilesmap -->
+</div><!-- /#cont-body-charttiles -->

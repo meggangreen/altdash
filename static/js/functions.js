@@ -4,11 +4,10 @@ let cCountries, cCountry, cGoalsRaw, cGoals = new Map ([]);
 let cYear, cYears, cMin, cMax, yearI, scrollStop;
 let chartScatter, cDatasets, cTileVals, cInformation;
 let chartGoals = new Set ([]), chartIndicators = new Set ([]);
-let urlArgs, doPushState = false;
 
 $(document).ready(function() {
     /* When the page loads, sets up some variables and event listeners, calls
-       the 'conductorLoadWholePage' function. */
+       'selectCountry'. */
 
     cCountries = $('.opt-country').toArray();
     cGoalsRaw = $('.tile-sm').toArray();
@@ -17,7 +16,6 @@ $(document).ready(function() {
     $('.indicator-chart').each(function() { chartIndicators.add(this.id); });
 
     // Start the data-to-chart flow
-    
     selectCountry();
 
     // Event listeners
@@ -93,7 +91,7 @@ function swapDivs(evt) {
 
     // history.pushState(data, title, 'level-two');
     $(toShow).removeClass("extra-hidden");
-    if (toShow === '#row-body-tiledetails' && toGoal !== '#undefined') {
+    if ( (toGoal !== '#undefined') && (toShow === '#row-body-tiledetails') ) {
         $('html, body').animate(
             { scrollTop: $(toGoal).offset().top -65 }, 
             500, 'linear');
@@ -108,28 +106,22 @@ function selectCountry(evt) {
 
     */
 
-    // Stop scatter scroll
+    $('#loading-overlay').fadeIn();
+    destroyGoalIndicCharts();
+    $('html, body').animate(
+        { scrollTop: $('body').offset().top },
+        500, 'linear');
+
     scrollStop = true;
 
-    // Start loading screen
-    $('#loading-overlay').fadeIn();
-
-    // Destroy existing goal and indicator charts
-    destroyGoalIndicCharts();
-
-    // Scroll to the top of the page
-    $('html, body').animate({scrollTop: $('body').offset().top}, 500, 'linear');
-
-    // Where did the country selection come from?
-    // URL, drop-down list, map (not written), no where OR random button
-    if ( true === false /* url contained country, pull from url */ ) {
-        // pull from url
-        // stick in data-country
-    } else if ( $(this).attr('id') === "select-country" ) {
+    if ( $(this).attr('id') === "select-country" ) {
+        //this updates codewise but not in the page
         $('#select-country').data('country', $(this).val()); 
-    } else {  // Pick randomized country
+    } else {
+        // Pick randomized country
         let r = Math.floor(Math.random() * cCountries.length);
         let rCountry = cCountries[r].value;
+        //this updates codewise but not in the page
         $('#select-country').data('country', rCountry);
     } // end if
     
@@ -142,8 +134,8 @@ function selectCountry(evt) {
 
 
 function getCountryData(cCountry) {
-    /* Retrieves country data and calls 'mapExtraHidden', 'makeSlider',
-       'makeCountryInfo', and 'updateChartTiles'.
+    /* Retrieves country data and calls 'mapExtraHidden', 'makeSlider', and
+       'updateChartTiles'.
 
     */
 
@@ -155,8 +147,8 @@ function getCountryData(cCountry) {
         // All have to stay inside callback for now, until promise implemented
         scrollStop = false;
         mapExtraHidden();
-        makeSlider();
         makeCountryInfo();
+        makeSlider();
         updateChartTiles();
     } // end func
     ); // end .get
@@ -237,7 +229,6 @@ function updateChartTiles(evt) {
         makeChartScatter(cYear);
     }
     $('.btn').removeAttr('disabled');
-    doPushState = true;
     $('#loading-overlay').fadeOut();
 
 } // end updateChartTiles
@@ -287,10 +278,13 @@ function makeCountryInfo() {
     } else {
         
         formatH4 = `<h4>
-                      <a href="${cWikiurl}" target="_blank" 
-                        title="${cName} at Wikipedia">${cName}</a>
-                      | ${cIncome} | ${cRegion}
-                    </h4>`;
+              <a href="${cWikiurl}" target="_blank" class="outside-link"
+                 title="${cName} at Wikipedia">${cName}</a> |
+              <a href="/country=INC" class="inside-link" 
+                 title="${cIncome}">${cIncome}</a> |
+              <a href="/country=REG" class="inside-link"
+                 title="${cRegion}">${cRegion}</a>
+            </h4>`;
         formatPHead = 'Other groups';
 
     } // end if
@@ -299,7 +293,9 @@ function makeCountryInfo() {
     let cGroupList = new Array();
     for (let i = 0; i < cGroups.length; i++) {
         if (!IRW.includes(cGroups[i])) {
-            cGroupList.push(cGroups[i]);
+            let cGroupHTML = `<a href="/?country=CID" title="${cGroups[i]}"
+                class="inside-link">${cGroups[i]}</a>`;
+            cGroupList.push(cGroupHTML);
         } // end if
     } // end for
 
@@ -448,14 +444,27 @@ function makeChartGoal(chartGoalID) {
 
     let cGoalID = chartGoalID.slice(-3);
     let cGoalColor = cGoals.get(cGoalID)[0];
-    let ctx = $('#' + chartGoalID + '-ctx')[0].getContext('2d');
+    $('#' + chartGoalID).empty();
+    
     let cGoalData = new Array();
     for ( let yearI = cMin; yearI <= cMax; yearI++ ) {
         let yearStr = String(yearI);
         let dataY = cTileVals[yearStr][cGoalID];
-        let obj = { x: yearI, y: dataY };
-        cGoalData.push(obj);
+        if (dataY >= 0) {
+            let obj = { x: yearI, y: dataY };
+            cGoalData.push(obj);
+        } // end if
     } // end for
+    if (cGoalData.length < 1) {
+        $('#' + chartGoalID).html(`<p><i>(no data available)</i></p>`);
+        return false;
+    }
+
+    $('#' + chartGoalID).html(`<canvas id="${chartGoalID}-ctx"
+                                       height="1px" width="1px">
+                               </canvas>`);
+    let canvasID = $('#' + chartGoalID + '-ctx');
+    let ctx = canvasID[0].getContext('2d');
 
     let chartGoal = new Chart(ctx, {
         type: 'line',
@@ -543,12 +552,11 @@ function makeChartIndicator(chartIndicatorID) {
     // chartIndicatorID = 'chart-...';
 
     let cIndicID = chartIndicatorID.slice(6);
-    // currently only replaces first instance
     let cIndicLookup = cIndicID.replace(/\./g, '');
     let cGoalColor = $('.chart-' + cIndicLookup).data('color');
-    let ctx = $('#chart-' + cIndicLookup + '-ctx')[0].getContext('2d');
-    let cIndicatorData = new Array();
+    $('.chart-' + cIndicLookup).empty();
     
+    let cIndicatorData = new Array();
     for ( let yearI = cMin; yearI <= cMax; yearI++ ) {
         let yearStr = String(yearI);
         let indicData = cDatasets[yearStr].filter(cData => cData['i'] === cIndicID);
@@ -558,6 +566,20 @@ function makeChartIndicator(chartIndicatorID) {
             cIndicatorData.push(obj);
         } // end if
     } // end for
+    if (cIndicatorData.length < 1) {
+        $('.chart-' + cIndicLookup).removeClass('indicator-chart');
+        $('.chart-' + cIndicLookup).addClass('indicator-chart-none');
+        $('.chart-' + cIndicLookup).html(`<p><i>(no data available)</i></p>`);
+        return false;
+    } // end if
+
+    $('.chart-' + cIndicLookup).removeClass('indicator-chart-none');
+    $('.chart-' + cIndicLookup).addClass('indicator-chart');
+    $('.chart-' + cIndicLookup).html(`<canvas id="chart-${cIndicLookup}-ctx"
+                                              height="1px" width="1px">
+                                      </canvas>`);
+    let canvasID = $('#chart-' + cIndicLookup + '-ctx');
+    let ctx = canvasID[0].getContext('2d');
 
     let chartIndicator = new Chart(ctx, {
         type: 'line',
